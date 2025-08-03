@@ -1,4 +1,5 @@
 node_modules
+/dist
 
 # Nuxt dev/build outputs
 .output
@@ -6,8 +7,6 @@ node_modules
 .nuxt
 .nitro
 .cache
-
-
 
 .nx/cache
 .nx/workspace-data
