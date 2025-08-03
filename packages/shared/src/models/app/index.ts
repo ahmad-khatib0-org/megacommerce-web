@@ -1,1 +1,1 @@
-export * from '@/models/app/context'
+export * from './context'

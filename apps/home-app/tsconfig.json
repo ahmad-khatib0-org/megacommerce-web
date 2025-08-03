@@ -23,7 +23,19 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@megacommerce/shared": [
+        "../../dist/packages/shared"
+      ],
+      "@megacommerce/shared/*": [
+        "../../dist/packages/shared/src/*"
+      ]
+    }
   },
   "include": [
     "**/*.js",
@@ -40,5 +52,10 @@
     "jest.config.ts",
     "**/*.spec.ts",
     "**/*.test.ts"
+  ],
+  "references": [
+    {
+      "path": "../../packages/shared"
+    }
   ]
 }

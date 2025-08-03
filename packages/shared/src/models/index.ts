@@ -1,1 +1,1 @@
-export * from '@/models/app'
+export * from './app'
