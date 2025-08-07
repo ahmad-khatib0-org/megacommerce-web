@@ -27,7 +27,28 @@
     "types": [
       "jest",
       "node"
-    ]
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@megacommerce/shared": [
+        "../../dist/packages/shared"
+      ],
+      "@megacommerce/shared/*": [
+        "../../dist/packages/shared/src/*"
+      ],
+      "@megacommerce/ui": [
+        "../../packages/ui/src/index.ts"
+      ],
+      "@megacommerce/ui/server": [
+        "../../packages/ui/src/server.ts"
+      ],
+      "@megacommerce/ui/shared": [
+        "../../packages/ui/src/shared.ts"
+      ]
+    }
   },
   "include": [
     "**/*.js",
