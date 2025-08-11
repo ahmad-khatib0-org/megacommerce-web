@@ -30,10 +30,10 @@
         "./src/*"
       ],
       "@megacommerce/shared": [
-        "../../dist/packages/shared"
+        "../../dist/packages/shared/src/index.js"
       ],
-      "@megacommerce/shared/*": [
-        "../../dist/packages/shared/src/*"
+      "@megacommerce/shared/server": [
+        "../../dist/packages/shared/src/server/index.js"
       ]
     }
   },

@@ -10,17 +10,29 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "lib": ["es2020", "dom"],
+    "lib": [
+      "es2020",
+      "dom"
+    ],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@megacommerce/shared": ["packages/shared/src/index.ts"],
-      "@megacommerce/shared/*": ["packages/shared/src/*"],
-      "@megacommerce/ui": ["packages/ui/src/index.ts"],
-      "@megacommerce/ui/server": ["packages/ui/src/server.ts"],
-      "@megacommerce/ui/shared": ["packages/ui/src/shared.ts"]
+      // "@megacommerce/shared/server": ["packages/shared/"],
+      // "@megacommerce/shared/*": ["packages/shared/src/*"],
+      "@megacommerce/ui": [
+        "packages/ui/src/index.ts"
+      ],
+      "@megacommerce/ui/server": [
+        "packages/ui/src/server.ts"
+      ],
+      "@megacommerce/ui/shared": [
+        "packages/ui/src/shared.ts"
+      ]
     }
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": [
+    "node_modules",
+    "tmp"
+  ]
 }

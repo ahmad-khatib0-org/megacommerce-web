@@ -1,5 +1,5 @@
 .PHONY: clean_all
 
 clean_generated:
-	rm -rf dist .nx/cache packages/shared/dist apps/home-app/.next
-	pnpx nx clear-cache
+	rm -rf dist .nx packages/shared/dist apps/home-app/.next
+	nx reset
