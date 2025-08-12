@@ -3,35 +3,37 @@ import { useForm } from '@mantine/form'
 import { yupResolver } from 'mantine-form-yup-resolver'
 
 import { Stepper } from '@megacommerce/ui'
-import type { ObjString } from '@megacommerce/shared'
+import { ObjString } from '@megacommerce/shared'
 
 import SignupInformationForm from '@/components/signup/signup-information-form'
+import { SignupHelpers } from '@/helpers/client'
 
 type Props = {
-  trans: ObjString
+  tr: ObjString
 }
 
-function SignupWrapper({ trans }: Props) {
+function SignupWrapper({ tr }: Props) {
   const infoForm = useForm({
     validateInputOnBlur: true,
+    validate: yupResolver(SignupHelpers.infoForm(tr)),
+    initialValues: SignupHelpers.infoFormValues(),
   })
 
   const steps = [
-    <SignupInformationForm key="information" form={} />,
-    <div key="second"> second </div>,
-    <div key="third"> third </div>,
+    <SignupInformationForm key="company" form={infoForm} tr={tr} />,
+    <div key="auth"> second </div>,
+    <div key="addetiona"> third </div>,
   ]
 
   return (
-    <section className="">
-      <Stepper
-        labels={['item 1', 'item 21', 'item 3']}
-        steps={steps}
-        clickNext="please click the next button instead"
-        nextMsg="Next"
-        prevMsg="Previous"
-      />
-    </section>
+    <Stepper
+      labels={[tr.s1Label, tr.s2Label, tr.s3Label]}
+      steps={steps}
+      clickNext={tr.clickNx}
+      nextMsg="Next"
+      prevMsg="Previous"
+      className="pe-4"
+    />
   )
 }
 

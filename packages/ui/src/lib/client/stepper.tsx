@@ -9,18 +9,22 @@ type Props = {
   clickNext: string
   nextMsg: string
   prevMsg: string
+  className?: string
 }
 
-export function Stepper({ labels, steps, clickNext, nextMsg, prevMsg }: Props) {
+export function Stepper({ labels, steps, clickNext, nextMsg, prevMsg, className }: Props) {
   const [current, setCurrent] = useState(0)
 
   const onStepClick = async (idx: number) => {
-    if (idx > current) toast(clickNext)
+    if (idx > current) {
+      toast(clickNext)
+      return
+    }
     setCurrent(idx)
   }
 
   return (
-    <div className="flex flex-col items-center *:w-full w-max">
+    <div className={`flex flex-col items-center *:w-full w-full ${className ?? ''}`}>
       <ul className="flex items-center gap-8 mb-4">
         {labels.map((step, idx) => {
           const isCompleted = idx < current
@@ -40,13 +44,13 @@ export function Stepper({ labels, steps, clickNext, nextMsg, prevMsg }: Props) {
                 `}>
                 {idx + 1}
               </div>
-              <span className="text-xl text-gray-600">{step}</span>
+              <span className="text-base text-gray-600 font-bold">{step}</span>
             </li>
           )
         })}
       </ul>
       <div className="mt-4">{steps[current]}</div>
-      <div className="flex justify-between items-center">
+      <div className="flex justify-around items-center mt-10">
         <Button title={prevMsg}>{prevMsg}</Button>
         <Button title={nextMsg} gradient={{ from: 'blue', to: 'cyan', deg: 90 }} variant="gradient">
           {nextMsg}
