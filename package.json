@@ -32,6 +32,7 @@
     "@testing-library/dom": "10.4.0",
     "@testing-library/react": "16.1.0",
     "@types/jest": "^30.0.0",
+    "@types/mustache": "^4.2.6",
     "@types/node": "^20.0.0",
     "@types/react": "19.0.0",
     "@types/react-dom": "19.0.0",
@@ -85,6 +86,7 @@
     "react-dom": "19.0.0",
     "react-toastify": "^11.0.5",
     "server-only": "^0.0.1",
+    "uuid": "^11.1.0",
     "yup": "^1.7.0"
   }
 }
