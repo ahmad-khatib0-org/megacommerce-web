@@ -34,10 +34,13 @@
         "./src/*"
       ],
       "@megacommerce/shared": [
-        "../../dist/packages/shared"
+        "../../dist/packages/shared/src/index.js"
       ],
-      "@megacommerce/shared/*": [
-        "../../dist/packages/shared/src/*"
+      "@megacommerce/shared/server": [
+        "../../dist/packages/shared/src/server/index.js"
+      ],
+      "@megacommerce/shared/client": [
+        "../../dist/packages/shared/src/client/index.js"
       ],
       "@megacommerce/ui": [
         "../../packages/ui/src/index.ts"

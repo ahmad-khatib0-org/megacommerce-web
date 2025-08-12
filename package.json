@@ -79,6 +79,7 @@
     "@megacommerce/proto": "^0.1.17",
     "client-only": "^0.0.1",
     "mantine-form-yup-resolver": "^2.0.0",
+    "mustache": "^4.2.0",
     "next": "~15.2.4",
     "react": "19.0.0",
     "react-dom": "19.0.0",
