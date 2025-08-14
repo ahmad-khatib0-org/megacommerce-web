@@ -92,7 +92,6 @@ class TemplatePool {
 
 class TranslationStore {
   private static _instance: TranslationStore
-  private _isInitialized = false
   private store: Map<string, Map<string, TemplatePool>> = new Map()
 
   public static instance(): TranslationStore {
@@ -103,8 +102,6 @@ class TranslationStore {
   }
 
   public init(translations: Translations, maxPoolSize: number): void {
-    if (this._isInitialized) return
-
     for (const [lang, elements] of Object.entries(translations)) {
       const langMap = new Map<string, TemplatePool>()
       for (const [id, tr] of Object.entries(elements)) {
@@ -112,8 +109,6 @@ class TranslationStore {
       }
       this.store.set(lang, langMap)
     }
-
-    this._isInitialized = true
   }
 
   public translate<P extends Record<string, any>>(lang: string, id: string, params?: P): string {
@@ -196,6 +191,7 @@ async function loadCachedTranslations() {
     }
   }
 
+  console.log(`loaded trans from cache, number of langs: ${Object.keys(res).length}`)
   return res
 }
 

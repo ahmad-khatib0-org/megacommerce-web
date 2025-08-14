@@ -18,10 +18,11 @@ export class System {
      TODO: relay on cached config, trans, ... For better CI builds
    */
   async init(): Promise<void> {
-    const isBuildOrProd = isBuildStage() || process.env.NODE_ENV === 'production'
+    // const isBuildOrProd = isBuildStage() || process.env.NODE_ENV === 'production'
     if (this._initialized) return
     try {
-      await Trans.init(commonClient, !isBuildOrProd) // cached trans in build/prod
+      // await Trans.init(commonClient, !isBuildOrProd) // cached trans in build/prod
+      await Trans.init(commonClient) // cached trans in build/prod
       this._initialized = true
     } catch (err) {
       console.error(err)

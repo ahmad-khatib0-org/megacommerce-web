@@ -1,5 +1,5 @@
 import 'client-only'
-import { object, string } from 'yup'
+import { object, string, ref } from 'yup'
 import {
   ObjString,
   UserFirstNameMaxLength,
@@ -8,6 +8,8 @@ import {
   UserLastNameMinLength,
   UserNameMaxLength,
   UserNameMinLength,
+  UserPasswordMaxLength,
+  UserPasswordMinLength,
 } from '@megacommerce/shared'
 import { UserNameRegex } from '@megacommerce/shared'
 
@@ -29,6 +31,19 @@ export class SignupHelpers {
   }
 
   static authInfoFormValues() {
-    return { email: '', password: '' }
+    return { email: '', password: '', password_confirmation: '' }
+  }
+
+  static authInfoForm(tr: ObjString) {
+    return object().shape({
+      email: string().email().required(tr.emailErr),
+      password: string()
+        .min(UserPasswordMinLength, tr.passMinErr)
+        .max(UserPasswordMaxLength, tr.passMaxErr)
+        .required(tr.r),
+      password_confirmation: string()
+        .oneOf([ref('password')], tr.passConfErr)
+        .required(tr.r),
+    })
   }
 }

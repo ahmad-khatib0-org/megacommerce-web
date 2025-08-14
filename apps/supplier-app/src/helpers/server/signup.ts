@@ -5,9 +5,24 @@ import {
   UserFirstNameMinLength,
   UserLastNameMaxLength,
   UserLastNameMinLength,
+  UserPasswordMaxLength,
+  UserPasswordMinLength,
+  UserImageMaxSizeKB,
 } from '@megacommerce/shared'
 import { Trans } from '@megacommerce/shared/server'
 import { UserNameMaxLength, UserNameMinLength } from '@megacommerce/shared'
+
+export async function getPasswordRequirements() {
+  const tr = Trans.tr
+  const lang = await Trans.getUserLang()
+
+  return [
+    { re: '[0-9]', label: tr(lang, 'password.numbers') },
+    { re: '[a-z]', label: tr(lang, 'password.lowercase') },
+    { re: '[A-Z]', label: tr(lang, 'password.uppercase') },
+    { re: "[$&+,:;=?@#|'<>.^*()%!-]", label: tr(lang, 'password.symbols') },
+  ]
+}
 
 export async function getSignupPageTrans(): Promise<ObjString> {
   const tr = Trans.tr
@@ -35,6 +50,13 @@ export async function getSignupPageTrans(): Promise<ObjString> {
       Max: UserLastNameMaxLength,
     }),
     emailErr: tr(lang, 'user.create.email.error'),
+    passMinErr: tr(lang, 'password.min_length', { Min: UserPasswordMinLength }),
+    passMaxErr: tr(lang, 'password.max_length', { Max: UserPasswordMaxLength }),
+    r: tr(lang, 'required'),
+    passConfErr: tr(lang, 'password_confirmation.do_not_much'),
+    maxImgSz: tr(lang, 'image.size.error', { Max: UserImageMaxSizeKB, Measure: 'KB' }),
+    logo: tr(lang, 'company_logo'),
+    optional: tr(lang, 'optional'),
   }
 
   return trans

@@ -42,8 +42,8 @@
       "@megacommerce/shared/client": [
         "../../dist/packages/shared/src/client/index.js"
       ],
-      "@megacommerce/ui": [
-        "../../packages/ui/src/index.ts"
+      "@megacommerce/ui/client": [
+        "../../packages/ui/src/client.ts"
       ],
       "@megacommerce/ui/server": [
         "../../packages/ui/src/server.ts"
