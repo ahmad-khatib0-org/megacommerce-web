@@ -10,9 +10,10 @@ type Props = {
   nextMsg: string
   prevMsg: string
   className?: string
+  onNext: (idx: number) => Promise<boolean>
 }
 
-export function Stepper({ labels, steps, clickNext, nextMsg, prevMsg, className }: Props) {
+export function Stepper({ labels, steps, clickNext, nextMsg, prevMsg, className, onNext }: Props) {
   const [current, setCurrent] = useState(0)
 
   const onStepClick = async (idx: number) => {
@@ -21,6 +22,14 @@ export function Stepper({ labels, steps, clickNext, nextMsg, prevMsg, className 
       return
     }
     setCurrent(idx)
+  }
+
+  const onClickNext = async () => {
+    if (await onNext(current)) setCurrent((prev) => prev + 1)
+  }
+
+  const onClickPrev = () => {
+    if (current > 0) setCurrent((prev) => prev - 1)
   }
 
   return (
@@ -51,8 +60,14 @@ export function Stepper({ labels, steps, clickNext, nextMsg, prevMsg, className 
       </ul>
       <div className="mt-4">{steps[current]}</div>
       <div className="flex justify-around items-center mt-10">
-        <Button title={prevMsg}>{prevMsg}</Button>
-        <Button title={nextMsg} gradient={{ from: 'blue', to: 'cyan', deg: 90 }} variant="gradient">
+        <Button onClick={() => onClickPrev()} title={prevMsg}>
+          {prevMsg}
+        </Button>
+        <Button
+          onClick={() => onClickNext()}
+          title={nextMsg}
+          gradient={{ from: 'blue', to: 'cyan', deg: 90 }}
+          variant="gradient">
           {nextMsg}
         </Button>
       </div>
