@@ -9,11 +9,23 @@ type Props = {
   clickNext: string
   nextMsg: string
   prevMsg: string
-  className?: string
+  subMsg: string
   onNext: (idx: number) => Promise<boolean>
+  onSubmit: () => void
+  className?: string
 }
 
-export function Stepper({ labels, steps, clickNext, nextMsg, prevMsg, className, onNext }: Props) {
+export function Stepper({
+  labels,
+  steps,
+  clickNext,
+  nextMsg,
+  prevMsg,
+  className,
+  onNext,
+  onSubmit,
+  subMsg,
+}: Props) {
   const [current, setCurrent] = useState(0)
 
   const onStepClick = async (idx: number) => {
@@ -33,8 +45,8 @@ export function Stepper({ labels, steps, clickNext, nextMsg, prevMsg, className,
   }
 
   return (
-    <div className={`flex flex-col items-center *:w-full w-full ${className ?? ''}`}>
-      <ul className="flex items-center gap-8 mb-4">
+    <div className={`flex flex-col gap-y-4 items-center *:w-full w-full ${className ?? ''}`}>
+      <ul className="flex items-center gap-x-8">
         {labels.map((step, idx) => {
           const isCompleted = idx < current
           const isCurrent = idx === current
@@ -58,18 +70,25 @@ export function Stepper({ labels, steps, clickNext, nextMsg, prevMsg, className,
           )
         })}
       </ul>
-      <div className="mt-4">{steps[current]}</div>
-      <div className="flex justify-around items-center mt-10">
+      <div className="mb-auto">{steps[current]}</div>
+      <div className="flex justify-around items-center mt-auto">
         <Button onClick={() => onClickPrev()} title={prevMsg}>
           {prevMsg}
         </Button>
-        <Button
-          onClick={() => onClickNext()}
-          title={nextMsg}
-          gradient={{ from: 'blue', to: 'cyan', deg: 90 }}
-          variant="gradient">
-          {nextMsg}
-        </Button>
+        {(current + 1) < steps.length && (
+          <Button
+            onClick={() => onClickNext()}
+            title={nextMsg}
+            gradient={{ from: 'blue', to: 'cyan', deg: 90 }}
+            variant="gradient">
+            {nextMsg}
+          </Button>
+        )}
+        {current + 1 === steps.length && (
+          <Button onClick={() => onSubmit()} title={subMsg}>
+            {subMsg}
+          </Button>
+        )}
       </div>
     </div>
   )

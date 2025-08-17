@@ -1,5 +1,7 @@
 import 'client-only'
 import { object, string, ref } from 'yup'
+import { SupplierCreateRequest } from '@megacommerce/proto/web/users/v1/supplier'
+import { Attachment } from '@megacommerce/proto/web/shared/v1/attachment'
 import {
   ObjString,
   UserFirstNameMaxLength,
@@ -10,8 +12,8 @@ import {
   UserNameMinLength,
   UserPasswordMaxLength,
   UserPasswordMinLength,
+  UserNameRegex,
 } from '@megacommerce/shared'
-import { UserNameRegex } from '@megacommerce/shared'
 
 export class SignupHelpers {
   static infoForm(tr: ObjString) {
@@ -45,5 +47,22 @@ export class SignupHelpers {
         .oneOf([ref('password')], tr.passConfErr)
         .required(tr.r),
     })
+  }
+
+  static requestBuilder(
+    info: ReturnType<typeof this.infoFormValues>,
+    auth: ReturnType<typeof this.authInfoFormValues>,
+    image: Attachment | undefined,
+  ) {
+    const req: SupplierCreateRequest = {
+      username: info.username,
+      firstName: info.first_name,
+      lastName: info.last_name,
+      email: auth.email,
+      password: auth.password,
+      membership: '',
+      image: '',
+    }
+    return req
   }
 }

@@ -1,5 +1,6 @@
 {
   "required": "this field is required",
+  "form.fields.invalid": "Please correct the required fields first",
   "optional": "this field is optional",
   "invalid_grpc_url": "invalid grpc url",
   "common_service_connect_error": "failed to Establish a connection to the common service",
@@ -56,6 +57,9 @@
   "password_confirmation.do_not_much": "Password confirmation does not match password",
   "file.size.error": "Max file size must be {{Max}} {{Measure}}",
   "image.size.error": "Max image size must be {{Max}} {{Measure}}",
+  "account.create": "Create an account",
+  "previous": "Previous",
+  "next": "Next",
   "authentication.permissions.profile_view.name": "View user profile details.",
   "authentication.permissions.profile_edit.name": "Edit user profile information.",
   "authentication.permissions.password_update.name": "Update account password.",

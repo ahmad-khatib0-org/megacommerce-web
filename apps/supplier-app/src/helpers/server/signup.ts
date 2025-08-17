@@ -57,6 +57,11 @@ export async function getSignupPageTrans(): Promise<ObjString> {
     maxImgSz: tr(lang, 'image.size.error', { Max: UserImageMaxSizeKB, Measure: 'KB' }),
     logo: tr(lang, 'company_logo'),
     optional: tr(lang, 'optional'),
+    subMsg: tr(lang, 'optional'),
+    correct: tr(lang, 'form.fields.invalid'),
+    createAcc: tr(lang, 'account.create'),
+    prev: tr(lang, 'previous'),
+    next: tr(lang, 'next'),
   }
 
   return trans
