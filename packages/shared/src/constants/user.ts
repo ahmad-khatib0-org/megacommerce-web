@@ -14,5 +14,5 @@ export const UserPasswordMinLength = 8
 export const UserLocaleMaxLength = 5
 export const UserTimezoneMaxLength = 256
 export const UserRolesMaxLength = 256
-export const UserImageMaxSizeKB = 1024 * 1024 * 2
+export const UserImageMaxSizeBytes = 1024 * 1024 * 2
 export const UserImageAcceptedTypes = ['image/png', 'image/webp', 'image/jpeg', 'image/jpg']
