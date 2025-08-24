@@ -34,6 +34,18 @@
       ],
       "@megacommerce/shared/server": [
         "../../dist/packages/shared/src/server/index.js"
+      ],
+      "@megacommerce/shared/client": [
+        "../../dist/packages/shared/src/client/index.js"
+      ],
+      "@megacommerce/ui/client": [
+        "../../packages/ui/src/client.ts"
+      ],
+      "@megacommerce/ui/server": [
+        "../../packages/ui/src/server.ts"
+      ],
+      "@megacommerce/ui/shared": [
+        "../../packages/ui/src/shared.ts"
       ]
     }
   },
