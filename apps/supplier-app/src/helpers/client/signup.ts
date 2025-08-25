@@ -6,6 +6,7 @@ import { object, string, ref } from 'yup'
 import { SupplierCreateRequest } from '@megacommerce/proto/web/users/v1/supplier'
 import { Attachment } from '@megacommerce/proto/web/shared/v1/attachment'
 import { AppError } from '@megacommerce/proto/shared/v1/error'
+import { getFirstErroredStep, handleGrpcWebErr } from '@megacommerce/shared/client'
 import {
   ObjString,
   UserFirstNameMaxLength,
@@ -21,8 +22,7 @@ import {
 
 import { SignupAuthInfoForm } from '@/components/signup/signup-auth-info-form'
 import { SignupInformationForm } from '@/components/signup/signup-information-form'
-import { handleGrpcWebErr, PagesPaths, usersClient } from '@/helpers/client'
-import { getFirstErroredStep } from '@megacommerce/shared/client'
+import { PagesPaths, usersClient } from '@/helpers/client'
 
 export class SignupHelpers {
   static onClickNext = async (

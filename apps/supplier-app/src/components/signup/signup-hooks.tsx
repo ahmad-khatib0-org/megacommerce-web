@@ -6,7 +6,8 @@ import { yupResolver } from 'mantine-form-yup-resolver'
 
 import { Attachment } from '@megacommerce/proto/web/shared/v1/attachment'
 import { ObjString, UserImageAcceptedTypes, UserImageMaxSizeBytes } from '@megacommerce/shared'
-import { buildAttachment, SignupHelpers } from '@/helpers/client'
+import { buildAttachment } from '@megacommerce/shared/client'
+import { SignupHelpers } from '@/helpers/client'
 
 type Props = {
   tr: ObjString

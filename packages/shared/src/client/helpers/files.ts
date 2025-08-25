@@ -1,5 +1,5 @@
-import { Attachment } from '@megacommerce/proto/web/shared/v1/attachment'
 import { Meta, UppyFile } from '@uppy/core'
+import { Attachment } from '@megacommerce/proto/web/shared/v1/attachment'
 
 export function buildAttachment(file: UppyFile<Meta, Record<string, never>>): Promise<Attachment> {
   return new Promise((res) => {
@@ -14,7 +14,9 @@ export function buildAttachment(file: UppyFile<Meta, Record<string, never>>): Pr
         fileExtension: file.extension,
         base64: reader.result as string,
         exifOrientation: 0,
-        crop: file.meta.crop as Attachment['crop'] | undefined,
+        crop: file.meta['crop'] as Attachment['crop'] | undefined,
+        data: new Uint8Array(),
+        mime: file.type,
       }
       res(attachment)
     }

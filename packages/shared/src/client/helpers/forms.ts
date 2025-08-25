@@ -26,22 +26,3 @@ export const getFirstErroredStep = (errors: StringMap, fieldsMap: { [idx: number
 
   return idx === null ? -1 : idx
 }
-const fieldsMap1 = { 0: ['first_name', 'some_filed'], 1: ['email'], 2: ['other_field'] }
-const errors1: StringMap = { data: { email: 'email error' } }
-console.log(getFirstErroredStep(errors1, fieldsMap1)) // must return 1
-
-const fieldsMap2 = { 0: ['email', 'some_filed'], 1: ['note'], 2: ['other_field'] }
-const errors2: StringMap = { data: { email: 'email error', note: 'note error' } }
-console.log(getFirstErroredStep(errors2, fieldsMap2)) // must return 0
-
-const fieldsMap3 = { 0: ['email', 'some_filed'], 1: ['note'], 2: ['other_field'] }
-const errors3: StringMap = { data: { other_field: 'other_field error' } }
-console.log(getFirstErroredStep(errors3, fieldsMap3)) // must return 2
-
-const fieldsMap4 = { 0: ['email'], 1: ['note'] }
-const errors4: StringMap = { data: { not_mapped: 'irrelevant error' } }
-console.log(getFirstErroredStep(errors4, fieldsMap4)) // -1
-
-const fieldsMap5 = { 0: ['email'], 1: ['note'] }
-const errors5: StringMap = { data: {} }
-console.log(getFirstErroredStep(errors5, fieldsMap5)) // -1
