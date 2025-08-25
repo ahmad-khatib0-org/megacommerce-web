@@ -1,3 +1,5 @@
+import 'client-only'
+
 export class PagesPaths {
   constructor() { }
 

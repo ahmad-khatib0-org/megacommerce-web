@@ -3,4 +3,5 @@ export class Assets {
 
   static imgCheckMark = '/images/check-mark.jpg'
   static imgErrorAlert = '/images/error-alert.png'
+  static imgLock = '/images/lock.png'
 }

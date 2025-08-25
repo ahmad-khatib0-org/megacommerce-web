@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { ColorSchemeScript, mantineHtmlProps, MantineProvider } from '@mantine/core'
 import { ToastContainer } from 'react-toastify'
+import '@mantine/core/styles.css'
 import './global.css'
 
 import { ServerError } from '@megacommerce/ui/server'

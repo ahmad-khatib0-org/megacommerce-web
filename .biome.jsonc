@@ -1,0 +1,52 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.0.5/schema.json",
+  "files": {
+    "includes": [
+      "**/*.{js,jsx,ts,tsx,vue,css,html,json,graphql}"
+    ]
+  },
+  "formatter": {
+    "indentStyle": "space", // --use-tabs=false
+    "indentWidth": 2, // --tab-width=2
+    "lineWidth": 110, // --print-width=110
+    "lineEnding": "lf", // --end-of-line=lf
+    "bracketSpacing": true // --bracket-spacing=true
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single", // --single-quote
+      "jsxQuoteStyle": "double", // Prettier default for JSX
+      "quoteProperties": "asNeeded", // --quote-props=as-needed
+      "trailingCommas": "all", // --trailing-comma=all
+      "semicolons": "asNeeded", // --semi=false
+      "arrowParentheses": "always", // --arrow-parens=always
+      "bracketSameLine": true // --jsx-bracket-same-line & --bracket-same-line
+    }
+  },
+  "html": {
+    "formatter": {
+      "whitespacesSensitivity": "css", // --html-whitespace-sensitivity=css
+      "bracketSameLine": true, // match JSX behavior for tags
+      "indentScriptAndStyle": false // --vue-indent-script-and-style=false
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "style": {
+        "useConst": "warn",
+        "noVar": "error",
+        "noUnusedVariables": "warn",
+        "useShorthandArrayType": "warn"
+      },
+      "suspicious": {
+        "noExplicitAny": "warn",
+        "noDoubleEquals": "error"
+      },
+      "complexity": {
+        "noExtraBooleanCast": "warn"
+      }
+    }
+  }
+}
