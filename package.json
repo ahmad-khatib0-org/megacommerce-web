@@ -78,7 +78,7 @@
     "@mantine/core": "^8.2.3",
     "@mantine/form": "^8.2.3",
     "@mantine/hooks": "^8.2.3",
-    "@megacommerce/proto": "^0.1.48",
+    "@megacommerce/proto": "^0.1.54",
     "@tabler/icons-react": "^3.34.1",
     "@uppy/core": "^4.5.2",
     "@uppy/dashboard": "^4.4.3",

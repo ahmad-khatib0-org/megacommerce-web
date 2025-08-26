@@ -3,8 +3,9 @@ import { Metadata } from "next"
 import { Button } from "@mantine/core"
 
 import { Trans } from "@megacommerce/shared/server"
+
+import PasswordForgotWrapper from "@/components/auth/password-forgot/password-forgot-wrapper"
 import { Assets } from "@/helpers/shared"
-import ForgotPasswordWrapper from "@/components/auth/forgot-password/forgot-password-wrapper"
 
 export async function generateMetadata(): Promise<Metadata> {
   const lang = await Trans.getUserLang()
@@ -20,13 +21,14 @@ async function Page() {
   const trans = {
     email: tr(lang, 'email'),
     emailErr: tr(lang, 'email.invalid'),
-    send: tr(lang, 'forgot.password.send_instructions')
+    send: tr(lang, 'forgot.password.send_instructions'),
+    goToMsg: tr(lang, 'forgot.password.go_back')
   }
 
   return (
     <main>
       <section className='flex items-center justify-center min-h-screen'>
-        <ForgotPasswordWrapper
+        <PasswordForgotWrapper
           tr={trans}
           Header={
             <div className="flex flex-col gap-y-4">

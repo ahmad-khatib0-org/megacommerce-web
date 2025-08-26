@@ -26,14 +26,12 @@ function EmailVerificationWrapper({ tr, req }: Props) {
     setLoading(true)
     try {
       const res = await usersClient.EmailConfirmation(req)
-      console.log(res)
       if (res.error) {
         setErrorMsg(res.error.message)
         return
       }
       setSuccessMsg(res.data!.message!)
     } catch (err) {
-      console.log(err)
       setErrorMsg(handleGrpcWebErr(err))
     } finally {
       setLoading(false)

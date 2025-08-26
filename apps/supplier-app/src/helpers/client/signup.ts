@@ -58,7 +58,6 @@ export class SignupHelpers {
       const req = this.requestBuilder(info.values, auth.values, image)
       const res = await usersClient.CreateSupplier(req)
       if (res.error) {
-        console.log(res.error)
         this.invalidateForms(res.error, info, auth, setImgErr)
         const firstErr = getFirstErroredStep(res.error!.errors!, this.formStepsFields())
         if (updateStep && firstErr !== -1) updateStep(firstErr)
