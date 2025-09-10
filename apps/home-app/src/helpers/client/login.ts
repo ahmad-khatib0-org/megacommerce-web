@@ -5,8 +5,8 @@ export class LoginHelpers {
   constructor() { }
 
   private static clientID = process.env.NEXT_PUBLIC_OAUTH_CLIENT_ID!;
-  private static redirectURL = process.env.NEXT_PUBLIC_OAUTH_REDIRECT_URI!;
-  private static oauthURL = process.env.NEXT_PUBLIC_OAUTH_URL!;
+  private static redirectURL = process.env.NEXT_PUBLIC_OAUTH_REDIRECT_URL!;
+  private static oauthURL = process.env.NEXT_PUBLIC_OAUTH_AUTH_URL!;
 
   static prepareLoginUrl(): URL {
     const state = crypto.randomUUID();
@@ -19,6 +19,7 @@ export class LoginHelpers {
       maxAge: 300, // 5 minutes
     });
 
+    console.log(this.oauthURL);
     const url = new URL(this.oauthURL);
     url.searchParams.set("client_id", this.clientID);
     url.searchParams.set("response_type", "code");
