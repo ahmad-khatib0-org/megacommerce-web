@@ -36,6 +36,9 @@ export class LoginHelpers {
   static checkLoginUrl(currentUrl: string): URL | undefined {
     try {
       const url = new URL(currentUrl);
+      // this to prevent infinite redirection, because if login_challenge is persists
+      // so that means the client exchanged a login_challenge with the OAuth provider
+      if (url.searchParams.get("login_challenge")) return undefined
 
       // Check required search params
       const requiredParams = ['client_id', 'response_type', 'scope', 'redirect_uri', 'state'];

@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
 async function getPageTrans(tr: TransFunction, lang: string) {
   return {
     youCan: tr(lang, 'email_confirm.you_can_to_login'),
-    goTo: tr(lang, 'go_to_login_page'),
+    goTo: tr(lang, 'login.go_to_login_page'),
   }
 }
 

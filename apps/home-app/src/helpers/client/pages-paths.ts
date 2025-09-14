@@ -4,6 +4,7 @@ export class PagesPaths {
   constructor() { }
 
   static home = '/'
-  static emailConfirmation = '/email-confirmation'
-  static login = '/login'
+  static emailConfirmation = '/auth/email-confirmation'
+  static login = '/auth/login'
+  static loginError = '/auth/login/error'
 }

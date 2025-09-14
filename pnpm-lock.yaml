@@ -24,8 +24,8 @@ importers:
         specifier: ^8.2.3
         version: 8.2.4(react@19.0.0)
       '@megacommerce/proto':
-        specifier: ^0.1.71
-        version: 0.1.71
+        specifier: ^0.1.83
+        version: 0.1.83
       '@tabler/icons-react':
         specifier: ^3.34.1
         version: 3.34.1(react@19.0.0)
@@ -1700,8 +1700,8 @@ packages:
     peerDependencies:
       react: ^18.x || ^19.x
 
-  '@megacommerce/proto@0.1.71':
-    resolution: {integrity: sha512-NjPJQX7CZCi8GdKORdXsxnvmKzamSv+oIsJv/N5l/h3R+yHltf30vesZ4xUiLu3lHgmzwOs+wKHQSHJGnsKxpg==}
+  '@megacommerce/proto@0.1.83':
+    resolution: {integrity: sha512-KEl/CDRvMdwJgSfF9atrVSTIEgCZQLl635sWLyHtR5XXGKdSwkKfgW7FbZ4zs5LNvfIRvXLD24DZZIs4AU9m1g==}
 
   '@modern-js/node-bundle-require@2.68.2':
     resolution: {integrity: sha512-MWk/pYx7KOsp+A/rN0as2ji/Ba8x0m129aqZ3Lj6T6CCTWdz0E/IsamPdTmF9Jnb6whQoBKtWSaLTCQlmCoY0Q==}
@@ -9932,7 +9932,7 @@ snapshots:
     dependencies:
       react: 19.0.0
 
-  '@megacommerce/proto@0.1.71':
+  '@megacommerce/proto@0.1.83':
     dependencies:
       '@bufbuild/protobuf': 2.6.3
       '@grpc/grpc-js': 1.13.4
