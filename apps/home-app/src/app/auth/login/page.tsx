@@ -2,17 +2,20 @@ import Image from "next/image"
 
 import { Trans } from "@megacommerce/shared/server"
 import { ServerError } from "@megacommerce/ui/server"
-import { UserPasswordMaxLength, UserPasswordMinLength } from "@megacommerce/shared"
+import { SearchParams, UserPasswordMaxLength, UserPasswordMinLength } from "@megacommerce/shared"
 
 import LoginWrapper from "@/components/auth/login/login-wrapper"
 import { oauthServiceStatusChecker } from "@/helpers/server"
 import { Assets } from "@/helpers/shared"
 
-type Props = {}
+type Props = {
+  searchParams: SearchParams
+}
 
-async function Page({ }: Props) {
+async function Page({ searchParams }: Props) {
   const tr = Trans.tr
   const lang = await Trans.getUserLang()
+  const { login_challenge } = await searchParams
 
   const trans = {
     r: tr(lang, 'required'),
@@ -26,12 +29,14 @@ async function Page({ }: Props) {
   try {
     const isAlive = await oauthServiceStatusChecker.isOauthServiceAlive()
     if (!isAlive) return <ServerError />
-    return <section className="grid grid-cols-[55%,1fr]">
-      <LoginWrapper tr={trans} />
-      <div className="relative h-screen w-full select-none">
-        <Image src={Assets.login} alt="describe authentication flow" fill sizes="100%" style={{ objectFit: 'cover' }} />
-      </div>
-    </section>
+    return (
+      <section className="grid grid-cols-[55%,1fr]">
+        <LoginWrapper tr={trans} login_challenge={login_challenge as string} />
+        <div className="relative h-screen w-full select-none">
+          <Image src={Assets.login} alt="describe authentication flow" fill sizes="100%" style={{ objectFit: 'cover' }} />
+        </div>
+      </section>
+    )
   } catch (err) {
     return <ServerError />
   }

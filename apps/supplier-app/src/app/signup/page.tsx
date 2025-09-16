@@ -12,12 +12,13 @@ async function Page() {
   return (
     <main className="w-full px-10 grid grid-cols-[66%,_1fr] mt-4">
       <SignupWrapper tr={trans} passwordRequirements={requirements} />
-      <div className="relative min-h-[80vh]">
+      <div className="relative min-h-[80vh] select-none">
         <Image
           src={AssetsPaths.signupImg}
           alt="Megacommerce supplier platform"
           sizes="100%"
           fill
+          priority
           style={{ objectFit: 'fill' }}
         />
       </div>

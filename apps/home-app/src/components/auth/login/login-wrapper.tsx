@@ -1,54 +1,18 @@
 'use client'
-import { useEffect, useState } from "react"
 import { Button, PasswordInput, TextInput } from "@mantine/core"
-import { useRouter } from "next/navigation"
-import { useForm } from "@mantine/form"
-import { object, string } from "yup"
-import { toast } from "react-toastify"
-import { yupResolver } from "mantine-form-yup-resolver"
 import { IconMail } from "@tabler/icons-react"
 
 import { PageLoader } from "@megacommerce/ui/shared"
-import { handleGrpcWebErr } from "@megacommerce/shared/client"
 import { ObjString, UserPasswordMaxLength, UserPasswordMinLength } from "@megacommerce/shared"
-import { LoginHelpers } from "@/helpers/client"
+import LoginHooks from "@/components/auth/login/login-hooks"
 
 type Props = {
   tr: ObjString
+  login_challenge: string
 }
 
-const LoginWrapper = ({ tr }: Props) => {
-  const router = useRouter()
-  const [loading, setLoading] = useState(false)
-  const [successMsg, setSuccessMsg] = useState<{ message: string, description: string } | undefined>()
-
-  const form = useForm({
-    validateInputOnBlur: true,
-    initialValues: { email: '', password: '' },
-    validate: yupResolver(object().shape({
-      email: string().email().required(tr.emailErr),
-      password: string()
-        .min(UserPasswordMinLength, tr.passMinErr)
-        .max(UserPasswordMaxLength, tr.passMaxErr)
-        .required(tr.r),
-    }))
-  })
-
-  const onSubmit = async ({ email, password }: { email: string, password: string }) => {
-    if (loading) return
-    setLoading(true)
-    try {
-    } catch (err) {
-      toast.error(handleGrpcWebErr(err))
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    const url = LoginHelpers.checkLoginUrl(window.location.href)
-    if (url) router.push(url.toString())
-  }, [])
+const LoginWrapper = ({ tr, login_challenge }: Props) => {
+  const { loading, form, onSubmit } = LoginHooks({ tr, login_challenge })
 
   return (
     <div>

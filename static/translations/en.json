@@ -131,10 +131,11 @@
   "oauth.unsupported_response_type": "The authentication response type is not supported.",
   "oauth.invalid_scope.requested": "The requested permissions are invalid or excessive.",
   "oauth.invalid_scope.configured": "Invalid authentication configuration. Try again, if issue presists, Please contact support.",
-  "oauth.server_error.internal": "Authentication service is temporarily unavailable. Please try again later.",
+  "oauth.server_error.internal": "Authentication service is temporarily unavailable. Please try again in a few moments.",
   "oauth.server_error.external": "A dependent service is temporarily unavailable. Please try again in a few moments.",
   "oauth.temporarily_unavailable": "Authentication service is busy. Please try again in a moment.",
   "oauth.connection_timeout": "The authentication service took too long to respond. Please check your connection and try again.",
   "oauth.unknown_error": "An unexpected error occurred during authentication. Please try again.",
-  "oauth.network_error": "Network connection issue. Please check your internet connection and try again."
+  "oauth.network_error": "Network connection issue. Please check your internet connection and try again.",
+  "oauth.login_challenge.missing": "The login challenge is missing from the URL, please make sure to not manipulate the Link, Please Try again, if issue presists, Please contact support."
 }
