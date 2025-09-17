@@ -65,4 +65,13 @@ export class LoginHelpers {
       return this.prepareLoginUrl();
     }
   }
+
+  static getLoginChallengeParam(location: string): string {
+    try {
+      const url = new URL(location);
+      return url.searchParams.get('login_challenge') ?? "";
+    } catch {
+      return "";
+    }
+  }
 }

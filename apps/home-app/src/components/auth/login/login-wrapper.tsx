@@ -1,18 +1,17 @@
 'use client'
 import { Button, PasswordInput, TextInput } from "@mantine/core"
-import { IconMail } from "@tabler/icons-react"
+import { IconMail, IconLock } from "@tabler/icons-react"
 
-import { PageLoader } from "@megacommerce/ui/shared"
 import { ObjString, UserPasswordMaxLength, UserPasswordMinLength } from "@megacommerce/shared"
+import { PageLoader } from "@megacommerce/ui/shared"
 import LoginHooks from "@/components/auth/login/login-hooks"
 
 type Props = {
   tr: ObjString
-  login_challenge: string
 }
 
-const LoginWrapper = ({ tr, login_challenge }: Props) => {
-  const { loading, form, onSubmit } = LoginHooks({ tr, login_challenge })
+const LoginWrapper = ({ tr }: Props) => {
+  const { loading, form, onSubmit } = LoginHooks({ tr })
 
   return (
     <div>
@@ -26,6 +25,7 @@ const LoginWrapper = ({ tr, login_challenge }: Props) => {
           label={tr.email}
           placeholder={tr.email}
           withAsterisk
+          type="email"
           size='sm'
           className="w-96"
           leftSection={<IconMail size={20} />}
@@ -39,7 +39,7 @@ const LoginWrapper = ({ tr, login_challenge }: Props) => {
           className="w-96"
           maxLength={UserPasswordMaxLength}
           minLength={UserPasswordMinLength}
-          leftSection={<IconMail size={20} />}
+          leftSection={<IconLock size={20} />}
           {...form.getInputProps('password')}
         />
         <div className="flex justify-between items-center mt-8">

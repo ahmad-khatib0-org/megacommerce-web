@@ -24,8 +24,8 @@ importers:
         specifier: ^8.2.3
         version: 8.2.4(react@19.0.0)
       '@megacommerce/proto':
-        specifier: ^0.1.83
-        version: 0.1.83
+        specifier: ^0.1.87
+        version: 0.1.87
       '@tabler/icons-react':
         specifier: ^3.34.1
         version: 3.34.1(react@19.0.0)
@@ -89,6 +89,9 @@ importers:
       yup:
         specifier: ^1.7.0
         version: 1.7.0
+      zustand:
+        specifier: ^5.0.8
+        version: 5.0.8(@types/react@19.0.0)(react@19.0.0)(use-sync-external-store@1.5.0(react@19.0.0))
     devDependencies:
       '@babel/core':
         specifier: ^7.14.5
@@ -1700,8 +1703,8 @@ packages:
     peerDependencies:
       react: ^18.x || ^19.x
 
-  '@megacommerce/proto@0.1.83':
-    resolution: {integrity: sha512-KEl/CDRvMdwJgSfF9atrVSTIEgCZQLl635sWLyHtR5XXGKdSwkKfgW7FbZ4zs5LNvfIRvXLD24DZZIs4AU9m1g==}
+  '@megacommerce/proto@0.1.87':
+    resolution: {integrity: sha512-8OS544OgMWpzsMNUWd3INV5N7lTN/U/FJ6ENxg3MaoxN2SNn3uBCBTd1qDSJjKCncX0ZrAkOI8jA8wf5RJsBLw==}
 
   '@modern-js/node-bundle-require@2.68.2':
     resolution: {integrity: sha512-MWk/pYx7KOsp+A/rN0as2ji/Ba8x0m129aqZ3Lj6T6CCTWdz0E/IsamPdTmF9Jnb6whQoBKtWSaLTCQlmCoY0Q==}
@@ -8381,6 +8384,24 @@ packages:
   yup@1.7.0:
     resolution: {integrity: sha512-VJce62dBd+JQvoc+fCVq+KZfPHr+hXaxCcVgotfwWvlR0Ja3ffYKaJBT8rptPOSKOGJDCUnW2C2JWpud7aRP6Q==}
 
+  zustand@5.0.8:
+    resolution: {integrity: sha512-gyPKpIaxY9XcO2vSMrLbiER7QMAMGOQZVRdJ6Zi782jkbzZygq5GI9nG8g+sMgitRtndwaBSl7uiqC49o1SSiw==}
+    engines: {node: '>=12.20.0'}
+    peerDependencies:
+      '@types/react': '>=18.0.0'
+      immer: '>=9.0.6'
+      react: '>=18.0.0'
+      use-sync-external-store: '>=1.2.0'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      immer:
+        optional: true
+      react:
+        optional: true
+      use-sync-external-store:
+        optional: true
+
 snapshots:
 
   '@alloc/quick-lru@5.2.0': {}
@@ -9932,7 +9953,7 @@ snapshots:
     dependencies:
       react: 19.0.0
 
-  '@megacommerce/proto@0.1.83':
+  '@megacommerce/proto@0.1.87':
     dependencies:
       '@bufbuild/protobuf': 2.6.3
       '@grpc/grpc-js': 1.13.4
@@ -17908,3 +17929,9 @@ snapshots:
       tiny-case: 1.0.3
       toposort: 2.0.2
       type-fest: 2.19.0
+
+  zustand@5.0.8(@types/react@19.0.0)(react@19.0.0)(use-sync-external-store@1.5.0(react@19.0.0)):
+    optionalDependencies:
+      '@types/react': 19.0.0
+      react: 19.0.0
+      use-sync-external-store: 1.5.0(react@19.0.0)

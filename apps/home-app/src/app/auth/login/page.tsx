@@ -8,14 +8,11 @@ import LoginWrapper from "@/components/auth/login/login-wrapper"
 import { oauthServiceStatusChecker } from "@/helpers/server"
 import { Assets } from "@/helpers/shared"
 
-type Props = {
-  searchParams: SearchParams
-}
+type Props = {}
 
-async function Page({ searchParams }: Props) {
+async function Page({ }: Props) {
   const tr = Trans.tr
   const lang = await Trans.getUserLang()
-  const { login_challenge } = await searchParams
 
   const trans = {
     r: tr(lang, 'required'),
@@ -31,7 +28,7 @@ async function Page({ searchParams }: Props) {
     if (!isAlive) return <ServerError />
     return (
       <section className="grid grid-cols-[55%,1fr]">
-        <LoginWrapper tr={trans} login_challenge={login_challenge as string} />
+        <LoginWrapper tr={trans} />
         <div className="relative h-screen w-full select-none">
           <Image src={Assets.login} alt="describe authentication flow" fill sizes="100%" style={{ objectFit: 'cover' }} />
         </div>

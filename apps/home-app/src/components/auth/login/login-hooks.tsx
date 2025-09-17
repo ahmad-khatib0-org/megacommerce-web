@@ -13,12 +13,12 @@ import { LoginHelpers, PagesPaths, usersClient } from "@/helpers/client"
 
 type Props = {
   tr: ObjString
-  login_challenge: string
 }
 
-function LoginHooks({ tr, login_challenge }: Props) {
+function LoginHooks({ tr }: Props) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const [challenge, setChallenge] = useState("")
 
   const form = useForm({
     validateInputOnBlur: true,
@@ -36,7 +36,7 @@ function LoginHooks({ tr, login_challenge }: Props) {
     if (loading) return
     setLoading(true)
     try {
-      const res = await usersClient.Login({ email, password, loginChallenge: login_challenge })
+      const res = await usersClient.Login({ email, password, loginChallenge: challenge })
       if (res.error) handleError(res.error)
       if (res.data) handleSuccess(res.data)
     } catch (err) {
@@ -66,9 +66,19 @@ function LoginHooks({ tr, login_challenge }: Props) {
     if (url) router.push(url)
   }
 
+  // TODO: handle no challenge and display an error popup
+  const init = () => {
+    const location = window.location.href
+    const url = LoginHelpers.checkLoginUrl(location)
+    if (url) {
+      router.push(url.toString())
+      return
+    }
+    setChallenge(() => LoginHelpers.getLoginChallengeParam(location))
+  }
+
   useEffect(() => {
-    const url = LoginHelpers.checkLoginUrl(window.location.href)
-    if (url) router.push(url.toString())
+    init()
   }, [])
 
   return {
