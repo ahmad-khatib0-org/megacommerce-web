@@ -12,7 +12,7 @@ import { Translations } from '../models'
 import { Cookies, DefaultLanguage } from '../constants'
 import { calculateHash } from './build'
 
-const TRANSLATIONS_DIR = '../../static/translations'
+const TRANSLATIONS_DIR = './translations'
 
 async function fetchTranslations(client: Common.CommonServiceClient): Promise<Translations> {
   return new Promise((resolve, reject) => {

@@ -1,6 +1,6 @@
 import 'server-only'
 
-import { Trans, isBuildStage } from '@megacommerce/shared/server'
+import { Trans, isBuildStage, waitForServiceToBeReady } from '@megacommerce/shared/server'
 import { Config } from '@megacommerce/proto/common/v1/config'
 import { commonClient, System } from "@/helpers/server"
 
@@ -28,6 +28,8 @@ async function init(): Promise<System> {
 
   _initPromise = (async () => {
     try {
+      const { port, hostname } = new URL(process.env['COMMON_GRPC_ENDPOINT'] as string)
+      await waitForServiceToBeReady(hostname, parseInt(port))
       await Trans.init(commonClient);
       const config = await initConfig();
       console.log(`called the init function`);
@@ -36,6 +38,7 @@ async function init(): Promise<System> {
       _system = { config };
       return _system;
     } catch (err) {
+      console.log(err);
       throw Error("An Error occurred while initing server data & config")
     }
   })();
