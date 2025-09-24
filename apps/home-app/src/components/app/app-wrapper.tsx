@@ -12,7 +12,9 @@ type Props = {
 function getTranslations(lang: string) {
   const tr = Trans.tr;
   return {
-    placeholder: tr(lang, 'search.looking_for')
+    placeholder: tr(lang, 'search.looking_for'),
+    shipTo: tr(lang, 'location.ship_to'),
+    wl: tr(lang, 'translation.website_language')
   }
 }
 

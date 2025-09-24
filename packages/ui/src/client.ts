@@ -2,3 +2,4 @@
 // (e.g. those with 'use client' directive) or other non-server utilities
 export * from './lib/client/stepper'
 export * from './lib/client/password-input/password-input'
+export * from './lib/client/language-location-currency/language-location-currency'

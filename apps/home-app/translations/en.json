@@ -140,5 +140,7 @@
   "oauth.login_challenge.missing": "The login challenge is missing from the URL, please make sure to not manipulate the Link, Please Try again, if issue presists, Please contact support.",
   "oauth.login_state.invalid": "The login token state is missing from the URL/cookies, make sure to not manipulate the Link, Please Try again, if issue presists, Please contact support.",
   "oauth.login_code.invalid": "The login token code is missing from the URL, make sure to not manipulate the Link, Please Try again, if issue presists, Please contact support.",
-  "search.looking_for": "I'm looking for..."
+  "search.looking_for": "I'm looking for...",
+  "location.ship_to": "Ship to",
+  "translation.website_language": "Website Language"
 }

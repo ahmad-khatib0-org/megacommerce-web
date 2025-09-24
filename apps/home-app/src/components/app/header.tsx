@@ -1,6 +1,8 @@
 import 'server-only'
+
 import { ObjString } from "@megacommerce/shared"
 import SearchBar from "@/components/app/search-bar"
+import LanguageCurrencyLocation from '@/components/app/language-currency-location'
 
 type Props = {
   tr: ObjString
@@ -14,6 +16,9 @@ const Header = ({ tr }: Props) => {
         <p className="font-bold text-3xl text-orange-600">Commerce</p>
       </a>
       <SearchBar tr={tr} />
+      <div className='flex justify-center items-center'>
+        <LanguageCurrencyLocation tr={tr} />
+      </div>
     </section>
   )
 }
