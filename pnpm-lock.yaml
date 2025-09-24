@@ -277,6 +277,12 @@ importers:
         specifier: ^3.0.0
         version: 3.2.4(@types/node@20.19.10)(@vitest/ui@3.2.4)(jiti@2.4.2)(jsdom@22.1.0)(less@4.4.0)(sass-embedded@1.90.0)(sass@1.62.1)(sugarss@5.0.1(postcss@8.4.38))(terser@5.43.1)(yaml@2.8.1)
 
+  scripts:
+    devDependencies:
+      '@types/node':
+        specifier: ^20.19.10
+        version: 20.19.10
+
 packages:
 
   '@alloc/quick-lru@5.2.0':
