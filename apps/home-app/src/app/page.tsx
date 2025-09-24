@@ -1,3 +1,7 @@
 export default function Index() {
-  return <div>The home page</div>
+  return <>
+    <section>
+      The first section: a slider of products
+    </section>
+  </>
 }
