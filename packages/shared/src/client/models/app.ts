@@ -13,3 +13,9 @@ export class GrpcWebError extends Error {
     this.metadata = metadata
   }
 }
+
+export interface AppCookies {
+  language: string
+  currency: string
+  location: string
+}
