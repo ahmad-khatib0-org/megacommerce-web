@@ -1,17 +1,34 @@
 'use client'
-import { useState } from 'react'
 
-import { ObjString } from '@megacommerce/shared'
-import { LanguageCurrencyLocation as LanguageCurrencyLocationComp } from '@megacommerce/ui/client'
+import { AVAILABLE_LANGUAGES } from '@megacommerce/shared/client'
+import { LanguageCurrencyLocation as LanguageCurrencyLocationComp, OnSave } from '@megacommerce/ui/client'
 
-type Props = {
-  tr: ObjString
-}
+import AppHooks from '@/components/app/app-hooks'
+import { tr } from '@/helpers/client'
 
-function LanguageCurrencyLocation({ tr }: Props) {
-  const [selectedCountry, setSelectedCountry] = useState('France')
-  const [selectedCurrency, setSelectedCurrency] = useState('USD')
-  return <LanguageCurrencyLocationComp selectedCountry={selectedCountry} selectedCountryCode={'fr'} selectedCurrency={selectedCurrency} shipTo={tr.shipTo} selectedLanguage={'English'} websiteLang={tr.wl} />
+type Props = {}
+
+function LanguageCurrencyLocation({ }: Props) {
+  const { language, currency, location } = AppHooks({})
+  const lang = tr.getUserLang()
+  const t = tr.tr
+
+  const onSave = (data: OnSave) => {
+    console.log(data);
+  }
+
+  return <LanguageCurrencyLocationComp
+    onSave={onSave}
+    selectedCountryCode={location}
+    selectedCurrency={currency}
+    selectedLanguage={language}
+    languages={AVAILABLE_LANGUAGES}
+    shipTo={t(lang, 'location.ship_to')}
+    websiteLang={t(lang, 'translation.website_language')}
+    language={t(lang, 'translation.language')}
+    currency={t(lang, 'currencies.currency')}
+    save={t(lang, 'save')}
+  />
 }
 
 export default LanguageCurrencyLocation
