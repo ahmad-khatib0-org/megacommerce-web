@@ -142,5 +142,8 @@
   "oauth.login_code.invalid": "The login token code is missing from the URL, make sure to not manipulate the Link, Please Try again, if issue presists, Please contact support.",
   "search.looking_for": "I'm looking for...",
   "location.ship_to": "Ship to",
-  "translation.website_language": "Website Language"
+  "translation.website_language": "Website Language",
+  "translation.language": "Language",
+  "currencies.currency": "Currency",
+  "save": "Save"
 }
