@@ -145,5 +145,9 @@
   "translation.website_language": "Website Language",
   "translation.language": "Language",
   "currencies.currency": "Currency",
-  "save": "Save"
+  "save": "Save",
+  "welcome": "Welcome",
+  "signin": "Signin",
+  "register": "Register",
+  "cart": "Cart"
 }

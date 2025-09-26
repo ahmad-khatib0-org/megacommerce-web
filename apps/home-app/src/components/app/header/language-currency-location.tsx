@@ -8,6 +8,7 @@ type Props = {
   langs: ObjString
 }
 
+// TODO: complete the onSave function
 function LanguageCurrencyLocation({ tr, langs }: Props) {
   const { currency, country, language } = useAppStore((state) => state.clientInfo)
 

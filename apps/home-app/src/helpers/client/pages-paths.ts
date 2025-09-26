@@ -6,5 +6,6 @@ export class PagesPaths {
   static home = '/'
   static emailConfirmation = '/auth/email-confirmation'
   static login = '/auth/login'
+  static signupBuyer = 'buyer.megacommerce.com/signup'
   static loginError = '/auth/login/error'
 }

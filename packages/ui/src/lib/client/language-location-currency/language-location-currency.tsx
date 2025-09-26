@@ -66,11 +66,11 @@ export function LanguageCurrencyLocation({
       <PopoverTrigger className="px-2 py-1">
         <div className="flex flex-col justify-center items-center">
           <div className="flex items-center gap-x-2">
-            <p className="text-sm">{shipTo}: {country}</p>
+            <p className="font-medium line-clamp-1">{shipTo}: {country}</p>
             {getFlagImage(countryCode)}
           </div>
           <div className="flex items-center gap-x-3">
-            <p className="font-sm">{currency} / {language}</p>
+            <p className="font-medium">{currency} / {language}</p>
           </div>
         </div>
       </PopoverTrigger>
