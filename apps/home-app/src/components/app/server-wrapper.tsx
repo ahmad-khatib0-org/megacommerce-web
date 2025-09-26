@@ -2,13 +2,13 @@ import 'server-only'
 import { ToastContainer } from 'react-toastify'
 import { ColorSchemeScript, mantineHtmlProps, MantineProvider } from '@mantine/core'
 
-import Header from '@/components/app/header'
+import Header from '@/components/app/header/header'
 
 type Props = {
   children: React.ReactNode
 }
 
-async function AppWrapper({ children }: Props) {
+async function ServerWrapper({ children }: Props) {
   return (
     <html lang="en" {...mantineHtmlProps}>
       <head>
@@ -16,7 +16,7 @@ async function AppWrapper({ children }: Props) {
       </head>
       <body>
         <MantineProvider>
-          <Header />
+          <Header userLang='en' />
           {children}
         </MantineProvider>
         <ToastContainer />
@@ -25,4 +25,4 @@ async function AppWrapper({ children }: Props) {
   )
 }
 
-export default AppWrapper
+export default ServerWrapper

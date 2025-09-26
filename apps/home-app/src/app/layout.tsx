@@ -4,10 +4,8 @@ import '@mantine/core/styles.css'
 import './global.css'
 
 import { ServerError } from '@megacommerce/ui/server'
-import AppWrapper from '@/components/app/app-wrapper'
+import ServerWrapper from '@/components/app/server-wrapper'
 import { system } from '@/helpers/server'
-
-export const dynamic = 'force-static'
 
 export const metadata: Metadata = {
   title: 'Welcome Megacommece.com',
@@ -28,5 +26,5 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     )
   }
 
-  return <AppWrapper>{children}</AppWrapper>
+  return <ServerWrapper >{children}</ServerWrapper>
 }

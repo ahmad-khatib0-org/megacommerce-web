@@ -47,7 +47,7 @@ export function LanguageCurrencyLocation({ shipTo, selectedCurrency, selectedCou
   const _onSave = () => onSave({ currency, language, location: currency })
 
   useEffect(() => {
-    setCountry(countriesList.find((c) => c.code === countryCode)?.name ?? "")
+    setCountry(countriesList.find((c) => c.code.toLowerCase() === countryCode.toLowerCase())?.name ?? "")
   }, [])
 
   return (

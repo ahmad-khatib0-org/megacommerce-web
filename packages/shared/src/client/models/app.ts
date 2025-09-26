@@ -14,8 +14,13 @@ export class GrpcWebError extends Error {
   }
 }
 
-export interface AppCookies {
+/**
+ * ClientInformation represents essential information about a user, like 
+ * 
+ * language, currency, ship to location, ...
+*/
+export interface ClientInformation {
+  country: string
   language: string
   currency: string
-  location: string
 }

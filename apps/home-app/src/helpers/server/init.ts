@@ -1,12 +1,7 @@
 import 'server-only'
-
-import { Trans, isBuildStage, waitForServiceToBeReady } from '@megacommerce/shared/server'
+import { Trans, waitForServiceToBeReady } from '@megacommerce/shared/server'
 import { Config } from '@megacommerce/proto/common/v1/config'
 import { commonClient, System } from "@/helpers/server"
-
-// const isBuildOrProd = isBuildStage() || process.env.NODE_ENV === 'production'
-// await Trans.init(commonClient, !isBuildOrProd) // cached trans in build/prod
-// 
 
 let _initPromise: Promise<System> | null = null;
 let _initialized = false
