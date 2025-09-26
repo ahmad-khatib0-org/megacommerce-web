@@ -14,7 +14,7 @@ type Props = {
   selectedLanguage: string
   websiteLang: string
   language: string
-  languages: string[]
+  languages: { [key: string]: string }
   currency: string
   save: string
   onSave: (data: OnSave) => void
@@ -26,7 +26,18 @@ export interface OnSave {
   location: string
 }
 
-export function LanguageCurrencyLocation({ shipTo, selectedCurrency, selectedCountryCode, selectedLanguage, websiteLang, language: languageStr, languages, currency: currencyStr, save, onSave }: Props) {
+export function LanguageCurrencyLocation({
+  shipTo,
+  selectedCurrency,
+  selectedCountryCode,
+  selectedLanguage,
+  websiteLang,
+  language: languageStr,
+  languages,
+  currency: currencyStr,
+  save,
+  onSave,
+}: Props) {
   const countriesList = useMemo(() => countries, [])
   const currenciesList = useMemo(() => currencies, [])
 
@@ -111,9 +122,9 @@ export function LanguageCurrencyLocation({ shipTo, selectedCurrency, selectedCou
             </SelectTrigger>
             <SelectContent className="max-h-60 max-w-64 border border-black/20 bg-sugar">
               <div className="overflow-auto max-h-60">
-                {languages.map((lang) => {
+                {Object.entries(languages).map(([lang, name]) => {
                   return <SelectItem key={lang} value={lang}>
-                    <p>{lang}</p>
+                    <p>{name}</p>
                   </SelectItem>
                 })}
               </div>

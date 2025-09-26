@@ -2,7 +2,7 @@ import 'server-only'
 
 import SearchBar from "@/components/app/header/search-bar"
 import LanguageCurrencyLocation from '@/components/app/header/language-currency-location'
-import { Trans } from '@megacommerce/shared/server'
+import { AVAILABLE_LANGUAGES, Trans } from '@megacommerce/shared/server'
 
 type Props = {
   userLang: string
@@ -29,7 +29,7 @@ const Header = ({ userLang }: Props) => {
       </a>
       <SearchBar />
       <div className='flex justify-center items-center'>
-        <LanguageCurrencyLocation tr={tr} />
+        <LanguageCurrencyLocation tr={tr} langs={AVAILABLE_LANGUAGES} />
       </div>
     </section>
   )

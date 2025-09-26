@@ -1,31 +1,33 @@
 'use client'
+import { useAppStore } from '@/store'
 import { ObjString } from '@megacommerce/shared'
-import { AVAILABLE_LANGUAGES } from '@megacommerce/shared/client'
 import { LanguageCurrencyLocation as LanguageCurrencyLocationComp, OnSave } from '@megacommerce/ui/client'
 
 type Props = {
   tr: ObjString
+  langs: ObjString
 }
 
-function LanguageCurrencyLocation({ tr }: Props) {
+function LanguageCurrencyLocation({ tr, langs }: Props) {
+  const { currency, country, language } = useAppStore((state) => state.clientInfo)
+
   const onSave = (data: OnSave) => {
     console.log(data);
   }
 
-  return <>
-    <LanguageCurrencyLocationComp
-      onSave={onSave}
-      selectedCountryCode={location}
-      selectedCurrency={currency}
-      selectedLanguage={language}
-      languages={AVAILABLE_LANGUAGES}
-      shipTo={tr.shipTo}
-      websiteLang={tr.websiteLang}
-      language={tr.language}
-      currency={tr.currency}
-      save={tr.save}
-    />
-  </>
+  if (!language) return null
+  return <LanguageCurrencyLocationComp
+    onSave={onSave}
+    selectedCountryCode={country}
+    selectedCurrency={currency}
+    selectedLanguage={language}
+    languages={langs}
+    shipTo={tr.shipTo}
+    websiteLang={tr.websiteLang}
+    language={tr.language}
+    currency={tr.currency}
+    save={tr.save}
+  />
 }
 
 export default LanguageCurrencyLocation

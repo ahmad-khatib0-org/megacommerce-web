@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { Common, Trans as TransGrpc } from '@megacommerce/proto/common/v1'
 
 import { Translations } from '../models'
-import { Cookies, DefaultLanguage } from '../constants'
+import { Cookies, DEFAULT_LANGUAGE_SYMBOL } from '../constants'
 import { calculateHash } from './build'
 
 const TRANSLATIONS_DIR = './translations'
@@ -225,6 +225,6 @@ export const Trans = {
 
   getUserLang: async (): Promise<string> => {
     const c = await cookies()
-    return c.get(Cookies.AcceptLanguage)?.value || DefaultLanguage
+    return c.get(Cookies.AcceptLanguage)?.value || DEFAULT_LANGUAGE_SYMBOL
   },
 }

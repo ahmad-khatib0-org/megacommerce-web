@@ -21,21 +21,10 @@ export const Headers = {
 } as const
 
 export const Cookies = {
-  Authorization: 'authorization',
-  XRequestID: 'x-request-id',
-  XIPAddress: 'x-ip-address',
-  XForwardedFor: 'x-forwarded-for',
-  Path: 'path',
-  UserAgent: 'user-agent',
   AcceptLanguage: 'accept-language',
-  SessionID: 'session-id',
   Token: 'token',
-  CreatedAt: 'created-at',
-  ExpiresAt: 'expires-at',
-  LastActivityAt: 'last-activity-at',
   UserID: 'user-id',
   DeviceID: 'device-id',
-  Roles: 'roles',
-  IsOAuth: 'is-oauth',
-  Props: 'props',
+  Currency: 'currency',
+  Country: 'country',
 } as const
