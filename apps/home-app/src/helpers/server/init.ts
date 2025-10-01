@@ -1,6 +1,8 @@
 import 'server-only'
+import { Pool } from 'pg';
 import { Trans, waitForServiceToBeReady } from '@megacommerce/shared/server'
 import { Config } from '@megacommerce/proto/common/v1/config'
+
 import { commonClient, System } from "@/helpers/server"
 
 let _initPromise: Promise<System> | null = null;
@@ -27,10 +29,11 @@ async function init(): Promise<System> {
       await waitForServiceToBeReady(hostname, parseInt(port))
       await Trans.init(commonClient);
       const config = await initConfig();
+      const db = await initDB(config);
       console.log(`called the init function`);
 
+      _system = { config, db };
       _initialized = true;
-      _system = { config };
       return _system;
     } catch (err) {
       console.log(err);
@@ -54,3 +57,25 @@ async function initConfig(): Promise<Config> {
   })
 }
 
+async function initDB(cfg: Config): Promise<Pool> {
+  try {
+    const pool = new Pool({
+      application_name: cfg.main?.siteName,
+      connectionString: cfg.sql?.dataSource,
+      connectionTimeoutMillis: 5000,
+      idleTimeoutMillis: cfg.sql?.connMaxIdleTimeMilliseconds,
+      max: cfg.sql?.maxOpenConns,
+    })
+
+    try {
+      await pool.query('SELECT 1');
+      console.log('DB connected successfully');
+    } catch (err) {
+      throw Error(`DB connection test failed: ${err}`);
+    }
+
+    return pool
+  } catch (err) {
+    throw Error(`failed to init databse connection ${err}`)
+  }
+}

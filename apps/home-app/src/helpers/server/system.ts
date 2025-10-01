@@ -1,6 +1,8 @@
 import 'server-only'
+import { Pool } from 'pg'
 import { Config } from "@megacommerce/proto/common/v1/config";
 
 export interface System {
-  config: Config | null;
+  config: Config;
+  db: Pool
 }
