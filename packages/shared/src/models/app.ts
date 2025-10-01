@@ -4,3 +4,8 @@ export type ObjString = { [key: string]: string }
 export type ObjAny = { [key: string]: any }
 
 export type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
+
+export interface IDName {
+  id: string
+  name: string
+}
