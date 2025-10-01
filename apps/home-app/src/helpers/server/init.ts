@@ -3,7 +3,7 @@ import { Pool } from 'pg';
 import { Trans, waitForServiceToBeReady } from '@megacommerce/shared/server'
 import { Config } from '@megacommerce/proto/common/v1/config'
 
-import { commonClient, System } from "@/helpers/server"
+import { commonClient, System, AppData } from "@/helpers/server"
 
 let _initPromise: Promise<System> | null = null;
 let _initialized = false
@@ -25,12 +25,14 @@ async function init(): Promise<System> {
 
   _initPromise = (async () => {
     try {
+      console.log(`called the init function`);
+
       const { port, hostname } = new URL(process.env['COMMON_GRPC_ENDPOINT'] as string)
       await waitForServiceToBeReady(hostname, parseInt(port))
       await Trans.init(commonClient);
       const config = await initConfig();
       const db = await initDB(config);
-      console.log(`called the init function`);
+      await AppData.instance().init(db)
 
       _system = { config, db };
       _initialized = true;
