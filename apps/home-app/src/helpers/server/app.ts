@@ -19,7 +19,7 @@ export class AppData {
 
   public async init(db: Pool): Promise<void> {
     try {
-      const rows = await db.query("SELECT id, name, image FROM categories")
+      const rows = await db.query("SELECT id, name, image, subcategories FROM categories")
       this._categories = rows.rows as typeof this._categories
       console.log(this._categories);
     } catch (err) {

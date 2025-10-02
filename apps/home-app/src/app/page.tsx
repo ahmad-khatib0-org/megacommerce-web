@@ -2,6 +2,7 @@ import { Trans } from "@megacommerce/shared/server";
 
 import Categories from "@/components/home/categories";
 import HomeNavbar from "@/components/home/home-navbar";
+import HomeCarousel from "@/components/home/home-carousel";
 import { AppData } from "@/helpers/server";
 
 const getTranslations = (lang: string) => {
@@ -19,5 +20,6 @@ export default async function Index() {
   return <>
     <HomeNavbar tr={tr} />
     <Categories tr={tr} categories={cats} />
+    <HomeCarousel />
   </>
 }
