@@ -5,4 +5,7 @@ export class Assets {
   static imgErrorAlert = '/images/error-alert.png'
   static imgLock = '/images/lock.png'
   static login = '/images/login.png'
+  static fastDelivery = '/images/fast-delivery.png'
+  static freeReturn = '/images/free-return.png'
+  static freeShipping = '/images/free-shipping.png'
 }

@@ -21,7 +21,6 @@ export class AppData {
     try {
       const rows = await db.query("SELECT id, name, image, subcategories FROM categories")
       this._categories = rows.rows as typeof this._categories
-      console.log(this._categories);
     } catch (err) {
       throw Error(`failed to init categories: ${err}`)
     }

@@ -149,5 +149,15 @@
   "welcome": "Welcome",
   "signin": "Signin",
   "register": "Register",
-  "cart": "Cart"
+  "cart": "Cart",
+  "shipping.free_shipping": "Free shipping",
+  "shipping.free_shipping_desc": "Free shipping on all Choice items.",
+  "shipping.fast_delivery": "Fast delivery",
+  "shipping.fast_delivery_get_refound": "Fast delivery & get refunds for any issues",
+  "shipping.fast_delivery_desc": "€1.00 coupon code if delayed. Refund if package lost. Refund if items damaged. Refund if no delivery in 45 days",
+  "shipping.free_return": "Free return",
+  "shipping.free_return_on_millions_of_items": "Free returns on millions of items",
+  "shipping.free_return_desc": "Not satisfied with your order? Send it back within 90 days after the order was placed or 15 days after the order was received (depending on where it shipped from). The first return on each order is free (up to 5 times per month).",
+  "categories.all_categories": "All Categories",
+  "megacommerce.commitment": "Megacommerce Commitment"
 }
