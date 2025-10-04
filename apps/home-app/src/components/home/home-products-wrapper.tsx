@@ -38,7 +38,7 @@ function HomeProductsWrapper({ title, products }: Props) {
               style={{ flex: '0 0 50%' }}
               className='embla__slide flex flex-col'>
               <div className="relative h-40 w-full">
-                <Image src={p.image} alt={p.name} fill className="object-cover" />
+                <Image src={p.image} alt={p.name} fill sizes="100%" className="object-cover" />
               </div>
               <p className="line-clamp-2 text-center mb-4">{p.name}</p>
               {p.body}

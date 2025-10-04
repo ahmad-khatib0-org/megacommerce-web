@@ -6,6 +6,7 @@ import HomeCarousel from "@/components/home/home-carousel";
 import HomeShippingFeatures from "@/components/home/home-shipping-features";
 import HomeBestSellers from "@/components/home/home-best-sellers";
 import HomeBigDiscount from "@/components/home/home-big-discount";
+import HomeNewProducts from "@/components/home/home-new-products";
 import { AppData } from "@/helpers/server";
 
 const getTranslations = (lang: string) => {
@@ -23,7 +24,8 @@ const getTranslations = (lang: string) => {
     freeReturnDesc: tr(lang, 'shipping.free_return_desc'),
     bestSellers: "Best Sellers",
     bigDisc: "Big Discount",
-    sold: "sold"
+    sold: "sold",
+    hot: "Hot And New"
   }
 }
 
@@ -38,9 +40,10 @@ export default async function Index() {
     <HomeCarousel />
     <HomeShippingFeatures tr={tr} />
     <h1 className="my-8 text-center font-semibold text-4xl">Today's deals</h1>
-    <div className="grid grid-cols-3 w-11/12 mx-auto mb-10 gap-x-4">
+    <div className="grid grid-cols-3 w-11/12 mx-auto mb-10 gap-x-6">
       <HomeBestSellers tr={tr} />
       <HomeBigDiscount tr={tr} />
+      <HomeNewProducts tr={tr} />
     </div>
   </>
 }
