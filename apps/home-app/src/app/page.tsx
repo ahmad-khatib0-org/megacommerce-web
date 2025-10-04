@@ -4,6 +4,7 @@ import Categories from "@/components/home/categories";
 import HomeNavbar from "@/components/home/home-navbar";
 import HomeCarousel from "@/components/home/home-carousel";
 import HomeShippingFeatures from "@/components/home/home-shipping-features";
+import HomeBestSellers from "@/components/home/home-best-sellers";
 import { AppData } from "@/helpers/server";
 
 const getTranslations = (lang: string) => {
@@ -19,6 +20,8 @@ const getTranslations = (lang: string) => {
     freeReturn: tr(lang, 'shipping.free_return'),
     freeReturnOn: tr(lang, 'shipping.free_return_on_millions_of_items'),
     freeReturnDesc: tr(lang, 'shipping.free_return_desc'),
+    bestSellers: "Best Sellers",
+    sold: "sold"
   }
 }
 
@@ -32,5 +35,9 @@ export default async function Index() {
     <Categories tr={tr} categories={cats} />
     <HomeCarousel />
     <HomeShippingFeatures tr={tr} />
+    <h1 className="my-8 text-center font-semibold text-4xl">Today's deals</h1>
+    <div className="grid grid-cols-3 w-11/12 mx-auto mb-10">
+      <HomeBestSellers tr={tr} />
+    </div>
   </>
 }

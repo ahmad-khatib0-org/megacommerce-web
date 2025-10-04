@@ -1,6 +1,5 @@
 'use client'
 import { useCallback, useEffect, useState } from 'react'
-import Image from 'next/image'
 import useEmblaCarousel from 'embla-carousel-react'
 import autoplay from 'embla-carousel-autoplay'
 
@@ -62,7 +61,6 @@ function HomeCarousel({ }: Props) {
       </div>
     </div>
   )
-
 }
 
 export default HomeCarousel
