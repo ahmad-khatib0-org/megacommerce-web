@@ -8,4 +8,6 @@ export class Assets {
   static fastDelivery = '/images/fast-delivery.png'
   static freeReturn = '/images/free-return.png'
   static freeShipping = '/images/free-shipping.png'
+  static percentage = '/images/percentage.avif'
+  static arrowDown = '/images/arrow-down.avif'
 }

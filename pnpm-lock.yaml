@@ -27,8 +27,8 @@ importers:
         specifier: ^8.2.3
         version: 8.2.4(react@19.0.0)
       '@megacommerce/proto':
-        specifier: ^0.1.89
-        version: 0.1.89
+        specifier: ^0.1.93
+        version: 0.1.93
       '@radix-ui/react-popover':
         specifier: ^1.1.15
         version: 1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -1736,8 +1736,8 @@ packages:
     peerDependencies:
       react: ^18.x || ^19.x
 
-  '@megacommerce/proto@0.1.89':
-    resolution: {integrity: sha512-f7kRXMQN4KaVWqkey/60wRjN+0bVSzWfc1igcF4MN07gPRGNSUlSiQsycqXUKWnygPEuKLG249AOlMCFEbT+kg==}
+  '@megacommerce/proto@0.1.93':
+    resolution: {integrity: sha512-Lg0O2AB1msDHEEUsfPe/n14n5e9YrRSIB9bHpKAOenVUWzwvNtUZmUJq4BmOHvpobSc+n0Z1xs2RvapQPqxU5Q==}
 
   '@modern-js/node-bundle-require@2.68.2':
     resolution: {integrity: sha512-MWk/pYx7KOsp+A/rN0as2ji/Ba8x0m129aqZ3Lj6T6CCTWdz0E/IsamPdTmF9Jnb6whQoBKtWSaLTCQlmCoY0Q==}
@@ -10387,7 +10387,7 @@ snapshots:
     dependencies:
       react: 19.0.0
 
-  '@megacommerce/proto@0.1.89':
+  '@megacommerce/proto@0.1.93':
     dependencies:
       '@bufbuild/protobuf': 2.6.3
       '@grpc/grpc-js': 1.13.4
