@@ -1,5 +1,7 @@
-import { ClientInformation } from '@megacommerce/shared/client'
+import 'client-only'
 import { create } from 'zustand'
+
+import { ClientInformation } from '@megacommerce/shared/client'
 
 interface AppState {
   clientInfo: ClientInformation
