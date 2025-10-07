@@ -23,6 +23,7 @@ export const ServerError = () => {
           alt="describe an internal error"
           sizes="100%"
           fill
+          priority
           style={{ objectFit: 'cover' }}
         />
       </div>

@@ -35,6 +35,7 @@ async function init(): Promise<System> {
       _initialized = true;
       return _system;
     } catch (err) {
+      console.error(err);
       throw Error("An Error occurred while initing server data & config")
     }
   })();

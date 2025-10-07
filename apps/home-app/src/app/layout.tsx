@@ -21,7 +21,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <head>
           <ColorSchemeScript />
         </head>
-        <body> <ServerError /> </body>
+        <body><ServerError /></body>
       </html>
     )
   }
