@@ -3,7 +3,7 @@ import { Pool } from 'pg';
 import { Config } from '@megacommerce/proto/common/v1/config'
 
 import { Trans, waitForServiceToBeReady } from '@megacommerce/shared/server'
-import { commonClient, System } from "@/helpers/server"
+import { AppData, commonClient, System } from "@/helpers/server"
 
 let _initPromise: Promise<System> | null = null;
 let _initialized = false
@@ -30,12 +30,14 @@ async function init(): Promise<System> {
       await Trans.init(commonClient);
       const config = await initConfig();
       const db = await initDB(config);
+      await AppData.instance().init(db)
 
       _system = { config, db };
       _initialized = true;
       return _system;
     } catch (err) {
       console.error(err);
+      _initPromise = null;
       throw Error("An Error occurred while initing server data & config")
     }
   })();
@@ -43,16 +45,28 @@ async function init(): Promise<System> {
   return _initPromise;
 }
 
-async function initConfig(): Promise<Config> {
-  return new Promise((resolve, reject) => {
-    commonClient.configGet({}, (err, res) => {
-      const errMsg = 'failed to retrieve config from common service'
-      if (err) return reject(new Error(`${errMsg}: ${err.message}`))
-      if (res?.error) return reject(new Error(`${errMsg}: ${res.error}`))
-      if (!res?.data) return reject(new Error(`${errMsg}: no config data received`))
-      resolve(res.data)
-    })
-  })
+async function initConfig(retries = 3): Promise<Config> {
+  let lastErr: Error | null = null;
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      return await new Promise((resolve, reject) => {
+        commonClient.configGet({}, (err, res) => {
+          const errMsg = 'failed to retrieve config from common service';
+          if (err) return reject(new Error(`${errMsg}: ${err.message}`));
+          if (res?.error) return reject(new Error(`${errMsg}: ${res.error}`));
+          if (!res?.data) return reject(new Error(`${errMsg}: no config data received`));
+          resolve(res.data);
+        });
+      });
+    } catch (err) {
+      lastErr = err as Error;
+      console.warn(`initConfig attempt ${attempt} failed: ${err}`);
+      if (attempt < retries) {
+        await new Promise((r) => setTimeout(r, 200 * Math.pow(2, attempt)));
+      }
+    }
+  }
+  throw lastErr ?? new Error('initConfig failed');
 }
 
 async function initDB(cfg: Config): Promise<Pool> {
