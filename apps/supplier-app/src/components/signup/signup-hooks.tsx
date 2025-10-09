@@ -32,7 +32,7 @@ function SignupHooks({ tr, setImage }: Props) {
       autoProceed: false,
       restrictions: {
         maxNumberOfFiles: 1,
-        maxFileSize: UserImageMaxSizeBytes * 5,
+        maxFileSize: UserImageMaxSizeBytes,
         allowedFileTypes: UserImageAcceptedTypes,
       },
     }).use(ImageEditor, {

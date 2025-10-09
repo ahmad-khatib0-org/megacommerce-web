@@ -64,6 +64,7 @@
   "products.description": "Product Description",
   "products.variants": "Product Variants",
   "products.media": "Product Media",
+  "products.media.description": "You must provide at least one image for your product, and at most 10 images are allowed, please try to choose clear, descriptive, optimized ... images",
   "products.offer": "Offer",
   "products.safety_and_compliance": "Safety & Compliance",
   "products.title": "Product Title",

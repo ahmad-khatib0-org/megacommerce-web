@@ -12,3 +12,7 @@ export const PRODUCT_BRAND_NAME_MAX_LENGTH = 60;
 
 export const PRODUCT_BULLET_POINT_MIN_LENGTH = 3;
 export const PRODUCT_BULLET_POINT_MAX_LENGTH = 255;
+
+export const PRODUCTS_MAX_IMAGES_COUNT = 10
+export const PRODUCTS_IMAGE_MAX_SIZE_BYTES = 1024 * 1024 * 2
+export const PRODUCTS_IMAGE_ACCEPTED_TYPES = ['image/png', 'image/webp', 'image/jpeg', 'image/jpg']

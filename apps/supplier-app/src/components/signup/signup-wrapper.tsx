@@ -1,21 +1,21 @@
 'use client'
 import { useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 import '@uppy/core/dist/style.min.css'
 import '@uppy/dashboard/dist/style.min.css'
 import '@uppy/image-editor/dist/style.min.css'
 
+import { ObjString } from '@megacommerce/shared'
 import { Attachment } from '@megacommerce/proto/web/shared/v1/attachment'
 import { PageLoader } from '@megacommerce/ui/shared'
 import { Stepper, StepperHandle } from '@megacommerce/ui/client'
-import { ObjString } from '@megacommerce/shared'
 
 import SignupInformationForm from '@/components/signup/signup-information-form'
 import SignupAdditionalInfoForm from '@/components/signup/signup-additional-info-form'
 import SignupAuthInfoForm, { PasswordRequirements } from '@/components/signup/signup-auth-info-form'
 import SignupHooks from '@/components/signup/signup-hooks'
 import { SignupHelpers } from '@/helpers/client'
-import { useRouter } from 'next/navigation'
 
 type Props = {
   tr: ObjString

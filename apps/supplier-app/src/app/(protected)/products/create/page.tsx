@@ -21,6 +21,7 @@ const getTranslations = (lang: string) => {
     proVar: tr(lang, 'products.variants'),
     proHasVar: tr(lang, 'products.has_variations'),
     proMedia: tr(lang, 'products.media'),
+    proMediaDesc: tr(lang, 'products.media.description'),
     offer: tr(lang, 'products.offer'),
     safety: tr(lang, 'products.safety_and_compliance'),
     back: tr(lang, 'back'),
