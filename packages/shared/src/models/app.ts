@@ -9,3 +9,8 @@ export interface IDName {
   id: string
   name: string
 }
+
+export interface ValueLabel {
+  value: string
+  label: string
+}

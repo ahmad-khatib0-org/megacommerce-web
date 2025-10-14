@@ -16,3 +16,11 @@ export const PRODUCT_BULLET_POINT_MAX_LENGTH = 255;
 export const PRODUCTS_MAX_IMAGES_COUNT = 10
 export const PRODUCTS_IMAGE_MAX_SIZE_BYTES = 1024 * 1024 * 2
 export const PRODUCTS_IMAGE_ACCEPTED_TYPES = ['image/png', 'image/webp', 'image/jpeg', 'image/jpg']
+
+export const PRODUCT_MINIMUM_INVENTORY_QUANTITY = 1
+export enum PRODUCT_OFFERING_CONDITION { New = "new", Used = "used" }
+export enum PRODUCT_FULFILLMENT_TYPE { Megacommerce = "megacommerce", Supplier = "supplier" }
+
+export const PRODUCT_OFFERING_CONDITION_NOTE_MIN_LENGTH = 5
+export const PRODUCT_OFFERING_CONDITION_NOTE_MAX_LENGTH = 255
+export const PRODUCT_MINIMUM_ORDER_MAX_OPTIONS = 4

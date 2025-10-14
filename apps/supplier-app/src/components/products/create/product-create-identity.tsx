@@ -56,8 +56,7 @@ function ProductCreateIdentity({ tr, form, categories }: Props) {
               setCategoryName(s.name);
               combobox.closeDropdown();
             }}
-            aria-label={s.name}
-          >
+            aria-label={s.name}>
             {s.name}
           </Combobox.Option>
         ))}

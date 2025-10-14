@@ -3,21 +3,25 @@ import '@uppy/core/dist/style.min.css'
 import '@uppy/dashboard/dist/style.min.css'
 import '@uppy/image-editor/dist/style.min.css'
 import { Button, Stepper } from "@mantine/core"
-import { ObjString } from "@megacommerce/shared"
+import { ObjString, ValueLabel } from "@megacommerce/shared"
 
 import ProductCreateHooks from "@/components/products/create/product-create-hooks"
 import ProductCreateIdentity, { Category } from "@/components/products/create/product-create-identity"
 import ProductCreateDescription from "@/components/products/create/product-create-description"
 import ProductCreateMedia from "@/components/products/create/product-create-media"
+import ProductCreateOffer from '@/components/products/create/product-create-offer'
 
 type Props = {
   tr: ObjString
   categories: Category[]
+  offering: ValueLabel[]
+  filfillment: ValueLabel[]
 }
 
-const ProductCreateWrapper = ({ tr, categories }: Props) => {
-  const { active, setActive, identityForm, descForm, nextStep, prevStep, uppy } = ProductCreateHooks({ tr })
+const ProductCreateWrapper = ({ tr, categories, offering, filfillment }: Props) => {
+  const { active, setActive, identityForm, descForm, offerForm, nextStep, prevStep, uppy } = ProductCreateHooks({ tr })
 
+  // <ProductCreateOffer tr={tr} form={offerForm} offering={offering} />
   return (
     <main>
       <section className="grid grid-rows-[1fr,auto] bg-slate-100/90 min-h-screen max-h-screen w-screen">
@@ -39,10 +43,14 @@ const ProductCreateWrapper = ({ tr, categories }: Props) => {
           <Stepper.Step label={tr.proDesc} aria-label={tr.proDesc} >
             <ProductCreateDescription tr={tr} form={descForm} />
           </Stepper.Step>
+          <Stepper.Step label={tr.proDet} aria-label={tr.proDet} >
+            <ProductCreateDescription tr={tr} form={descForm} />
+          </Stepper.Step>
           <Stepper.Step label={tr.proMedia} aria-label={tr.proMedia} >
             <ProductCreateMedia uppy={uppy} tr={tr} />
           </Stepper.Step>
           <Stepper.Step label={tr.offer} aria-label={tr.offer} >
+            <ProductCreateOffer tr={tr} offering={offering} form={offerForm} filfillment={filfillment} />
           </Stepper.Step>
           <Stepper.Step label={tr.safety} aria-label={tr.safety} >
           </Stepper.Step>
