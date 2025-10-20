@@ -6,18 +6,22 @@ import { yupResolver } from "mantine-form-yup-resolver"
 import { toast } from "react-toastify"
 
 import { Attachment } from "@megacommerce/proto/web/shared/v1/attachment"
-import { buildAttachment } from "@megacommerce/shared/client"
+import { buildAttachment, handleGrpcWebErr } from "@megacommerce/shared/client"
 import { ObjString, PRODUCTS_MAX_IMAGES_COUNT, PRODUCTS_IMAGE_ACCEPTED_TYPES, PRODUCTS_IMAGE_MAX_SIZE_BYTES } from "@megacommerce/shared"
 
-import { Products } from "@/helpers/client"
+import { ProductCreateOfferFormValues } from "@/components/products/create/product-create-offer"
+import { Products, productsClient } from "@/helpers/client"
+import { useProductsStore } from "@/store"
 
 type Props = {
   tr: ObjString
 }
 
 function ProductCreateHooks({ tr }: Props) {
+  const setProductsData = useProductsStore((s) => s.set_product_details_data)
   const [active, setActive] = useState(0);
   const [images, setImages] = useState<Attachment[]>([])
+  const [productDetailsLoading, setProductDetailsLoading] = useState(false)
   const [imageErr, setImageErr] = useState<string | undefined>()
   const [submitting, setSubmitting] = useState(false)
 
@@ -33,12 +37,36 @@ function ProductCreateHooks({ tr }: Props) {
     validate: yupResolver(Products.descriptionForm(tr))
   })
 
-  const nextStep = () => {
+  const offerForm = useForm<ProductCreateOfferFormValues>({
+    validateInputOnBlur: true,
+    initialValues: Products.offerFormValues(),
+    validate: yupResolver(Products.offerForm(tr)) as any
+  })
+
+  const nextStep = async () => {
     let valid = false
     if (active === 0) valid = !identityForm.validate().hasErrors
+    if (active === 1) valid = !descForm.validate().hasErrors
+    if (active === 4) valid = !offerForm.validate().hasErrors
     if (!valid) {
       toast.error(tr.correct)
       return
+    }
+
+    if (active === 0) {
+      try {
+        const response = await productsClient.ProductData({
+          subcategory: { category: identityForm.values.category, subcategory: identityForm.values.subcategory }
+        })
+        if (response.error) {
+          toast.error(response.error.message)
+          return
+        }
+        setProductsData(response.data!)
+      } catch (err) {
+        toast.error(handleGrpcWebErr(err))
+        return
+      }
     }
     setActive((current) => (current < 6 ? current + 1 : current))
   }
@@ -98,10 +126,12 @@ function ProductCreateHooks({ tr }: Props) {
     setActive,
     identityForm,
     descForm,
+    offerForm,
     nextStep,
     prevStep,
     uppy,
     images,
+    productDetailsLoading,
   }
 }
 

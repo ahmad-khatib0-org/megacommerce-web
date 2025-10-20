@@ -10,6 +10,7 @@ import ProductCreateIdentity, { Category } from "@/components/products/create/pr
 import ProductCreateDescription from "@/components/products/create/product-create-description"
 import ProductCreateMedia from "@/components/products/create/product-create-media"
 import ProductCreateOffer from '@/components/products/create/product-create-offer'
+import ProductCreateDetails from '@/components/products/create/product-create-details'
 
 type Props = {
   tr: ObjString
@@ -44,7 +45,7 @@ const ProductCreateWrapper = ({ tr, categories, offering, filfillment }: Props) 
             <ProductCreateDescription tr={tr} form={descForm} />
           </Stepper.Step>
           <Stepper.Step label={tr.proDet} aria-label={tr.proDet} >
-            <ProductCreateDescription tr={tr} form={descForm} />
+            <ProductCreateDetails tr={tr} />
           </Stepper.Step>
           <Stepper.Step label={tr.proMedia} aria-label={tr.proMedia} >
             <ProductCreateMedia uppy={uppy} tr={tr} />
@@ -59,7 +60,7 @@ const ProductCreateWrapper = ({ tr, categories, offering, filfillment }: Props) 
           <Button>{tr.can}</Button>
           <div className="flex items-center gap-x-4">
             <Button onClick={prevStep} variant="default">{tr.back}</Button>
-            <Button onClick={nextStep}>{tr.svAndCon}</Button>
+            <Button onClick={async () => await nextStep()}>{tr.svAndCon}</Button>
           </div>
         </div>
       </section>

@@ -1,7 +1,13 @@
 import { Button, Textarea, TextInput } from "@mantine/core"
 import { UseFormReturnType } from "@mantine/form"
 import { IconCircleX, IconPlus } from "@tabler/icons-react"
-import { ObjString } from "@megacommerce/shared"
+import {
+  ObjString,
+  PRODUCT_BULLET_POINT_MAX_LENGTH,
+  PRODUCT_BULLET_POINT_MIN_LENGTH,
+  PRODUCT_DESCRIPTION_MAX_LENGTH,
+  PRODUCT_DESCRIPTION_MIN_LENGTH
+} from "@megacommerce/shared"
 
 type Props = {
   tr: ObjString
@@ -24,6 +30,8 @@ function ProductCreateDescription({ tr, form }: Props) {
         withAsterisk
         size="sm"
         rows={5}
+        minLength={PRODUCT_DESCRIPTION_MIN_LENGTH}
+        maxLength={PRODUCT_DESCRIPTION_MAX_LENGTH}
         {...form.getInputProps('description')}
       />
       {form.getValues().bullet_points.map((bp, idx) => <div key={bp.id} className="flex flex-col">
@@ -35,7 +43,6 @@ function ProductCreateDescription({ tr, form }: Props) {
               className='rounded-md'>
               {tr.bulletDel}
             </Button>
-
           </div>
         }
         <TextInput
@@ -43,6 +50,8 @@ function ProductCreateDescription({ tr, form }: Props) {
           placeholder={tr.bullet}
           withAsterisk
           size="md"
+          minLength={PRODUCT_BULLET_POINT_MIN_LENGTH}
+          maxLength={PRODUCT_BULLET_POINT_MAX_LENGTH}
           {...form.getInputProps(`bullet_points.${idx}.bullet_point`)}
         />
       </div>)}

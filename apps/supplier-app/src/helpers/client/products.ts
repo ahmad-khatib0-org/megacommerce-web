@@ -26,6 +26,7 @@ export class Products {
     return object().shape({
       title: string().min(PRODUCT_TITLE_MIN_LENGTH, tr.titErr).max(PRODUCT_TITLE_MAX_LENGTH, tr.titErr).required(tr.titErr),
       category: string().required(tr.proTypeErr),
+      subcategory: string().required(tr.proTypeErr),
       has_variations: boolean().optional(),
       brand_name: string().when('no_brand', {
         is: false,
@@ -43,7 +44,16 @@ export class Products {
   }
 
   static identityFormValues() {
-    return { title: '', category: '', has_variations: false, brand_name: '', no_brand: false, product_id: '', no_product_id: false }
+    return {
+      title: '',
+      category: '',
+      subcategory: '',
+      has_variations: false,
+      brand_name: '',
+      no_brand: false,
+      product_id: '',
+      no_product_id: false,
+    }
   }
 
   static descriptionForm(tr: ObjString) {

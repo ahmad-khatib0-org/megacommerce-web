@@ -2,7 +2,14 @@ import { useState } from 'react'
 import { Checkbox, Combobox, TextInput, useCombobox } from '@mantine/core'
 import { UseFormReturnType } from '@mantine/form'
 
-import { IDName, ObjString } from "@megacommerce/shared"
+import {
+  IDName,
+  ObjString,
+  PRODUCT_BRAND_NAME_MAX_LENGTH,
+  PRODUCT_BRAND_NAME_MIN_LENGTH,
+  PRODUCT_TITLE_MAX_LENGTH,
+  PRODUCT_TITLE_MIN_LENGTH,
+} from "@megacommerce/shared"
 
 type Props = {
   tr: ObjString
@@ -22,6 +29,7 @@ export type ProductCreateIdentityForm = UseFormReturnType<ProductCreateIdentityF
 export interface ProductCreateIdentityFormValues {
   title: string
   category: string
+  subcategory: string
   has_variations: boolean
   brand_name: string
   no_brand: boolean
@@ -51,7 +59,8 @@ function ProductCreateIdentity({ tr, form, categories }: Props) {
             key={s.id}
             onClick={() => {
               // when selecting, update both selected id (value sent to form) and visible name
-              form.setFieldValue('category', s.id);
+              form.setFieldValue('category', c.id);
+              form.setFieldValue('subcategory', s.id);
               setInputValue(s.name);
               setCategoryName(s.name);
               combobox.closeDropdown();
@@ -70,6 +79,8 @@ function ProductCreateIdentity({ tr, form, categories }: Props) {
         placeholder={tr.proTitle}
         withAsterisk
         size="sm"
+        minLength={PRODUCT_TITLE_MIN_LENGTH}
+        maxLength={PRODUCT_TITLE_MAX_LENGTH}
         {...form.getInputProps('title')}
       />
       <Combobox store={combobox}>
@@ -110,6 +121,8 @@ function ProductCreateIdentity({ tr, form, categories }: Props) {
         placeholder={tr.brand}
         withAsterisk
         size="sm"
+        minLength={PRODUCT_BRAND_NAME_MIN_LENGTH}
+        maxLength={PRODUCT_BRAND_NAME_MAX_LENGTH}
         {...form.getInputProps('brand_name')}
       />
       <Checkbox

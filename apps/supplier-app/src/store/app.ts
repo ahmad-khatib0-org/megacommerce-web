@@ -1,6 +1,6 @@
 import 'client-only'
-import { create } from 'zustand'
-
+import { create, StateCreator } from 'zustand'
+import { devtools } from 'zustand/middleware'
 import { ClientInformation } from '@megacommerce/shared/client'
 
 interface AppState {
@@ -8,7 +8,13 @@ interface AppState {
   setClientInfo: (info: ClientInformation) => void
 }
 
-export const useAppStore = create<AppState>((set) => ({
-  clientInfo: { currency: "", language: "", country: "" },
+const storeFn: StateCreator<AppState> = (set) => ({
+  clientInfo: { currency: '', language: '', country: '' },
   setClientInfo: (clientInfo: ClientInformation) => set({ clientInfo }),
-}))
+})
+
+export const useAppStore =
+  process.env.NODE_ENV === 'development'
+    ? create<AppState>()(devtools(storeFn, { name: 'App Store' }))
+    : create<AppState>()(storeFn)
+

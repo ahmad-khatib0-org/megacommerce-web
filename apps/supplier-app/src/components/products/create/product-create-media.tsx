@@ -1,6 +1,5 @@
 import Uppy from '@uppy/core'
 import { Dashboard } from '@uppy/react'
-
 import { ObjString } from '@megacommerce/shared'
 
 type Props = {
