@@ -4,9 +4,7 @@ import { yupResolver } from "mantine-form-yup-resolver";
 
 import { ObjString } from "@megacommerce/shared";
 
-import ProductCreateDetailsInputString from "@/components/products/create/product-create-details-input-string";
-import ProductCreateDetailsInputSelect from "@/components/products/create/product-create-details-input-select";
-import ProductCreateDetailsInputCheckbox from "@/components/products/create/product-create-details-input-checkbox";
+import ProductCreateDetailsInputWrapper from "@/components/products/create/product-create-details-input-wrapper";
 import { useAppStore, useProductsStore } from "@/store";
 import { Products } from "@/helpers/client";
 
@@ -43,29 +41,17 @@ const ProductCreateDetails = forwardRef<ProductCreateDetailsHandlers, Props>(({ 
     if (Object.keys(productDetailsFormValues).length > 0) form.setValues(productDetailsFormValues)
   }, [])
 
-  const fields = productDetailsData.subcategory?.data!;
-  const trans = productDetailsData.subcategory?.translations!;
+  const { trans, fieldsShared, fieldsVariations } = Products.buildProductDetailsFormFieldsVariations(productDetailsData, hasVariations)
 
   return (
     <div className="relative flex flex-col gap-y-4 w-full max-w-[800px] overflow-y-auto">
-      {Object.entries(fields.attributes).map(([fieldName, fieldData]) => {
-        const type = fieldData.type;
-        const label = trans.attributes[fieldName];
-        const sharedProps = {
-          key: fieldName,
-          fieldData: fieldData,
-          fieldName: fieldName,
-          field: form.getInputProps(fieldName),
-          label: label
-        }
-        if (type === "input") {
-          return <ProductCreateDetailsInputString {...sharedProps} />
-        } else if (type === "select") {
-          return <ProductCreateDetailsInputSelect trans={trans} {...sharedProps} />
-        } else if (type === "boolean") {
-          return <ProductCreateDetailsInputCheckbox {...sharedProps} />
-        }
-        return null
+      {Object.entries(fieldsVariations).map(([fieldName, fieldData]) => {
+        return <ProductCreateDetailsInputWrapper
+          key={fieldName}
+          fieldData={fieldData}
+          fieldName={fieldName}
+          field={form.getInputProps(fieldName)}
+          trans={trans} />
       })}
     </div>
   );

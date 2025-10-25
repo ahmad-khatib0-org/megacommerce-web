@@ -22,6 +22,7 @@ import {
   PRODUCT_OFFERING_CONDITION_NOTE_MIN_LENGTH,
   PRODUCT_OFFERING_CONDITION_NOTE_MAX_LENGTH,
 } from '@megacommerce/shared';
+import { SubcategoryAttribute } from '@megacommerce/proto/web/products/v1/product_categories';
 
 export class Products {
   constructor() { }
@@ -245,5 +246,23 @@ export class Products {
 
     const formShape = object().shape(formFields);
     return { formShape, initialVals };
+  }
+
+  static buildProductDetailsFormFieldsVariations(productDetailsData: ProductDataResponseData, hasVariations: boolean) {
+    const trans = productDetailsData.subcategory?.translations!;
+    const attrs = productDetailsData.subcategory?.data!.attributes ?? {};
+    const fieldsVariations: { [key: string]: SubcategoryAttribute } = {}
+    const fieldsShared: { [key: string]: SubcategoryAttribute } = {}
+    if (hasVariations) {
+      for (const field of Object.entries(attrs)) {
+        if (field[1].includeInVariants) fieldsVariations[field[0]] = field[1]
+      }
+    } else {
+      for (const field of Object.entries(attrs)) {
+        if (!field[1].includeInVariants) fieldsShared[field[0]] = field[1]
+      }
+    }
+
+    return { trans, fieldsVariations, fieldsShared }
   }
 }

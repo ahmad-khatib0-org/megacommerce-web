@@ -1,4 +1,5 @@
 import { Select } from "@mantine/core"
+
 import { SubcategoryAttribute, SubcategoryTranslations } from "@megacommerce/proto/web/products/v1/product_categories"
 import { ValueLabel } from "@megacommerce/shared"
 
