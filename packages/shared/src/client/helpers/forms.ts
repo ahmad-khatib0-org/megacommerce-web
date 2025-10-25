@@ -18,7 +18,7 @@ export const getFirstErroredStep = (errors: StringMap, fieldsMap: { [idx: number
   }
 
   let idx: number | null = null
-  for (const field of Object.keys(errors.data)) {
+  for (const field of Object.keys(errors.values)) {
     if (field in reverse) {
       idx = idx === null ? reverse[field] : Math.min(reverse[field], idx)
     }

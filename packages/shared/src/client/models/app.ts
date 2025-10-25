@@ -24,3 +24,16 @@ export interface ClientInformation {
   language: string
   currency: string
 }
+
+export interface UploadFileStatus {
+  id: string
+  fileName: string
+  progress: number
+  completed: boolean
+  uploading?: boolean
+  errorMsg?: string
+  showCancel?: boolean
+  onCancel?: (id: string) => void
+  showTryAgain?: boolean
+  tryAgain?: (id: string) => void
+}

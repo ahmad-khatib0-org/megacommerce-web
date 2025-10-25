@@ -1,7 +1,8 @@
-import { number, object, string, boolean as booleanSchema } from "yup";
+import { forwardRef, useImperativeHandle } from "react";
 import { Checkbox, NumberInput, Select, TextInput } from "@mantine/core";
-import { useForm } from "@mantine/form";
+import { useForm, UseFormReturnType } from "@mantine/form";
 import { yupResolver } from "mantine-form-yup-resolver";
+import { number, object, string, boolean as booleanSchema } from "yup";
 
 import { ProductDataResponseData } from "@megacommerce/proto/web/products/v1/product_data";
 import { NumericRuleType, StringRuleType } from "@megacommerce/proto/web/shared/v1/validation";
@@ -13,8 +14,12 @@ type Props = {
   tr: ObjString;
 };
 
+export type ProductCreateDetailsHandlers = {
+  getForm: () => UseFormReturnType<Record<string, any>, (values: Record<string, any>) => Record<string, any>>
+}
+
 // TODO: complete the regex field type and validation
-function ProductCreateDetails({ tr }: Props) {
+const ProductCreateDetails = forwardRef<ProductCreateDetailsHandlers, Props>(({ tr }, ref) => {
   const productDetailsData = useProductsStore((s) => s.product_details_data);
   const lang = useAppStore((s) => s.clientInfo.language);
 
@@ -87,6 +92,10 @@ function ProductCreateDetails({ tr }: Props) {
     validateInputOnBlur: true,
     validate: yupResolver(formShape!),
   });
+
+  useImperativeHandle((ref), () => ({
+    getForm: () => form
+  }))
 
   const fields = productDetailsData.subcategory?.data!;
   const trans = productDetailsData.subcategory?.translations!;
@@ -170,7 +179,7 @@ function ProductCreateDetails({ tr }: Props) {
       })}
     </div>
   );
-}
+})
 
 export default ProductCreateDetails;
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Uppy, { Meta, UppyFile } from '@uppy/core'
 import ImageEditor from "@uppy/image-editor"
 import { useForm } from "@mantine/form"
@@ -10,6 +10,7 @@ import { buildAttachment, handleGrpcWebErr } from "@megacommerce/shared/client"
 import { ObjString, PRODUCTS_MAX_IMAGES_COUNT, PRODUCTS_IMAGE_ACCEPTED_TYPES, PRODUCTS_IMAGE_MAX_SIZE_BYTES } from "@megacommerce/shared"
 
 import { ProductCreateOfferFormValues } from "@/components/products/create/product-create-offer"
+import { ProductCreateDetailsHandlers } from "@/components/products/create/product-create-details"
 import { Products, productsClient } from "@/helpers/client"
 import { useProductsStore } from "@/store"
 
@@ -18,12 +19,14 @@ type Props = {
 }
 
 function ProductCreateHooks({ tr }: Props) {
-  const setProductsData = useProductsStore((s) => s.set_product_details_data)
+  const detailsFormRef = useRef<ProductCreateDetailsHandlers>(null)
   const [active, setActive] = useState(0);
   const [images, setImages] = useState<Attachment[]>([])
   const [productDetailsLoading, setProductDetailsLoading] = useState(false)
   const [imageErr, setImageErr] = useState<string | undefined>()
   const [submitting, setSubmitting] = useState(false)
+
+  const setProductsData = useProductsStore((s) => s.set_product_details_data)
 
   const identityForm = useForm({
     validateInputOnBlur: true,
@@ -47,6 +50,7 @@ function ProductCreateHooks({ tr }: Props) {
     let valid = false
     if (active === 0) valid = !identityForm.validate().hasErrors
     if (active === 1) valid = !descForm.validate().hasErrors
+    if (active === 2) valid = !detailsFormRef.current?.getForm().validate().hasErrors
     if (active === 4) valid = !offerForm.validate().hasErrors
     if (!valid) {
       toast.error(tr.correct)

@@ -25,14 +25,14 @@ const ProductCreateWrapper = ({ tr, categories, offering, filfillment }: Props) 
   // <ProductCreateOffer tr={tr} form={offerForm} offering={offering} />
   return (
     <main>
-      <section className="grid grid-rows-[1fr,auto] bg-slate-100/90 min-h-screen max-h-screen w-screen">
+      <section className="grid grid-rows-[1fr,auto] bg-slate-100/90 min-h-screen max-h-screen">
         <Stepper
           active={active}
           onStepClick={setActive}
           // allowNextStepsSelect={false}
           className="bg-white"
           styles={{
-            root: { width: '100vw', display: 'flex', flexDirection: 'column', overflowY: 'hidden' },
+            root: { width: '100%', display: 'flex', flexDirection: 'column', overflowY: 'hidden' },
             separator: { display: "none" },
             step: { display: "felx", flexDirection: 'column', rowGap: '1rem' },
             steps: { marginTop: '1rem', justifyContent: 'space-evenly', width: '100%' },

@@ -218,5 +218,8 @@
   "save_and_continue": "Save & Continue",
   "add_more": "Add More",
   "confirm": "Confirm",
-  "actions.delete_item": "Delete this item"
+  "actions.delete_item": "Delete this item",
+  "actions.try_again": "Try again",
+  "upload.uploading_file": "Uploading file...",
+  "upload.uploading_complete": "Uploading Completed"
 }
