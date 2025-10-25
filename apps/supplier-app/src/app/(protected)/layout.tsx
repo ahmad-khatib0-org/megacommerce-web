@@ -8,8 +8,8 @@ export default async function Layout({ children }: Readonly<{ children: React.Re
 
   return <div className='grid grid-cols-[auto,1fr]'>
     <div
-      style={{ background: 'linear-gradient(147deg,rgba(35, 36, 0, 1) 9%, rgba(121, 119, 9, 1) 35%, rgba(255, 170, 0, 1) 100%);' }}
-      className="w-32 h-screen">
+      style={{ background: 'linear-gradient(147deg,rgba(35, 36, 0, 1) 9%, rgba(121, 119, 9, 1) 35%, rgba(255, 170, 0, 1) 100%)' }}
+      className="w-32 h-full">
       <div className="">
         <p>This is a placeholder for the sidebar</p>
       </div>

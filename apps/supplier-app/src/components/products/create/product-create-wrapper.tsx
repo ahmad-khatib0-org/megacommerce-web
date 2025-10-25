@@ -20,9 +20,8 @@ type Props = {
 }
 
 const ProductCreateWrapper = ({ tr, categories, offering, filfillment }: Props) => {
-  const { active, setActive, identityForm, descForm, offerForm, nextStep, prevStep, uppy } = ProductCreateHooks({ tr })
+  const { active, setActive, identityForm, descForm, offerForm, detailsFormRef, nextStep, prevStep, uppy } = ProductCreateHooks({ tr })
 
-  // <ProductCreateOffer tr={tr} form={offerForm} offering={offering} />
   return (
     <main>
       <section className="grid grid-rows-[1fr,auto] bg-slate-100/90 min-h-screen max-h-screen">
@@ -45,7 +44,7 @@ const ProductCreateWrapper = ({ tr, categories, offering, filfillment }: Props) 
             <ProductCreateDescription tr={tr} form={descForm} />
           </Stepper.Step>
           <Stepper.Step label={tr.proDet} aria-label={tr.proDet} >
-            <ProductCreateDetails tr={tr} />
+            <ProductCreateDetails ref={detailsFormRef} tr={tr} hasVariations={identityForm.values.has_variations} />
           </Stepper.Step>
           <Stepper.Step label={tr.proMedia} aria-label={tr.proMedia} >
             <ProductCreateMedia uppy={uppy} tr={tr} />

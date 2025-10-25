@@ -27,6 +27,7 @@ function ProductCreateHooks({ tr }: Props) {
   const [submitting, setSubmitting] = useState(false)
 
   const setProductsData = useProductsStore((s) => s.set_product_details_data)
+  const setProductDetailsFormValues = useProductsStore((state) => state.set_product_details_form_values)
 
   const identityForm = useForm({
     validateInputOnBlur: true,
@@ -48,10 +49,18 @@ function ProductCreateHooks({ tr }: Props) {
 
   const nextStep = async () => {
     let valid = false
-    if (active === 0) valid = !identityForm.validate().hasErrors
-    if (active === 1) valid = !descForm.validate().hasErrors
-    if (active === 2) valid = !detailsFormRef.current?.getForm().validate().hasErrors
-    if (active === 4) valid = !offerForm.validate().hasErrors
+    if (active === 0) {
+      valid = !identityForm.validate().hasErrors
+    } else if (active === 1) {
+      valid = !descForm.validate().hasErrors
+    } else if (active === 2) {
+      const form = detailsFormRef.current?.getForm()!
+      valid = !form!.validate().hasErrors
+      setProductDetailsFormValues(form.getValues())
+    } else if (active === 4) {
+      valid = !offerForm.validate().hasErrors
+    }
+
     if (!valid) {
       toast.error(tr.correct)
       return
@@ -75,7 +84,12 @@ function ProductCreateHooks({ tr }: Props) {
     setActive((current) => (current < 6 ? current + 1 : current))
   }
 
-  const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
+  const prevStep = () => {
+    const detailsForm = detailsFormRef.current?.getForm();
+    if (detailsForm) setProductDetailsFormValues(detailsForm.getValues())
+
+    setActive((current) => (current > 0 ? current - 1 : current))
+  }
 
   const [uppy] = useState(() => {
     return new Uppy({
@@ -131,6 +145,7 @@ function ProductCreateHooks({ tr }: Props) {
     identityForm,
     descForm,
     offerForm,
+    detailsFormRef,
     nextStep,
     prevStep,
     uppy,
