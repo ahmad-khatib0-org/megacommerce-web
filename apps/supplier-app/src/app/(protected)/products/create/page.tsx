@@ -92,6 +92,11 @@ const getTranslations = (lang: string) => {
     delItem: tr(lang, 'actions.delete_item'),
     variations: tr(lang, 'products.variations'),
     shVarDesc: tr(lang, 'products.variations.shared.desc'),
+    varTitle: tr(lang, 'products.variations.title'),
+    varDesc: tr(lang, 'products.variations.title.desc'),
+    addVar: tr(lang, 'products.variations.add'),
+    rmVar: tr(lang, 'products.variations.remove'),
+    varRmWarn: tr(lang, 'products.variations.remove.warn'),
   }
 }
 

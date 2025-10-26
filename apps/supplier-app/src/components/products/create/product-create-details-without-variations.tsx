@@ -40,6 +40,7 @@ const ProductCreateDetailsWithoutVariations = forwardRef<ProductCreateDetailsHan
   return <>
     {Object.entries(attrs).map(([fieldName, fieldData]) => {
       return <ProductCreateDetailsInputWrapper
+        key={fieldName}
         fieldData={fieldData}
         fieldName={fieldName}
         field={form.getInputProps(fieldName)}

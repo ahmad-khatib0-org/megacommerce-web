@@ -21,6 +21,8 @@ import {
   PRODUCT_FULFILLMENT_TYPE,
   PRODUCT_OFFERING_CONDITION_NOTE_MIN_LENGTH,
   PRODUCT_OFFERING_CONDITION_NOTE_MAX_LENGTH,
+  PRODUCT_VARIATION_TITLE_MIN_LENGTH,
+  PRODUCT_VARIATION_TITLE_MAX_LENGTH,
 } from '@megacommerce/shared';
 import { SubcategoryAttribute } from '@megacommerce/proto/web/products/v1/product_categories';
 
@@ -207,10 +209,18 @@ export class Products {
     const { fieldsVariations, fieldsShared, trans } = this.buildProductDetailsFormFieldsVariations(fields)
 
     const { formFields: sharedFormFields, initialVals: sharedInitialValues } = this.buildFormFieldsValidators(lang, tr, fieldsShared)
-    const { formFields: variationsFormFields, initialVals: variationsInitialVals } = this.buildFormFieldsValidators(lang, tr, fieldsVariations)
+    const { formFields: varFormFields, initialVals: variationsInitialVals } = this.buildFormFieldsValidators(lang, tr, fieldsVariations)
+
+    const variationsFormFields = {
+      ...varFormFields,
+      "title": string()
+        .required(tr.required)
+        .min(PRODUCT_VARIATION_TITLE_MIN_LENGTH, translator(lang, 'form.fields.min', { Min: PRODUCT_VARIATION_TITLE_MIN_LENGTH }))
+        .max(PRODUCT_VARIATION_TITLE_MAX_LENGTH, translator(lang, 'form.fields.max', { Max: PRODUCT_VARIATION_TITLE_MAX_LENGTH }))
+    }
+    const variationsInitialValues: { variations: Record<string, any>[] } = { variations: [{ ...variationsInitialVals, "title": "" }] }
 
     const sharedFormShape = object().shape(sharedFormFields);
-    const variationsInitialValues = { variations: [variationsInitialVals] }
     const variationsFormShape = object().shape({
       variations: array().of(object().shape(variationsFormFields))
     })
