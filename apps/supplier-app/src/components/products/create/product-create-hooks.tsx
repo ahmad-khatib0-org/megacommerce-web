@@ -28,6 +28,7 @@ function ProductCreateHooks({ tr }: Props) {
 
   const setProductsData = useProductsStore((s) => s.set_product_details_data)
   const setProductDetailsFormValues = useProductsStore((state) => state.set_product_details_form_values)
+  const setProductDetailsVariationFormValues = useProductsStore((state) => state.set_product_details_variations_form_values)
 
   const identityForm = useForm({
     validateInputOnBlur: true,
@@ -54,9 +55,7 @@ function ProductCreateHooks({ tr }: Props) {
     } else if (active === 1) {
       valid = !descForm.validate().hasErrors
     } else if (active === 2) {
-      const form = detailsFormRef.current?.getForm()!
-      valid = !form!.validate().hasErrors
-      setProductDetailsFormValues(form.getValues())
+      valid = validateDetailsForm()
     } else if (active === 4) {
       valid = !offerForm.validate().hasErrors
     }
@@ -84,10 +83,28 @@ function ProductCreateHooks({ tr }: Props) {
     setActive((current) => (current < 6 ? current + 1 : current))
   }
 
-  const prevStep = () => {
-    const detailsForm = detailsFormRef.current?.getForm();
-    if (detailsForm) setProductDetailsFormValues(detailsForm.getValues())
+  const validateDetailsForm = (): boolean => {
+    let valid = false
+    const shared = detailsFormRef.current?.getForm()!
+    const variations = detailsFormRef.current?.getVariationsForm
 
+    console.log(`the variation is: ${variations}`);
+    if (variations) {
+      valid = !variations().validate().hasErrors
+      setProductDetailsVariationFormValues(variations().getValues())
+      if (!valid) return false
+    }
+    valid = !shared.validate().hasErrors
+    setProductDetailsFormValues(shared.getValues())
+
+    return valid
+  }
+
+  const prevStep = () => {
+    const sharedForm = detailsFormRef.current?.getForm();
+    const varForm = detailsFormRef.current?.getVariationsForm
+    if (sharedForm) setProductDetailsFormValues(sharedForm.getValues())
+    if (varForm) setProductDetailsVariationFormValues(varForm().getValues())
     setActive((current) => (current > 0 ? current - 1 : current))
   }
 

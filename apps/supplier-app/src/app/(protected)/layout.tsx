@@ -6,7 +6,7 @@ import AppHeader from "@/components/app/header/app-header"
 export default async function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
   const ci = await getClientInformation()
 
-  return <div className='grid grid-cols-[auto,1fr]'>
+  return <div className='grid grid-cols-[auto,1fr] min-h-screen'>
     <div
       style={{ background: 'linear-gradient(147deg,rgba(35, 36, 0, 1) 9%, rgba(121, 119, 9, 1) 35%, rgba(255, 170, 0, 1) 100%)' }}
       className="w-32 h-full">
@@ -14,7 +14,7 @@ export default async function Layout({ children }: Readonly<{ children: React.Re
         <p>This is a placeholder for the sidebar</p>
       </div>
     </div>
-    <div className="flex flex-col">
+    <div className="grid grid-rows-[auto,1fr]">
       <AppHeader info={ci} />
       {children}
     </div>

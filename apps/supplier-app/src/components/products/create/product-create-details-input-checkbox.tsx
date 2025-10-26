@@ -1,18 +1,16 @@
 import { Checkbox } from "@mantine/core"
-import { SubcategoryAttribute } from "@megacommerce/proto/web/products/v1/product_categories"
+import { SubcategoryAttribute, SubcategoryAttributeTranslation } from "@megacommerce/proto/web/products/v1/product_categories"
 
 type Props = {
   fieldData: SubcategoryAttribute
-  fieldName: string
+  fieldTrans: SubcategoryAttributeTranslation
   field: any
-  label: string
 }
 
-function ProductCreateDetailsInputCheckbox({ fieldData, fieldName, field, label }: Props) {
+function ProductCreateDetailsInputCheckbox({ fieldData, fieldTrans, field }: Props) {
   return <Checkbox
-    key={fieldName}
-    label={label}
-    aria-label={label}
+    label={fieldTrans.label}
+    aria-label={fieldTrans.label}
     className="font-medium mt-4"
     styles={{ label: { fontSize: 16 } }}
     {...field}

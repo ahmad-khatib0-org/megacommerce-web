@@ -11,15 +11,16 @@ type Props = {
   trans: SubcategoryTranslations
 }
 
+// TODO: complete the regex field type and validation
 function ProductCreateDetailsInputWrapper({ fieldData, fieldName, field, trans }: Props) {
-  const label = trans.attributes[fieldName];
+  const fieldTrans = trans.attributes[fieldName];
   const type = fieldData.type;
-  const sharedProps = { fieldData, fieldName, field, label }
+  const sharedProps = { fieldData, field, fieldTrans }
 
   if (type === "input") {
     return <ProductCreateDetailsInputString {...sharedProps} />
   } else if (type === "select") {
-    return <ProductCreateDetailsInputSelect trans={trans} {...sharedProps} />
+    return <ProductCreateDetailsInputSelect trans={trans} fieldName={fieldName} {...sharedProps} />
   } else if (type === "boolean") {
     return <ProductCreateDetailsInputCheckbox {...sharedProps} />
   }

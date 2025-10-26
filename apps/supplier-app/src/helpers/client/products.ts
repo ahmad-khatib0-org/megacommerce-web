@@ -188,15 +188,63 @@ export class Products {
     };
   }
 
-  static buildProductDetailsFormFields(fields: ProductDataResponseData, tr: ObjString, lang: string,) {
+  static buildProductDetailsWithoutVariationsFormFields(fields: ProductDataResponseData, tr: ObjString, lang: string,) {
+    const data = fields.subcategory?.data;
+    const trans = fields.subcategory?.translations;
+    if (!data || !trans) return {
+      formFields: {} as { [key: string]: any },
+      initialVals: {} as Record<string, any>,
+      formShape: undefined
+    };
+
+    const { formFields, initialVals } = this.buildFormFieldsValidators(lang, tr, data.attributes)
+
+    const formShape = object().shape(formFields);
+    return { formShape, initialVals };
+  }
+
+  static buildProductDetailsWithVariationsFormFields(fields: ProductDataResponseData, tr: ObjString, lang: string,) {
+    const { fieldsVariations, fieldsShared, trans } = this.buildProductDetailsFormFieldsVariations(fields)
+
+    const { formFields: sharedFormFields, initialVals: sharedInitialValues } = this.buildFormFieldsValidators(lang, tr, fieldsShared)
+    const { formFields: variationsFormFields, initialVals: variationsInitialVals } = this.buildFormFieldsValidators(lang, tr, fieldsVariations)
+
+    const sharedFormShape = object().shape(sharedFormFields);
+    const variationsInitialValues = { variations: [variationsInitialVals] }
+    const variationsFormShape = object().shape({
+      variations: array().of(object().shape(variationsFormFields))
+    })
+
+    return {
+      trans,
+      fieldsVariations,
+      fieldsShared,
+      sharedFormShape,
+      sharedInitialValues,
+      variationsFormShape,
+      variationsInitialValues,
+    }
+  }
+
+  static buildProductDetailsFormFieldsVariations(productDetailsData: ProductDataResponseData) {
+    const trans = productDetailsData.subcategory?.translations!;
+    const attrs = productDetailsData.subcategory?.data!.attributes ?? {};
+    const fieldsVariations: { [key: string]: SubcategoryAttribute } = {}
+    const fieldsShared: { [key: string]: SubcategoryAttribute } = {}
+
+    for (const field of Object.entries(attrs)) {
+      if (field[1].includeInVariants) fieldsVariations[field[0]] = field[1]
+      else fieldsShared[field[0]] = field[1]
+    }
+
+    return { attrs, trans, fieldsVariations, fieldsShared }
+  }
+
+  private static buildFormFieldsValidators(lang: string, tr: ObjString, attrs: { [key: string]: SubcategoryAttribute }) {
     const formFields: { [key: string]: any } = {};
     const initialVals: Record<string, any> = {};
 
-    const data = fields.subcategory?.data;
-    const trans = fields.subcategory?.translations;
-    if (!data || !trans) return { formFields, initialVals, formShape: undefined };
-
-    for (const [fieldName, fieldData] of Object.entries(data.attributes)) {
+    for (const [fieldName, fieldData] of Object.entries(attrs)) {
       if (fieldData.type === "input") {
         initialVals[fieldName] = "";
         const str = fieldData.validation?.str;
@@ -244,25 +292,6 @@ export class Products {
       }
     }
 
-    const formShape = object().shape(formFields);
-    return { formShape, initialVals };
-  }
-
-  static buildProductDetailsFormFieldsVariations(productDetailsData: ProductDataResponseData, hasVariations: boolean) {
-    const trans = productDetailsData.subcategory?.translations!;
-    const attrs = productDetailsData.subcategory?.data!.attributes ?? {};
-    const fieldsVariations: { [key: string]: SubcategoryAttribute } = {}
-    const fieldsShared: { [key: string]: SubcategoryAttribute } = {}
-    if (hasVariations) {
-      for (const field of Object.entries(attrs)) {
-        if (field[1].includeInVariants) fieldsVariations[field[0]] = field[1]
-      }
-    } else {
-      for (const field of Object.entries(attrs)) {
-        if (!field[1].includeInVariants) fieldsShared[field[0]] = field[1]
-      }
-    }
-
-    return { trans, fieldsVariations, fieldsShared }
+    return { formFields, initialVals }
   }
 }

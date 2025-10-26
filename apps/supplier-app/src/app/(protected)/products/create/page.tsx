@@ -90,6 +90,8 @@ const getTranslations = (lang: string) => {
     itemPrice: tr(lang, 'products.per_item_price'),
     minCount: tr(lang, 'products.minimum_order_count'),
     delItem: tr(lang, 'actions.delete_item'),
+    variations: tr(lang, 'products.variations'),
+    shVarDesc: tr(lang, 'products.variations.shared.desc'),
   }
 }
 

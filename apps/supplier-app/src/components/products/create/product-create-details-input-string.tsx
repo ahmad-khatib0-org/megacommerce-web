@@ -1,16 +1,15 @@
 import { NumberInput, TextInput } from "@mantine/core"
 
-import { SubcategoryAttribute } from "@megacommerce/proto/web/products/v1/product_categories"
+import { SubcategoryAttribute, SubcategoryAttributeTranslation } from "@megacommerce/proto/web/products/v1/product_categories"
 import { StringRuleType } from "@megacommerce/proto/web/shared/v1/validation"
 
 type Props = {
   fieldData: SubcategoryAttribute
-  fieldName: string
+  fieldTrans: SubcategoryAttributeTranslation
   field: any
-  label: string
 }
 
-function ProductCreateDetailsInputString({ fieldData, fieldName, field, label }: Props) {
+function ProductCreateDetailsInputString({ fieldData, field, fieldTrans }: Props) {
   const str = fieldData.validation?.str;
   const num = fieldData.validation?.numeric;
   const regex = fieldData.validation?.regex
@@ -25,9 +24,9 @@ function ProductCreateDetailsInputString({ fieldData, fieldName, field, label }:
 
     return (
       <TextInput
-        label={label}
-        placeholder={label}
-        aria-label={label}
+        label={fieldTrans.label}
+        placeholder={fieldTrans.placeholder}
+        aria-label={fieldTrans.label}
         withAsterisk
         size="sm"
         minLength={minLength}
@@ -38,9 +37,9 @@ function ProductCreateDetailsInputString({ fieldData, fieldName, field, label }:
   } else if (num) {
     return (
       <NumberInput
-        label={label}
-        placeholder={label}
-        aria-label={label}
+        label={fieldTrans.label}
+        placeholder={fieldTrans.placeholder}
+        aria-label={fieldTrans.label}
         withAsterisk
         size="sm"
         {...field}
