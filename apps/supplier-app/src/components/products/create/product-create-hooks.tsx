@@ -11,6 +11,7 @@ import { ObjString, PRODUCTS_MAX_IMAGES_COUNT, PRODUCTS_IMAGE_ACCEPTED_TYPES, PR
 
 import { ProductCreateOfferFormValues } from "@/components/products/create/product-create-offer"
 import { ProductCreateDetailsHandlers } from "@/components/products/create/product-create-details"
+import { ProductCreateOfferWithoutVariationsFormValues } from "@/components/products/create/product-create-offer-without-variations"
 import { Products, productsClient } from "@/helpers/client"
 import { useAppStore, useProductsStore } from "@/store"
 
@@ -51,6 +52,12 @@ function ProductCreateHooks({ tr }: Props) {
     initialValues: Products.offerFormValues(),
     validate: yupResolver(Products.offerForm(tr)) as any
   })
+
+  const offerWithouVariantForm = useForm<ProductCreateOfferWithoutVariationsFormValues>({
+    validateInputOnBlur: true,
+    initialValues: Products.offerPriceFormValues(),
+    validate: yupResolver(Products.offerPriceForm(tr)) as any,
+  });
 
   const nextStep = async () => {
     let valid = false
@@ -200,6 +207,7 @@ function ProductCreateHooks({ tr }: Props) {
     descForm,
     offerForm,
     detailsFormRef,
+    offerWithouVariantForm,
     nextStep,
     prevStep,
     uppy,
@@ -213,6 +221,7 @@ function ProductCreateHooks({ tr }: Props) {
     identityForm,
     descForm,
     offerForm,
+    offerWithouVariantForm,
     nextStep,
     prevStep,
     uppy,

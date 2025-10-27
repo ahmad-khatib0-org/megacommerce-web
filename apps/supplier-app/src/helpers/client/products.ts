@@ -1,6 +1,7 @@
 import 'client-only'
 import { array, boolean as booleanSchema, number, object, string, TestContext } from "yup";
 
+import { SubcategoryAttribute } from '@megacommerce/proto/web/products/v1/product_categories';
 import { ProductDataResponseData } from '@megacommerce/proto/web/products/v1/product_data';
 import { NumericRuleType, StringRuleType } from '@megacommerce/proto/web/shared/v1/validation';
 import { tr as translator } from '@megacommerce/shared/client';
@@ -24,7 +25,6 @@ import {
   PRODUCT_VARIATION_TITLE_MIN_LENGTH,
   PRODUCT_VARIATION_TITLE_MAX_LENGTH,
 } from '@megacommerce/shared';
-import { SubcategoryAttribute } from '@megacommerce/proto/web/products/v1/product_categories';
 
 export class Products {
   constructor() { }
@@ -83,6 +83,18 @@ export class Products {
 
   static offerForm(tr: ObjString) {
     return object().shape({
+      currency: string().required(tr.required),
+      fulfillment_type: string().oneOf(Object.values(PRODUCT_FULFILLMENT_TYPE), tr.invInp).required(tr.required),
+      processing_time: number().moreThan(0, tr.bgrThan0).required(tr.required),
+    })
+  }
+
+  static offerFormValues() {
+    return { currency: '', fulfillment_type: '', processing_time: 0 };
+  }
+
+  static offerPriceForm(tr: ObjString) {
+    return object().shape({
       sku: string().min(PRODUCT_SKU_MIN_LENGTH, tr.skuErr).max(PRODUCT_SKU_MAX_LENGTH, tr.skuErr).required(tr.skuErr),
       quantity: number().when('fulfillment_type', {
         is: PRODUCT_FULFILLMENT_TYPE.Supplier,
@@ -90,10 +102,7 @@ export class Products {
         otherwise: (s: any) => s.notRequired()
       }),
       price: number().typeError(tr.bgrThan0).min(0, tr.bgrThan0).required(tr.required),
-      currency: string().required(tr.required),
-      fulfillment_type: string().oneOf(Object.values(PRODUCT_FULFILLMENT_TYPE), tr.invInp).required(tr.required),
       offering_condition: string().oneOf(Object.values(PRODUCT_OFFERING_CONDITION), tr.invInp).required(tr.required),
-
       // condition_note stays nullable string
       condition_note: string()
         .transform((v, o) => (o === '' ? null : v))
@@ -132,7 +141,7 @@ export class Products {
           return true;
         }),
 
-      // important: use string().nullable() for dates to match your interface (ISO strings)
+      // important: use string().nullable() for dates to match interface (ISO strings)
       sale_price_start: string()
         .transform((v, o) => (o === '' ? null : v))
         .nullable()
@@ -159,7 +168,6 @@ export class Products {
             ),
         }),
 
-      processing_time: number().moreThan(0, tr.bgrThan0).required(tr.required),
       has_minimum_orders: booleanSchema(),
       minimum_orders: array().of(
         object().shape({
@@ -171,23 +179,20 @@ export class Products {
     })
   }
 
-  static offerFormValues() {
+  static offerPriceFormValues() {
     return {
       sku: "",
       quantity: 0,
       price: 0,
-      currency: '',
       offering_condition: '',
       condition_note: '',
       list_price: null,
-      fulfillment_type: '',
       sale_price: null,
       sale_price_start: null,
       sale_price_end: null,
-      processing_time: 0,
       has_minimum_orders: false,
       minimum_orders: null
-    };
+    }
   }
 
   static buildProductDetailsWithoutVariationsFormFields(fields: ProductDataResponseData, tr: ObjString, lang: string,) {
