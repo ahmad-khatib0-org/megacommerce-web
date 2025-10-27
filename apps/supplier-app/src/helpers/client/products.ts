@@ -213,12 +213,13 @@ export class Products {
 
     const variationsFormFields = {
       ...varFormFields,
+      "id": string(),
       "title": string()
         .required(tr.required)
         .min(PRODUCT_VARIATION_TITLE_MIN_LENGTH, translator(lang, 'form.fields.min', { Min: PRODUCT_VARIATION_TITLE_MIN_LENGTH }))
         .max(PRODUCT_VARIATION_TITLE_MAX_LENGTH, translator(lang, 'form.fields.max', { Max: PRODUCT_VARIATION_TITLE_MAX_LENGTH }))
     }
-    const variationsInitialValues: { variations: Record<string, any>[] } = { variations: [{ ...variationsInitialVals, "title": "" }] }
+    const variationsInitialValues: { variations: Record<string, any>[] } = { variations: [{ ...variationsInitialVals, "title": "", "id": Date.now().toString() }] }
 
     const sharedFormShape = object().shape(sharedFormFields);
     const variationsFormShape = object().shape({

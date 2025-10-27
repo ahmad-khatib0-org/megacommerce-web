@@ -18,6 +18,7 @@ import {
   PRODUCT_OFFERING_CONDITION,
   PRODUCT_FULFILLMENT_TYPE,
   PRODUCT_MINIMUM_ORDER_MAX_OPTIONS,
+  PRODUCTS_MAX_IMAGES_COUNT,
 } from "@megacommerce/shared"
 
 import ProductCreateWrapper from "@/components/products/create/product-create-wrapper"
@@ -97,6 +98,16 @@ const getTranslations = (lang: string) => {
     addVar: tr(lang, 'products.variations.add'),
     rmVar: tr(lang, 'products.variations.remove'),
     varRmWarn: tr(lang, 'products.variations.remove.warn'),
+    imgRelVar: tr(lang, 'products.variations.images.related'),
+    varImages: tr(lang, 'products.variations.images'),
+    assign: tr(lang, 'products.media.assign_images'),
+    assignInfo: tr(lang, 'products.media.assign_images.info'),
+    assignErr: tr(lang, 'products.media.assign_images.unselected'),
+    maxForVar: tr(lang, 'products.media.variant_images.exceeded', { Max: PRODUCTS_MAX_IMAGES_COUNT }),
+    noImagesToAssign: tr(lang, 'products.media.assign_images.no_images'),
+    imgNotFound: tr(lang, 'products.media.variant_images.not_found'),
+    rmImgVar: tr(lang, 'products.media.variant_images.remove'),
+    proImgVar: tr(lang, 'products.media.variant_images.not_provided'),
   }
 }
 

@@ -19,7 +19,6 @@ export class LoginHelpers {
       maxAge: 300, // 5 minutes
     });
 
-    console.log(this.oauthURL);
     const url = new URL(this.oauthURL);
     url.searchParams.set("client_id", this.clientID);
     url.searchParams.set("response_type", "code");

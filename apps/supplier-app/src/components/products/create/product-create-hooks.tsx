@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import Uppy, { Meta, UppyFile } from '@uppy/core'
 import ImageEditor from "@uppy/image-editor"
 import { useForm } from "@mantine/form"
@@ -6,13 +6,13 @@ import { yupResolver } from "mantine-form-yup-resolver"
 import { toast } from "react-toastify"
 
 import { Attachment } from "@megacommerce/proto/web/shared/v1/attachment"
-import { buildAttachment, handleGrpcWebErr } from "@megacommerce/shared/client"
-import { ObjString, PRODUCTS_MAX_IMAGES_COUNT, PRODUCTS_IMAGE_ACCEPTED_TYPES, PRODUCTS_IMAGE_MAX_SIZE_BYTES } from "@megacommerce/shared"
+import { buildAttachment, handleGrpcWebErr, tr as translator } from "@megacommerce/shared/client"
+import { ObjString, PRODUCTS_MAX_IMAGES_COUNT, PRODUCTS_IMAGE_ACCEPTED_TYPES, PRODUCTS_IMAGE_MAX_SIZE_BYTES, PRODUCTS_MIN_IMAGES_COUNT } from "@megacommerce/shared"
 
 import { ProductCreateOfferFormValues } from "@/components/products/create/product-create-offer"
 import { ProductCreateDetailsHandlers } from "@/components/products/create/product-create-details"
 import { Products, productsClient } from "@/helpers/client"
-import { useProductsStore } from "@/store"
+import { useAppStore, useProductsStore } from "@/store"
 
 type Props = {
   tr: ObjString
@@ -22,13 +22,17 @@ function ProductCreateHooks({ tr }: Props) {
   const detailsFormRef = useRef<ProductCreateDetailsHandlers>(null)
   const [active, setActive] = useState(0);
   const [images, setImages] = useState<Attachment[]>([])
+  const [variantsImages, setVariantsImages] = useState<{ [key: string]: { title: string, images: Attachment[] } }>({})
   const [productDetailsLoading, setProductDetailsLoading] = useState(false)
   const [imageErr, setImageErr] = useState<string | undefined>()
   const [submitting, setSubmitting] = useState(false)
 
+  const info = useAppStore((state) => state.clientInfo)
   const setProductsData = useProductsStore((s) => s.set_product_details_data)
   const setProductDetailsFormValues = useProductsStore((state) => state.set_product_details_form_values)
   const setProductDetailsVariationFormValues = useProductsStore((state) => state.set_product_details_variations_form_values)
+  const setProductDetailsVariationsTitles = useProductsStore((state) => state.set_product_details_variations_titles)
+  const productDetailsVariationsTitles = useProductsStore((state) => state.product_details_variations_titles)
 
   const identityForm = useForm({
     validateInputOnBlur: true,
@@ -50,18 +54,24 @@ function ProductCreateHooks({ tr }: Props) {
 
   const nextStep = async () => {
     let valid = false
+    let errMsg = ""
+
     if (active === 0) {
       valid = !identityForm.validate().hasErrors
     } else if (active === 1) {
       valid = !descForm.validate().hasErrors
     } else if (active === 2) {
       valid = validateDetailsForm()
+    } else if (active === 3) {
+      const err = validateMedia()
+      if (!err) valid = true
+      else errMsg = err
     } else if (active === 4) {
       valid = !offerForm.validate().hasErrors
     }
 
     if (!valid) {
-      toast.error(tr.correct)
+      toast.error(errMsg ?? tr.correct)
       return
     }
 
@@ -87,24 +97,48 @@ function ProductCreateHooks({ tr }: Props) {
     let valid = false
     const shared = detailsFormRef.current?.getForm()!
     const variations = detailsFormRef.current?.getVariationsForm
-
-    console.log(`the variation is: ${variations}`);
     if (variations) {
       valid = !variations().validate().hasErrors
-      setProductDetailsVariationFormValues(variations().getValues())
+      const values = variations().getValues()
+      setProductDetailsVariationFormValues(values)
       if (!valid) return false
+      const titles = values.variations.map((variation) => ({ label: variation["title"] as string, value: variation['id'] as string }))
+      setProductDetailsVariationsTitles(titles)
     }
     valid = !shared.validate().hasErrors
     setProductDetailsFormValues(shared.getValues())
-
     return valid
+  }
+
+  const validateMedia = (): string | null => {
+    if (identityForm.values.has_variations) {
+      for (const title of productDetailsVariationsTitles) {
+        if (Object.keys(variantsImages).length === 0) return tr.proImgVar
+        const current = variantsImages[title.value]
+        if (!current || (current && current.images.length === 0)) {
+          return translator(info.language, "products.media.variant_images.missing_for_variant", { Max: PRODUCTS_MAX_IMAGES_COUNT, Min: PRODUCTS_MIN_IMAGES_COUNT, Title: title.label })
+        } else if (current && current.images.length > PRODUCTS_MAX_IMAGES_COUNT) {
+          return translator(info.language, "products.media.variant_images.exceeded_for_variant", { Max: PRODUCTS_MAX_IMAGES_COUNT, Title: title.label })
+        }
+      }
+    } else {
+      if (images.length < PRODUCTS_MIN_IMAGES_COUNT || images.length > PRODUCTS_MAX_IMAGES_COUNT) {
+        return translator(info.language, "products.images.length.error", { Max: PRODUCTS_MAX_IMAGES_COUNT, Min: PRODUCTS_MIN_IMAGES_COUNT })
+      }
+    }
+    return null
   }
 
   const prevStep = () => {
     const sharedForm = detailsFormRef.current?.getForm();
     const varForm = detailsFormRef.current?.getVariationsForm
     if (sharedForm) setProductDetailsFormValues(sharedForm.getValues())
-    if (varForm) setProductDetailsVariationFormValues(varForm().getValues())
+    if (varForm) {
+      const values = varForm().getValues()
+      const titles = values.variations.map((variation) => ({ label: variation["title"] as string, value: variation["id"] as string }))
+      setProductDetailsVariationFormValues(values)
+      setProductDetailsVariationsTitles(titles)
+    }
     setActive((current) => (current > 0 ? current - 1 : current))
   }
 
@@ -130,18 +164,20 @@ function ProductCreateHooks({ tr }: Props) {
 
   useEffect(() => {
     const handleFileAdded = async (f: UppyFile<Meta, Record<string, never>>) => {
-      const files = [...images, await buildAttachment(f)]
-      setImages(files)
+      const newAttachment = await buildAttachment(f)
+      setImages(prevImages => [...prevImages, newAttachment])
     }
 
     const handleFileRemoved = (f: UppyFile<Meta, Record<string, never>>) => {
-      const files = images.filter((img) => img.id !== f.id)
-      setImages(files)
+      setImages(prevImages => prevImages.filter((img) => img.id !== f.id))
     }
 
     const handleEditComplete = async (f: UppyFile<Meta, Record<string, never>>) => {
-      const files = [...images.filter((img) => img.id !== f.id), await buildAttachment(f)]
-      setImages(files)
+      const newAttachment = await buildAttachment(f)
+      setImages(prevImages => [
+        ...prevImages.filter((img) => img.id !== f.id),
+        newAttachment
+      ])
     }
 
     uppy.on('file-added', handleFileAdded)
@@ -154,9 +190,10 @@ function ProductCreateHooks({ tr }: Props) {
       uppy.off('file-removed', handleFileRemoved)
       uppy.off('file-editor:complete', handleEditComplete)
     }
-  }, [uppy, setImages])
+  }, [uppy])
 
-  return {
+  // Return a stable object without causing re-renders
+  return useMemo(() => ({
     active,
     setActive,
     identityForm,
@@ -167,8 +204,22 @@ function ProductCreateHooks({ tr }: Props) {
     prevStep,
     uppy,
     images,
+    setImages,
+    variantsImages,
+    setVariantsImages,
     productDetailsLoading,
-  }
+  }), [
+    active,
+    identityForm,
+    descForm,
+    offerForm,
+    nextStep,
+    prevStep,
+    uppy,
+    images,
+    variantsImages,
+    productDetailsLoading
+  ])
 }
 
 export default ProductCreateHooks

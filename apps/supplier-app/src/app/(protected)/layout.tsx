@@ -2,18 +2,13 @@ import 'server-only'
 import { getClientInformation } from "@megacommerce/shared/server"
 
 import AppHeader from "@/components/app/header/app-header"
+import AppSidebar from '@/components/app/app-sidebar'
 
 export default async function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
   const ci = await getClientInformation()
 
   return <div className='grid grid-cols-[auto,1fr] min-h-screen'>
-    <div
-      style={{ background: 'linear-gradient(147deg,rgba(35, 36, 0, 1) 9%, rgba(121, 119, 9, 1) 35%, rgba(255, 170, 0, 1) 100%)' }}
-      className="w-32 h-full">
-      <div className="">
-        <p>This is a placeholder for the sidebar</p>
-      </div>
-    </div>
+    <AppSidebar />
     <div className="grid grid-rows-[auto,1fr]">
       <AppHeader info={ci} />
       {children}

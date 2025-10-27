@@ -139,7 +139,7 @@ const ProductCreateDetailsWithVariations = forwardRef<ProductCreateDetailsHandle
               {...variationForm.getInputProps(`variations.${idx}.title`)}
             />
             {Object.entries(variation).map((field) => {
-              if (field[0] === 'title') return null
+              if (field[0] === 'title' || field[0] === 'id') return null
               return <ProductCreateDetailsInputWrapper
                 key={field[0]}
                 field={variationForm.getInputProps(`variations.${idx}.${field[0]}`)}
