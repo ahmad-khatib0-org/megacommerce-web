@@ -11,5 +11,6 @@ export const TranslationsEN: Translations = {
   "form.fields.less_than": "Field must be less than {{Min}}",
   "products.media.variant_images.exceeded_for_variant": "The Product's Variant that is titled with: {{Title}} has exceeded the max: {{Max}} of allowed images, Please remove some of them",
   "products.media.variant_images.missing_for_variant": "The Product's Variant that is titled with: {{Title}} has no assigned images, Please provide at leaset {{Min}}, and at most {{Max}} images",
-  "products.images.length.error": "You must provid: at least {{Min}} images, and at most {{Max}} images for your product"
+  "products.images.length.error": "You must provid: at least {{Min}} images, and at most {{Max}} images for your product",
+  "products.offer.variant_pricing": "Sitting the pricing options of: {{Title}}, Products's Variant"
 }

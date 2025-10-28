@@ -20,7 +20,7 @@ type Props = {
 }
 
 const ProductCreateWrapper = ({ tr, categories, offering, filfillment }: Props) => {
-  const { active, setActive, identityForm, descForm, offerForm, offerWithouVariantForm, detailsFormRef, nextStep, prevStep, uppy, images, setImages, variantsImages, setVariantsImages } = ProductCreateHooks({ tr })
+  const { active, setActive, identityForm, descForm, offerForm, offerWithouVariantForm, detailsFormRef, nextStep, prevStep, uppy, images, setImages, variantsImages, setVariantsImages, offerWithVariantFormRef } = ProductCreateHooks({ tr })
 
   return (
     <main>
@@ -50,14 +50,7 @@ const ProductCreateWrapper = ({ tr, categories, offering, filfillment }: Props) 
             <ProductCreateMedia tr={tr} uppy={uppy} images={images} setImages={setImages} variantsImages={variantsImages} setVariantsImages={setVariantsImages} />
           </Stepper.Step>
           <Stepper.Step label={tr.offer} aria-label={tr.offer} >
-            <ProductCreateOffer
-              tr={tr}
-              offering={offering}
-              filfillment={filfillment}
-              hasVariations={identityForm.values.has_variations}
-              form={offerForm}
-              withouVariantForm={offerWithouVariantForm}
-            />
+            <ProductCreateOffer tr={tr} offering={offering} filfillment={filfillment} hasVariations={identityForm.values.has_variations} form={offerForm} withouVariantForm={offerWithouVariantForm} withVariantFormRef={offerWithVariantFormRef} />
           </Stepper.Step>
           <Stepper.Step label={tr.safety} aria-label={tr.safety} >
           </Stepper.Step>

@@ -7,6 +7,7 @@ import { NumericRuleType, StringRuleType } from '@megacommerce/proto/web/shared/
 import { tr as translator } from '@megacommerce/shared/client';
 import {
   ObjString,
+  ValueLabel,
   PRODUCT_TITLE_MAX_LENGTH,
   PRODUCT_TITLE_MIN_LENGTH,
   PRODUCT_BRAND_NAME_MIN_LENGTH,
@@ -94,7 +95,7 @@ export class Products {
   }
 
   static offerPriceForm(tr: ObjString) {
-    return object().shape({
+    return {
       sku: string().min(PRODUCT_SKU_MIN_LENGTH, tr.skuErr).max(PRODUCT_SKU_MAX_LENGTH, tr.skuErr).required(tr.skuErr),
       quantity: number().when('fulfillment_type', {
         is: PRODUCT_FULFILLMENT_TYPE.Supplier,
@@ -128,6 +129,7 @@ export class Products {
           return vNum >= pNum;
         }),
 
+      has_sale_price: booleanSchema(),
       sale_price: number()
         .transform((v, o) => (o === '' ? null : v))
         .nullable()
@@ -175,8 +177,8 @@ export class Products {
           price: number().typeError(tr.invNum).moreThan(0, tr.bgrThan0).required(tr.required),
           quantity: number().typeError(tr.invNum).moreThan(0, tr.bgrThan0).required(tr.required),
         })
-      )
-    })
+      ).nullable()
+    }
   }
 
   static offerPriceFormValues() {
@@ -187,12 +189,30 @@ export class Products {
       offering_condition: '',
       condition_note: '',
       list_price: null,
+      has_sale_price: false,
       sale_price: null,
       sale_price_start: null,
       sale_price_end: null,
       has_minimum_orders: false,
       minimum_orders: null
     }
+  }
+
+  static offerPriceVariationsForm(tr: ObjString) {
+    return object().shape({
+      variations: array().of(object().shape({
+        ...this.offerPriceForm(tr),
+        id: string().required(tr.required),
+        title: string().notRequired(),
+      }))
+    })
+  }
+
+  static offerPriceVariationsFormValues(titles: ValueLabel[]) {
+    const values = this.offerPriceFormValues()
+    const variations = []
+    for (const title of titles) variations.push({ id: title.value, title: title.label, ...values })
+    return { variations }
   }
 
   static buildProductDetailsWithoutVariationsFormFields(fields: ProductDataResponseData, tr: ObjString, lang: string,) {

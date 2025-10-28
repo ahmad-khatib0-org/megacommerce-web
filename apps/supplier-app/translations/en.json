@@ -81,6 +81,7 @@
   "products.fulfillment_type.supplier": "Fulfillment By Supplier",
   "products.fulfillment_type.megacommerce": "Fulfillment By Megacommerce",
   "products.sale_price": "Sale Price",
+  "products.sale_price.add": "Add Sale Price Option",
   "products.sale_price_start": "Selling Start At",
   "products.sale_price_start.required": "Sale start date is required when sale price is set",
   "products.sale_price_end": "Selling End At",

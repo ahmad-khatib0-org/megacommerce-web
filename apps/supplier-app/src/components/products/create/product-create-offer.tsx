@@ -1,15 +1,17 @@
-import { useMemo } from "react"
+import { RefObject, useMemo } from "react"
 import { NumberInput, Select } from "@mantine/core"
 import { UseFormReturnType } from "@mantine/form"
 
 import { currencies } from "@megacommerce/ui/shared"
 import { ObjString, ValueLabel } from "@megacommerce/shared"
 import ProductCreateOfferWithoutVariations, { ProductCreateOfferWithoutVariationsForm } from "@/components/products/create/product-create-offer-without-variations"
+import ProductCreateOfferWithVariations, { ProductCreateOfferWithVariationsHandler } from "@/components/products/create/product-create-offer-with-variations"
 
 type Props = {
   tr: ObjString
   form: ProductCreateOfferForm
   withouVariantForm: ProductCreateOfferWithoutVariationsForm
+  withVariantFormRef: RefObject<ProductCreateOfferWithVariationsHandler | null>
   offering: ValueLabel[]
   filfillment: ValueLabel[]
   hasVariations: boolean
@@ -26,7 +28,22 @@ export interface ProductCreateOfferFormValues {
   processing_time: number;
 }
 
-function ProductCreateOffer({ tr, form, offering, filfillment, hasVariations, withouVariantForm }: Props) {
+export interface ProductCreateOfferPriceFormValues {
+  sku: string;
+  quantity: number;
+  price: number;
+  offering_condition: string;
+  condition_note: string | null;
+  list_price: number | null;
+  has_sale_price: boolean
+  sale_price: number | null;
+  sale_price_start: string | null;
+  sale_price_end: string | null;
+  has_minimum_orders: boolean
+  minimum_orders: { id: string; price: number; quantity: number }[] | null; // optional
+}
+
+function ProductCreateOffer({ tr, form, offering, filfillment, hasVariations, withouVariantForm, withVariantFormRef }: Props) {
   const cur = useMemo(() => Object.keys(currencies).map((c) => c), [currencies])
 
   return (
@@ -61,6 +78,7 @@ function ProductCreateOffer({ tr, form, offering, filfillment, hasVariations, wi
         {...form.getInputProps('currency')}
       />
       {!hasVariations && <ProductCreateOfferWithoutVariations tr={tr} offering={offering} form={withouVariantForm} />}
+      {hasVariations && <ProductCreateOfferWithVariations ref={withVariantFormRef} tr={tr} offering={offering} />}
     </div>
   )
 }

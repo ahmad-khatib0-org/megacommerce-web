@@ -1,8 +1,7 @@
 import { ChangeEvent } from 'react'
 import { Button, Checkbox, NumberInput, Select, TextInput } from "@mantine/core"
-import { useForm, UseFormReturnType } from "@mantine/form";
+import { UseFormReturnType } from "@mantine/form";
 import { DatePickerInput } from '@mantine/dates'
-import { yupResolver } from "mantine-form-yup-resolver";
 import { IconSquareXFilled } from '@tabler/icons-react';
 import { toast } from 'react-toastify';
 
@@ -13,8 +12,7 @@ import {
   PRODUCT_OFFERING_CONDITION,
 } from "@megacommerce/shared"
 import { Button as SharedButton } from "@megacommerce/ui/shared"
-
-import { Products } from '@/helpers/client';
+import { ProductCreateOfferPriceFormValues } from '@/components/products/create/product-create-offer';
 
 type Props = {
   tr: ObjString
@@ -22,24 +20,7 @@ type Props = {
   form: ProductCreateOfferWithoutVariationsForm
 }
 
-export type ProductCreateOfferWithoutVariationsForm = UseFormReturnType<ProductCreateOfferWithoutVariationsFormValues>
-
-/**
-  * @field processing_time Days until shipping starts
-*/
-export interface ProductCreateOfferWithoutVariationsFormValues {
-  sku: string;
-  quantity: number;
-  price: number;
-  offering_condition: string;
-  condition_note: string | null;
-  list_price: number | null;
-  sale_price: number | null;
-  sale_price_start: string | null;
-  sale_price_end: string | null;
-  has_minimum_orders: boolean
-  minimum_orders: { id: string; price: number; quantity: number }[] | null; // optional
-}
+export type ProductCreateOfferWithoutVariationsForm = UseFormReturnType<ProductCreateOfferPriceFormValues>
 
 function ProductCreateOfferWithoutVariations({ tr, offering, form }: Props) {
   const onToggleMinOrder = (e: ChangeEvent<HTMLInputElement>) => {
@@ -69,6 +50,18 @@ function ProductCreateOfferWithoutVariations({ tr, offering, form }: Props) {
     }
   }
 
+  const onToggleSalePrice = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.checked
+    if (!value) {
+      form.setFieldValue("sale_price", null)
+      form.setFieldValue("sale_price_start", null)
+      form.setFieldValue("sale_price_end", null)
+      form.setFieldValue("has_sale_price", false)
+    } else {
+      form.setFieldValue("has_sale_price", true)
+    }
+  }
+
   const onAddMinOrder = () => {
     if ((form.getValues().minimum_orders ?? []).length >= PRODUCT_MINIMUM_ORDER_MAX_OPTIONS) {
       toast.error(tr.minOrdMax)
@@ -81,6 +74,14 @@ function ProductCreateOfferWithoutVariations({ tr, offering, form }: Props) {
 
   return (
     <>
+      <NumberInput
+        label={tr.price}
+        placeholder={tr.price}
+        aria-label={tr.price}
+        withAsterisk
+        size="sm"
+        {...form.getInputProps('price')}
+      />
       <TextInput
         label={tr.sku}
         placeholder={tr.sku}
@@ -95,14 +96,6 @@ function ProductCreateOfferWithoutVariations({ tr, offering, form }: Props) {
         withAsterisk
         size="sm"
         {...form.getInputProps('quantity')}
-      />
-      <NumberInput
-        label={tr.price}
-        placeholder={tr.price}
-        aria-label={tr.price}
-        withAsterisk
-        size="sm"
-        {...form.getInputProps('price')}
       />
       <div className="grid grid-cols-2 justify-center items-center gap-x-4">
         <Select
@@ -133,26 +126,36 @@ function ProductCreateOfferWithoutVariations({ tr, offering, form }: Props) {
         size="sm"
         {...form.getInputProps('list_price')}
       />
-      <NumberInput
-        label={tr.salePrice}
-        placeholder={tr.salePrice}
-        aria-label={tr.salePrice}
-        size="sm"
-        {...form.getInputProps('sale_price')}
-      />
-      <div className="grid grid-cols-2 justify-center items-center gap-x-4">
-        <DatePickerInput
-          label={tr.saleStart}
-          placeholder={tr.saleStart}
-          aria-label={tr.saleStart}
-          {...form.getInputProps('sale_price_start')}
+      <div className='grid grid-cols-2 justify-center items-center gap-x-4'>
+        <Checkbox
+          label={tr.salePrcAdd}
+          checked={form.values.has_sale_price}
+          className='font-medium cursor-pointer'
+          styles={{ label: { fontSize: 16 } }}
+          value={form.values.has_sale_price.toString()}
+          onChange={onToggleSalePrice}
         />
-        <DatePickerInput
-          label={tr.saleEnd}
-          placeholder={tr.saleEnd}
-          aria-label={tr.saleEnd}
-          {...form.getInputProps('sale_price_end')}
-        />
+        {form.values.has_sale_price && <>
+          <NumberInput
+            label={tr.salePrice}
+            placeholder={tr.salePrice}
+            aria-label={tr.salePrice}
+            size="sm"
+            {...form.getInputProps('sale_price')}
+          />
+          <DatePickerInput
+            label={tr.saleStart}
+            placeholder={tr.saleStart}
+            aria-label={tr.saleStart}
+            {...form.getInputProps('sale_price_start')}
+          />
+          <DatePickerInput
+            label={tr.saleEnd}
+            placeholder={tr.saleEnd}
+            aria-label={tr.saleEnd}
+            {...form.getInputProps('sale_price_end')}
+          />
+        </>}
       </div>
       <Checkbox
         label={tr.minOrd}

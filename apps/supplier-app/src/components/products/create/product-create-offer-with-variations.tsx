@@ -1,0 +1,239 @@
+import { ChangeEvent, forwardRef, useImperativeHandle } from 'react'
+import { Button, Checkbox, NumberInput, Select, TextInput } from "@mantine/core"
+import { useForm, UseFormReturnType } from "@mantine/form";
+import { DatePickerInput } from '@mantine/dates'
+import { IconSquareXFilled } from '@tabler/icons-react';
+import { yupResolver } from 'mantine-form-yup-resolver';
+import { toast } from 'react-toastify';
+
+import {
+  ObjString,
+  ValueLabel,
+  PRODUCT_MINIMUM_ORDER_MAX_OPTIONS,
+  PRODUCT_OFFERING_CONDITION,
+} from "@megacommerce/shared"
+import { Button as SharedButton } from "@megacommerce/ui/shared"
+import { tr as translator } from '@megacommerce/shared/client';
+
+import { ProductCreateOfferPriceFormValues } from '@/components/products/create/product-create-offer';
+import { useAppStore, useProductsStore } from '@/store';
+import { Products } from '@/helpers/client';
+
+type Props = {
+  tr: ObjString
+  offering: ValueLabel[]
+}
+
+export interface ProductCreateOfferWithVariationsHandler {
+  getForm: () => ProductCreateOfferWithVariationsForm
+}
+
+export type ProductCreateOfferWithVariationsForm = UseFormReturnType<ProductCreateOfferWithVariationsFormValues>
+
+export interface ProductCreateOfferWithVariationsFormValues {
+  variations: (ProductCreateOfferPriceFormValues & {
+    id: string
+    title: string
+  })[]
+}
+
+const ProductCreateOfferWithVariations = forwardRef<ProductCreateOfferWithVariationsHandler, Props>(({ tr, offering }, ref) => {
+  const lang = useAppStore((state) => state.clientInfo.language)
+  const productDetailsVariationsTitles = useProductsStore((state) => state.product_details_variations_titles)
+
+  const form = useForm<ProductCreateOfferWithVariationsFormValues>({
+    validateInputOnBlur: true,
+    initialValues: Products.offerPriceVariationsFormValues(productDetailsVariationsTitles),
+    validate: yupResolver(Products.offerPriceVariationsForm(tr)) as any,
+  });
+
+  const onToggleMinOrder = (e: ChangeEvent<HTMLInputElement>, idx: number) => {
+    const value = e.target.checked
+    if (value) {
+      form.setFieldValue(`variations.${idx}.minimum_orders`, [{ id: Date.now().toString(), price: 0, quantity: 0 }])
+      form.setFieldValue(`variations.${idx}.has_minimum_orders`, true)
+    } else {
+      const toastId = Date.now().toString()
+      toast.warn(
+        <div className="flex flex-col px-6">
+          <p className="font-light">{tr.minOrdWarn}</p>
+          <div className="flex gap-6 mt-2">
+            <SharedButton onClick={() => toast.dismiss(toastId)} className="border border-orange-300">{tr.cancel}</SharedButton>
+            <SharedButton
+              className="bg-orange-400 text-white"
+              onClick={() => {
+                form.setFieldValue(`variations.${idx}.minimum_orders`, null)
+                form.setFieldValue(`variations.${idx}.has_minimum_orders`, false)
+                toast.dismiss(toastId)
+              }}
+            >{tr.confirm}</SharedButton>
+          </div>
+        </div>,
+        { autoClose: false, closeOnClick: false, toastId }
+      );
+    }
+  }
+
+  const onAddMinOrder = (idx: number) => {
+    if ((form.values.variations[idx].minimum_orders ?? []).length >= PRODUCT_MINIMUM_ORDER_MAX_OPTIONS) {
+      toast.error(tr.minOrdMax)
+      return
+    }
+    const index = form.values.variations[idx].minimum_orders?.length ?? 0
+    if (index === 0) return // in practice, this won't occur 
+    form.insertListItem(`variations.${idx}.minimum_orders`, { id: Date.now().toString(), price: 0, quantity: 0 }, index)
+  }
+
+  const onToggleSalePrice = (e: ChangeEvent<HTMLInputElement>, idx: number) => {
+    const value = e.target.checked
+    if (!value) {
+      form.setFieldValue(`variations.${idx}.sale_price`, null)
+      form.setFieldValue(`variations.${idx}.sale_price_start`, null)
+      form.setFieldValue(`variations.${idx}.sale_price_end`, null)
+      form.setFieldValue(`variations.${idx}.has_sale_price`, false)
+    } else {
+      form.setFieldValue(`variations.${idx}.has_sale_price`, true)
+    }
+  }
+
+  useImperativeHandle((ref), () => ({
+    getForm: () => form
+  }))
+
+  return (
+    <div className='mt-4'>
+      {Object.keys(form.values.variations).map((field, idx) => {
+        return <div key={field} className='flex flex-col gap-y-3  mb-3 border border-black border-dashed py-4 px-3 rounded-md' >
+          <div className='border border-orange-700 py-3 px-2 rounded-md'>
+            <p className='font-semibold'>{translator(lang, 'products.offer.variant_pricing', { Title: form.values.variations[idx].title })}</p>
+          </div>
+          <TextInput
+            label={tr.sku}
+            placeholder={tr.sku}
+            aria-label={tr.sku}
+            withAsterisk
+            size="sm"
+            {...form.getInputProps(`variations.${idx}.sku`)}
+          />
+          <NumberInput label={tr.quantity}
+            placeholder={tr.quantity}
+            aria-label={tr.quantity}
+            withAsterisk
+            size="sm"
+            {...form.getInputProps(`variations.${idx}.quantity`)}
+          />
+          <NumberInput
+            label={tr.price}
+            placeholder={tr.price}
+            aria-label={tr.price}
+            withAsterisk
+            size="sm"
+            {...form.getInputProps(`variations.${idx}.price`)}
+          />
+          <div className="grid grid-cols-2 justify-center items-center gap-x-4">
+            <Select
+              label={tr.offCond}
+              placeholder={tr.offCond}
+              aria-label={tr.offCond}
+              data={offering}
+              allowDeselect={false}
+              withAsterisk
+              size="sm"
+              {...form.getInputProps(`variations.${idx}.offering_condition`)}
+            />
+            {form.values.variations[idx].offering_condition === PRODUCT_OFFERING_CONDITION.Used &&
+              <TextInput
+                label={tr.note}
+                placeholder={tr.note}
+                aria-label={tr.note}
+                withAsterisk
+                size="sm"
+                {...form.getInputProps(`variations.${idx}.condition_note`)}
+              />
+            }
+          </div>
+          <NumberInput
+            label={tr.lsPrice}
+            placeholder={tr.lsPrice}
+            aria-label={tr.lsPrice}
+            size="sm"
+            {...form.getInputProps(`variations.${idx}.list_price`)}
+          />
+
+          <div className='grid grid-cols-2 justify-center items-center gap-x-4 mt-4'>
+            <Checkbox
+              label={tr.salePrcAdd}
+              checked={form.values.variations[idx].has_sale_price}
+              className='font-medium cursor-pointer'
+              styles={{ label: { fontSize: 16 } }}
+              value={form.values.variations[idx].has_sale_price.toString()}
+              onChange={(e) => onToggleSalePrice(e, idx)}
+            />
+            {form.values.variations[idx].has_sale_price && <>
+              <NumberInput
+                label={tr.salePrice}
+                placeholder={tr.salePrice}
+                aria-label={tr.salePrice}
+                size="sm"
+                {...form.getInputProps(`variations.${idx}.sale_price`)}
+              />
+              <DatePickerInput
+                label={tr.saleStart}
+                placeholder={tr.saleStart}
+                aria-label={tr.saleStart}
+                {...form.getInputProps(`variations.${idx}.sale_price_start`)}
+              />
+              <DatePickerInput
+                label={tr.saleEnd}
+                placeholder={tr.saleEnd}
+                aria-label={tr.saleEnd}
+                {...form.getInputProps(`variations.${idx}.sale_price_end`)}
+              />
+            </>}
+          </div>
+          <Checkbox
+            label={tr.minOrd}
+            checked={form.values.variations[idx].has_minimum_orders}
+            className='font-medium mt-4 cursor-pointer'
+            styles={{ label: { fontSize: 16 } }}
+            value={form.values.variations[idx].has_minimum_orders.toString()}
+            onChange={(e) => onToggleMinOrder(e, idx)}
+          />
+          {(form.values.variations[idx].minimum_orders?.length ?? 0) > 0 && <div className="flex flex-col gap-y-4">
+            {(form.values.variations[idx].minimum_orders ?? []).map((mo, j) => <div
+              key={mo.id}
+              className={`relative grid grid-cols-2 justify-center items-center gap-x-4 pt-2`}>
+              {idx > 0 && <div
+                onClick={() => form.removeListItem(`variations.${idx}.minimum_orders`, j)}
+                className="absolute right-0 top-0 cursor-pointer">
+                <IconSquareXFilled aria-label={tr.delItem} />
+              </div>}
+              <NumberInput
+                label={tr.itemPrice}
+                placeholder={tr.itemPrice}
+                aria-label={tr.itemPrice}
+                withAsterisk
+                size="sm"
+                {...form.getInputProps(`variations.${idx}.minimum_orders.${j}.price`)}
+              />
+              <NumberInput
+                label={tr.minCount}
+                placeholder={tr.minCount}
+                aria-label={tr.minCount}
+                withAsterisk
+                size="sm"
+                {...form.getInputProps(`variations.${idx}.minimum_orders.${j}.quantity`)}
+              />
+            </div>)}
+            <Button
+              className="bg-orange-500 text-white font-bold hover:bg-orange-400 w-max px-12 py-1 mt-4"
+              onClick={() => onAddMinOrder(idx)}
+            >{tr.addMore}</Button>
+          </div>}
+        </div>
+      })}
+    </div>
+  )
+})
+
+export default ProductCreateOfferWithVariations

@@ -12,4 +12,5 @@ export interface Translations {
   "products.media.variant_images.exceeded_for_variant": string,
   "products.media.variant_images.missing_for_variant": string,
   "products.images.length.error": string,
+  "products.offer.variant_pricing": string
 }

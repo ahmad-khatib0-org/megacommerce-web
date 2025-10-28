@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import Uppy, { Meta, UppyFile } from '@uppy/core'
 import ImageEditor from "@uppy/image-editor"
 import { useForm } from "@mantine/form"
+import { object } from "yup"
 import { yupResolver } from "mantine-form-yup-resolver"
 import { toast } from "react-toastify"
 
@@ -9,9 +10,9 @@ import { Attachment } from "@megacommerce/proto/web/shared/v1/attachment"
 import { buildAttachment, handleGrpcWebErr, tr as translator } from "@megacommerce/shared/client"
 import { ObjString, PRODUCTS_MAX_IMAGES_COUNT, PRODUCTS_IMAGE_ACCEPTED_TYPES, PRODUCTS_IMAGE_MAX_SIZE_BYTES, PRODUCTS_MIN_IMAGES_COUNT } from "@megacommerce/shared"
 
-import { ProductCreateOfferFormValues } from "@/components/products/create/product-create-offer"
 import { ProductCreateDetailsHandlers } from "@/components/products/create/product-create-details"
-import { ProductCreateOfferWithoutVariationsFormValues } from "@/components/products/create/product-create-offer-without-variations"
+import { ProductCreateOfferWithVariationsHandler } from "@/components/products/create/product-create-offer-with-variations"
+import { ProductCreateOfferFormValues, ProductCreateOfferPriceFormValues } from "@/components/products/create/product-create-offer"
 import { Products, productsClient } from "@/helpers/client"
 import { useAppStore, useProductsStore } from "@/store"
 
@@ -21,6 +22,7 @@ type Props = {
 
 function ProductCreateHooks({ tr }: Props) {
   const detailsFormRef = useRef<ProductCreateDetailsHandlers>(null)
+  const offerWithVariantFormRef = useRef<ProductCreateOfferWithVariationsHandler>(null)
   const [active, setActive] = useState(0);
   const [images, setImages] = useState<Attachment[]>([])
   const [variantsImages, setVariantsImages] = useState<{ [key: string]: { title: string, images: Attachment[] } }>({})
@@ -53,15 +55,15 @@ function ProductCreateHooks({ tr }: Props) {
     validate: yupResolver(Products.offerForm(tr)) as any
   })
 
-  const offerWithouVariantForm = useForm<ProductCreateOfferWithoutVariationsFormValues>({
+  const offerWithouVariantForm = useForm<ProductCreateOfferPriceFormValues>({
     validateInputOnBlur: true,
     initialValues: Products.offerPriceFormValues(),
-    validate: yupResolver(Products.offerPriceForm(tr)) as any,
+    validate: yupResolver(object().shape(Products.offerPriceForm(tr))) as any,
   });
 
   const nextStep = async () => {
     let valid = false
-    let errMsg = ""
+    let errMsg = null
 
     if (active === 0) {
       valid = !identityForm.validate().hasErrors
@@ -70,11 +72,11 @@ function ProductCreateHooks({ tr }: Props) {
     } else if (active === 2) {
       valid = validateDetailsForm()
     } else if (active === 3) {
-      const err = validateMedia()
+      const err = validateMediaForm()
       if (!err) valid = true
       else errMsg = err
     } else if (active === 4) {
-      valid = !offerForm.validate().hasErrors
+      valid = validateOfferForm()
     }
 
     if (!valid) {
@@ -117,7 +119,7 @@ function ProductCreateHooks({ tr }: Props) {
     return valid
   }
 
-  const validateMedia = (): string | null => {
+  const validateMediaForm = (): string | null => {
     if (identityForm.values.has_variations) {
       for (const title of productDetailsVariationsTitles) {
         if (Object.keys(variantsImages).length === 0) return tr.proImgVar
@@ -134,6 +136,19 @@ function ProductCreateHooks({ tr }: Props) {
       }
     }
     return null
+  }
+
+  const validateOfferForm = (): boolean => {
+    let valid = false
+    valid = !offerForm.validate().hasErrors
+    if (!valid) return false
+    if (identityForm.values.has_variations && offerWithVariantFormRef.current) {
+      const form = offerWithVariantFormRef.current.getForm()
+      valid = !form.validate().hasErrors
+    } else {
+      valid = !offerWithouVariantForm.validate().hasErrors
+    }
+    return valid
   }
 
   const prevStep = () => {
@@ -208,26 +223,28 @@ function ProductCreateHooks({ tr }: Props) {
     offerForm,
     detailsFormRef,
     offerWithouVariantForm,
-    nextStep,
-    prevStep,
+    offerWithVariantFormRef,
+    productDetailsLoading,
     uppy,
     images,
     setImages,
     variantsImages,
     setVariantsImages,
-    productDetailsLoading,
+    nextStep,
+    prevStep,
   }), [
     active,
     identityForm,
     descForm,
     offerForm,
     offerWithouVariantForm,
-    nextStep,
-    prevStep,
+    offerWithVariantFormRef,
+    productDetailsLoading,
     uppy,
     images,
     variantsImages,
-    productDetailsLoading
+    nextStep,
+    prevStep,
   ])
 }
 

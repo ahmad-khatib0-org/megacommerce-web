@@ -6,31 +6,25 @@
     ]
   },
   "formatter": {
-    "indentStyle": "space", // --use-tabs=false
-    "indentWidth": 2, // --tab-width=2
-    "lineWidth": 110, // --print-width=110
-    "lineEnding": "lf", // --end-of-line=lf
-    "bracketSpacing": true, // --bracket-spacing=true
-    "attributePosition": "multiline"
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 110,
+    "lineEnding": "lf",
+    "bracketSpacing": true,
+    "attributePosition": "auto",
+    "indentChain": true
   },
   "javascript": {
     "formatter": {
-      "quoteStyle": "single", // --single-quote
-      "jsxQuoteStyle": "double", // Prettier default for JSX
-      "quoteProperties": "asNeeded", // --quote-props=as-needed
-      "trailingCommas": "all", // --trailing-comma=all
-      "semicolons": "asNeeded", // --semi=false
-      "arrowParentheses": "always", // --arrow-parens=always
-      "bracketSameLine": true, // --jsx-bracket-same-line & --bracket-same-line
-      "attributePosition": "multiline"
-    }
-  },
-  "html": {
-    "formatter": {
-      "whitespacesSensitivity": "css", // --html-whitespace-sensitivity=css
-      "bracketSameLine": true, // match JSX behavior for tags
-      "indentScriptAndStyle": false, // --vue-indent-script-and-style=false
-      "attributePosition": "multiline"
+      "quoteStyle": "single",
+      "jsxQuoteStyle": "double",
+      "quoteProperties": "asNeeded",
+      "trailingCommas": "all",
+      "semicolons": "asNeeded",
+      "arrowParentheses": "always",
+      "bracketSameLine": false,
+      "attributePosition": "multiline",
+      "lineWidth": 110
     }
   },
   "linter": {

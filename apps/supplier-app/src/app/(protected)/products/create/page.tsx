@@ -73,6 +73,7 @@ const getTranslations = (lang: string) => {
     lsPriceErr: tr(lang, 'products.list_price.error'),
     lsPrice: tr(lang, 'products.list_price'),
     salePrice: tr(lang, 'products.sale_price'),
+    salePrcAdd: tr(lang, 'products.sale_price.add'),
     saleStart: tr(lang, 'products.sale_price_start'),
     saleEnd: tr(lang, 'products.sale_price_end'),
     saleSErr: tr(lang, 'products.sale_price_start.required'),
