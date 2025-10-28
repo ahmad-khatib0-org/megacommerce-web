@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Uppy, { Meta, UppyFile } from '@uppy/core'
 import ImageEditor from "@uppy/image-editor"
 import { useForm } from "@mantine/form"
@@ -36,6 +36,7 @@ function ProductCreateHooks({ tr }: Props) {
   const setProductDetailsVariationFormValues = useProductsStore((state) => state.set_product_details_variations_form_values)
   const setProductDetailsVariationsTitles = useProductsStore((state) => state.set_product_details_variations_titles)
   const productDetailsVariationsTitles = useProductsStore((state) => state.product_details_variations_titles)
+  const setProductOfferFormValues = useProductsStore((state) => state.set_product_offer_form_values)
 
   const identityForm = useForm({
     validateInputOnBlur: true,
@@ -148,6 +149,11 @@ function ProductCreateHooks({ tr }: Props) {
     } else {
       valid = !offerWithouVariantForm.validate().hasErrors
     }
+
+    const base = offerForm.getValues()
+    const withoutVariant = offerWithouVariantForm.getValues()
+    const withVariant = offerWithVariantFormRef.current?.getForm
+    setProductOfferFormValues({ base, withoutVariant, withVariant: withVariant ? withVariant().getValues() : undefined })
     return valid
   }
 
@@ -161,6 +167,13 @@ function ProductCreateHooks({ tr }: Props) {
       setProductDetailsVariationFormValues(values)
       setProductDetailsVariationsTitles(titles)
     }
+    if (active === 4) {
+      const base = offerForm.getValues()
+      const withoutVariant = offerWithouVariantForm.getValues()
+      const withVariant = offerWithVariantFormRef.current?.getForm
+      setProductOfferFormValues({ base, withoutVariant, withVariant: withVariant ? withVariant().getValues() : undefined })
+    }
+
     setActive((current) => (current > 0 ? current - 1 : current))
   }
 
@@ -215,13 +228,13 @@ function ProductCreateHooks({ tr }: Props) {
   }, [uppy])
 
   // Return a stable object without causing re-renders
-  return useMemo(() => ({
+  return {
     active,
     setActive,
     identityForm,
     descForm,
-    offerForm,
     detailsFormRef,
+    offerForm,
     offerWithouVariantForm,
     offerWithVariantFormRef,
     productDetailsLoading,
@@ -232,20 +245,7 @@ function ProductCreateHooks({ tr }: Props) {
     setVariantsImages,
     nextStep,
     prevStep,
-  }), [
-    active,
-    identityForm,
-    descForm,
-    offerForm,
-    offerWithouVariantForm,
-    offerWithVariantFormRef,
-    productDetailsLoading,
-    uppy,
-    images,
-    variantsImages,
-    nextStep,
-    prevStep,
-  ])
+  }
 }
 
 export default ProductCreateHooks

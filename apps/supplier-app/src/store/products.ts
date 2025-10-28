@@ -5,10 +5,18 @@ import { ProductDataResponseData } from '@megacommerce/proto/web/products/v1/pro
 import { ProductVariationsFormValues } from '@/components/products/create/product-create-details-with-variations'
 
 import { ValueLabel } from '@megacommerce/shared'
+import { ProductCreateOfferFormValues, ProductCreateOfferPriceFormValues } from '@/components/products/create/product-create-offer'
+import { ProductCreateOfferWithVariationsFormValues } from '@/components/products/create/product-create-offer-with-variations'
 
 interface ProductCategoryInfo {
   category: string
   subcategory: string
+}
+
+interface OfferFormValues {
+  base?: ProductCreateOfferFormValues
+  withoutVariant?: ProductCreateOfferPriceFormValues
+  withVariant?: ProductCreateOfferWithVariationsFormValues
 }
 
 interface ProductsState {
@@ -21,6 +29,8 @@ interface ProductsState {
   set_product_details_variations_titles: (titles: ValueLabel[]) => void
   product_category_info: ProductCategoryInfo
   set_product_details_data: (product_details_data: ProductDataResponseData) => void
+  product_offer_form_values: OfferFormValues | null
+  set_product_offer_form_values: (product_offer_form: OfferFormValues) => void
 }
 
 const storeFn: StateCreator<ProductsState> = (set) => ({
@@ -33,6 +43,8 @@ const storeFn: StateCreator<ProductsState> = (set) => ({
   set_product_details_variations_titles: (product_details_variations_titles: ValueLabel[]) => set({ product_details_variations_titles }),
   product_category_info: { category: "", subcategory: "" },
   set_product_details_data: (product_details_data) => set({ product_details_data }),
+  product_offer_form_values: null,
+  set_product_offer_form_values: (product_offer_form_values) => set({ product_offer_form_values })
 })
 
 export const useProductsStore =

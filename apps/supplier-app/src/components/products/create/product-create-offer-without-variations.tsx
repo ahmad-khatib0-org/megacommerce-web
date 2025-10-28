@@ -1,4 +1,4 @@
-import { ChangeEvent } from 'react'
+import { ChangeEvent, useEffect } from 'react'
 import { Button, Checkbox, NumberInput, Select, TextInput } from "@mantine/core"
 import { UseFormReturnType } from "@mantine/form";
 import { DatePickerInput } from '@mantine/dates'
@@ -13,6 +13,7 @@ import {
 } from "@megacommerce/shared"
 import { Button as SharedButton } from "@megacommerce/ui/shared"
 import { ProductCreateOfferPriceFormValues } from '@/components/products/create/product-create-offer';
+import { useProductsStore } from '@/store';
 
 type Props = {
   tr: ObjString
@@ -23,6 +24,8 @@ type Props = {
 export type ProductCreateOfferWithoutVariationsForm = UseFormReturnType<ProductCreateOfferPriceFormValues>
 
 function ProductCreateOfferWithoutVariations({ tr, offering, form }: Props) {
+  const productOfferFormValues = useProductsStore((state) => state.product_offer_form_values)
+
   const onToggleMinOrder = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.checked
     if (value) {
@@ -71,6 +74,15 @@ function ProductCreateOfferWithoutVariations({ tr, offering, form }: Props) {
     if (index === 0) return // in practice, this won't occur 
     form.insertListItem("minimum_orders", { id: Date.now().toString(), price: 0, quantity: 0 }, index)
   }
+
+  const init = () => {
+    const values = productOfferFormValues?.withoutVariant
+    if (values) form.setValues(values)
+  }
+
+  useEffect(() => {
+    init()
+  }, [])
 
   return (
     <>

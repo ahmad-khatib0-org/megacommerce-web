@@ -1,4 +1,4 @@
-import { ChangeEvent, forwardRef, useImperativeHandle } from 'react'
+import { ChangeEvent, forwardRef, useEffect, useImperativeHandle } from 'react'
 import { Button, Checkbox, NumberInput, Select, TextInput } from "@mantine/core"
 import { useForm, UseFormReturnType } from "@mantine/form";
 import { DatePickerInput } from '@mantine/dates'
@@ -40,6 +40,7 @@ export interface ProductCreateOfferWithVariationsFormValues {
 const ProductCreateOfferWithVariations = forwardRef<ProductCreateOfferWithVariationsHandler, Props>(({ tr, offering }, ref) => {
   const lang = useAppStore((state) => state.clientInfo.language)
   const productDetailsVariationsTitles = useProductsStore((state) => state.product_details_variations_titles)
+  const productOfferFormValues = useProductsStore((state) => state.product_offer_form_values)
 
   const form = useForm<ProductCreateOfferWithVariationsFormValues>({
     validateInputOnBlur: true,
@@ -96,9 +97,18 @@ const ProductCreateOfferWithVariations = forwardRef<ProductCreateOfferWithVariat
     }
   }
 
+  const init = () => {
+    const values = productOfferFormValues?.withVariant
+    if (values) form.setValues(values)
+  }
+
   useImperativeHandle((ref), () => ({
     getForm: () => form
   }))
+
+  useEffect(() => {
+    init()
+  }, [])
 
   return (
     <div className='mt-4'>
@@ -203,7 +213,7 @@ const ProductCreateOfferWithVariations = forwardRef<ProductCreateOfferWithVariat
             {(form.values.variations[idx].minimum_orders ?? []).map((mo, j) => <div
               key={mo.id}
               className={`relative grid grid-cols-2 justify-center items-center gap-x-4 pt-2`}>
-              {idx > 0 && <div
+              {j > 0 && <div
                 onClick={() => form.removeListItem(`variations.${idx}.minimum_orders`, j)}
                 className="absolute right-0 top-0 cursor-pointer">
                 <IconSquareXFilled aria-label={tr.delItem} />

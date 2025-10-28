@@ -1,4 +1,4 @@
-import { RefObject, useMemo } from "react"
+import { RefObject, useEffect, useMemo } from "react"
 import { NumberInput, Select } from "@mantine/core"
 import { UseFormReturnType } from "@mantine/form"
 
@@ -6,6 +6,7 @@ import { currencies } from "@megacommerce/ui/shared"
 import { ObjString, ValueLabel } from "@megacommerce/shared"
 import ProductCreateOfferWithoutVariations, { ProductCreateOfferWithoutVariationsForm } from "@/components/products/create/product-create-offer-without-variations"
 import ProductCreateOfferWithVariations, { ProductCreateOfferWithVariationsHandler } from "@/components/products/create/product-create-offer-with-variations"
+import { useProductsStore } from "@/store"
 
 type Props = {
   tr: ObjString
@@ -45,6 +46,15 @@ export interface ProductCreateOfferPriceFormValues {
 
 function ProductCreateOffer({ tr, form, offering, filfillment, hasVariations, withouVariantForm, withVariantFormRef }: Props) {
   const cur = useMemo(() => Object.keys(currencies).map((c) => c), [currencies])
+  const productOfferFormValues = useProductsStore((state) => state.product_offer_form_values)
+
+  const init = () => {
+    if (productOfferFormValues?.base) form.setValues(productOfferFormValues.base)
+  }
+
+  useEffect(() => {
+    init()
+  }, [])
 
   return (
     <div className='relative flex flex-col gap-y-4 w-full max-w-[800px] overflow-y-auto'>
