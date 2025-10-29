@@ -1,12 +1,12 @@
-import Image from "next/image"
+import Image from 'next/image'
 
-import { Trans } from "@megacommerce/shared/server"
-import { ServerError } from "@megacommerce/ui/server"
-import { SearchParams, UserPasswordMaxLength, UserPasswordMinLength } from "@megacommerce/shared"
+import { Trans } from '@megacommerce/shared/server'
+import { ServerError } from '@megacommerce/ui/server'
+import { SearchParams, UserPasswordMaxLength, UserPasswordMinLength } from '@megacommerce/shared'
 
-import LoginWrapper from "@/components/auth/login/login-wrapper"
-import { oauthServiceStatusChecker } from "@/helpers/server"
-import { Assets } from "@/helpers/shared"
+import LoginWrapper from '@/components/auth/login/login-wrapper'
+import { oauthServiceStatusChecker } from '@/helpers/server'
+import { Assets } from '@/helpers/shared'
 
 type Props = {}
 
@@ -27,10 +27,16 @@ async function Page({ }: Props) {
     const isAlive = await oauthServiceStatusChecker.isOauthServiceAlive()
     if (!isAlive) return <ServerError />
     return (
-      <section className="grid grid-cols-[55%,1fr]">
+      <section className='grid grid-cols-[55%,1fr]'>
         <LoginWrapper tr={trans} />
-        <div className="relative h-screen w-full select-none">
-          <Image src={Assets.login} alt="describe authentication flow" fill sizes="100%" style={{ objectFit: 'cover' }} />
+        <div className='relative h-screen w-full select-none'>
+          <Image
+            src={Assets.login}
+            alt='describe authentication flow'
+            fill
+            sizes='100%'
+            style={{ objectFit: 'cover' }}
+          />
         </div>
       </section>
     )

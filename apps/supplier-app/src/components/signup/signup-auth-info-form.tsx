@@ -25,18 +25,18 @@ export interface SignupAuthInfoFormValues {
 
 function SignupAuthInfoForm({ form, tr, passwordRequirements }: Props) {
   return (
-    <div className="grid grid-cols-2 gap-x-6 gap-y-8 max-w-[700px]">
+    <div className='grid grid-cols-2 gap-x-6 gap-y-8 max-w-[700px]'>
       <TextInput
-        type="email"
+        type='email'
         label={tr.email}
         placeholder={tr.email}
         withAsterisk
         maxLength={240}
-        size="sm"
+        size='sm'
         {...form.getInputProps('email')}
       />
       <PasswordInput<SignupAuthInfoFormValues>
-        fieldName="password"
+        fieldName='password'
         requirements={passwordRequirements}
         minLength={UserPasswordMinLength}
         maxLength={UserPasswordMaxLength}

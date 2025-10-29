@@ -11,7 +11,7 @@
     "lineWidth": 110,
     "lineEnding": "lf",
     "bracketSpacing": true,
-    "attributePosition": "auto",
+    "attributePosition": "multiline",
     "indentChain": true
   },
   "javascript": {

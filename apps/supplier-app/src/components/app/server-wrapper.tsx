@@ -12,14 +12,12 @@ type Props = {
 async function ServerWrapper({ children }: Props) {
   const ci = await getClientInformation()
   return (
-    <html lang="en" {...mantineHtmlProps}>
+    <html lang='en' {...mantineHtmlProps}>
       <head>
         <ColorSchemeScript />
       </head>
       <body>
-        <MantineProvider>
-          {children}
-        </MantineProvider>
+        <MantineProvider>{children}</MantineProvider>
         <ToastContainer />
         <ClientWrapper clientInfo={{ language: ci.language, country: ci.location, currency: ci.currency }} />
       </body>

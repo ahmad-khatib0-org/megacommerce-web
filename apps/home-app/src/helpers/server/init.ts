@@ -1,11 +1,11 @@
 import 'server-only'
-import { Pool } from 'pg';
+import { Pool } from 'pg'
 import { Trans, waitForServiceToBeReady } from '@megacommerce/shared/server'
 import { Config } from '@megacommerce/proto/common/v1/config'
 
-import { commonClient, System, AppData } from "@/helpers/server"
+import { commonClient, System, AppData } from '@/helpers/server'
 
-let _initPromise: Promise<System> | null = null;
+let _initPromise: Promise<System> | null = null
 let _initialized = false
 let _system: System
 
@@ -16,34 +16,34 @@ export const system = async (): Promise<Readonly<System>> => {
 
 /**
  * @method init the required config, trans, ... In order to start the server
- * 
+ *
  * TODO: relay on cached config, trans, ... For better CI builds
-*/
+ */
 async function init(): Promise<System> {
-  if (_initialized) return _system;
-  if (_initPromise) return _initPromise;
+  if (_initialized) return _system
+  if (_initPromise) return _initPromise
 
   _initPromise = (async () => {
     try {
-      console.log(`called the init function`);
+      console.log(`called the init function`)
 
       const { port, hostname } = new URL(process.env['COMMON_GRPC_ENDPOINT'] as string)
       await waitForServiceToBeReady(hostname, parseInt(port))
-      await Trans.init(commonClient);
-      const config = await initConfig();
-      const db = await initDB(config);
+      await Trans.init(commonClient)
+      const config = await initConfig()
+      const db = await initDB(config)
       await AppData.instance().init(db)
 
-      _system = { config, db };
-      _initialized = true;
-      return _system;
+      _system = { config, db }
+      _initialized = true
+      return _system
     } catch (err) {
-      console.log(err);
-      throw Error("An Error occurred while initing server data & config")
+      console.log(err)
+      throw Error('An Error occurred while initing server data & config')
     }
-  })();
+  })()
 
-  return _initPromise;
+  return _initPromise
 }
 
 async function initConfig(): Promise<Config> {
@@ -70,10 +70,10 @@ async function initDB(cfg: Config): Promise<Pool> {
     })
 
     try {
-      await pool.query('SELECT 1');
-      console.log('DB connected successfully');
+      await pool.query('SELECT 1')
+      console.log('DB connected successfully')
     } catch (err) {
-      throw Error(`DB connection test failed: ${err}`);
+      throw Error(`DB connection test failed: ${err}`)
     }
 
     return pool

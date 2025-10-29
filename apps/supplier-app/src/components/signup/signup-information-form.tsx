@@ -21,29 +21,29 @@ export interface SignupInformationFormValues {
 
 function SignupInformationForm({ form, tr }: Props) {
   return (
-    <div className="grid grid-cols-2 gap-x-6 gap-y-8 max-w-[700px]">
+    <div className='grid grid-cols-2 gap-x-6 gap-y-8 max-w-[700px]'>
       <TextInput
         label={tr.un}
         placeholder={tr.un}
         withAsterisk
-        size="sm"
-        className="mb-3"
+        size='sm'
+        className='mb-3'
         {...form.getInputProps('username')}
       />
       <TextInput
         label={tr.fn}
         placeholder={tr.fn}
         withAsterisk
-        size="sm"
-        className="mb-3"
+        size='sm'
+        className='mb-3'
         {...form.getInputProps('first_name')}
       />
       <TextInput
         label={tr.ln}
         placeholder={tr.ln}
         withAsterisk
-        size="sm"
-        className="mb-3"
+        size='sm'
+        className='mb-3'
         {...form.getInputProps('last_name')}
       />
     </div>

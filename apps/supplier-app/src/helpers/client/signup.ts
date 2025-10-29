@@ -29,7 +29,7 @@ export class SignupHelpers {
     idx: number,
     tr: ObjString,
     info: SignupInformationForm,
-    auth: SignupAuthInfoForm,
+    auth: SignupAuthInfoForm
   ): Promise<boolean> => {
     let valid = false
     if (idx === 0) valid = !info.validate().hasErrors
@@ -50,7 +50,7 @@ export class SignupHelpers {
     image: Attachment | undefined,
     setImgErr: Dispatch<SetStateAction<string | undefined>>,
     router: ReturnType<typeof useRouter>,
-    updateStep: ((idx: number) => void) | undefined,
+    updateStep: ((idx: number) => void) | undefined
   ) => {
     if (sub) return
     setSub(true)
@@ -112,7 +112,7 @@ export class SignupHelpers {
   static requestBuilder(
     info: ReturnType<typeof this.infoFormValues>,
     auth: ReturnType<typeof this.authInfoFormValues>,
-    image: Attachment | undefined,
+    image: Attachment | undefined
   ) {
     const req: SupplierCreateRequest = {
       username: info.username,
@@ -130,9 +130,9 @@ export class SignupHelpers {
     error: AppError,
     info: SignupInformationForm,
     auth: SignupAuthInfoForm,
-    setImgErr: Dispatch<SetStateAction<string | undefined>>,
+    setImgErr: Dispatch<SetStateAction<string | undefined>>
   ) {
-    const e = error.errors?.data
+    const e = error.errors?.values
     if (!e) return
     if (e.hasOwnProperty('username')) info.setFieldError('username', e['username'])
     if (e.hasOwnProperty('first_name')) info.setFieldError('first_name', e['first_name'])

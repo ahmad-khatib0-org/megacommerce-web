@@ -17,14 +17,16 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     await system()
   } catch (err) {
     return (
-      <html lang="en" {...mantineHtmlProps}>
+      <html lang='en' {...mantineHtmlProps}>
         <head>
           <ColorSchemeScript />
         </head>
-        <body><ServerError /></body>
+        <body>
+          <ServerError />
+        </body>
       </html>
     )
   }
 
-  return <ServerWrapper >{children}</ServerWrapper>
+  return <ServerWrapper>{children}</ServerWrapper>
 }

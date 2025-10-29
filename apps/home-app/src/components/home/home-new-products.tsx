@@ -11,13 +11,15 @@ function HomeNewProducts({ tr }: Props) {
     id: `product-${i}`,
     name: 'the product name and this is ...',
     image: '/images/login.png',
-    body: <>
-      <p className='font-bold text-base'>40.44$</p>
-      <p className='font-light mt-2'>Added 1 day ago</p>
-    </>
+    body: (
+      <>
+        <p className='font-bold text-base'>40.44$</p>
+        <p className='font-light mt-2'>Added 1 day ago</p>
+      </>
+    ),
   }))
 
   return <HomeProductsWrapper title={tr.hot} products={products} />
 }
 
-export default HomeNewProducts 
+export default HomeNewProducts

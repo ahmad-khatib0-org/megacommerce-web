@@ -9,7 +9,7 @@ import {
   PRODUCT_BRAND_NAME_MIN_LENGTH,
   PRODUCT_TITLE_MAX_LENGTH,
   PRODUCT_TITLE_MIN_LENGTH,
-} from "@megacommerce/shared"
+} from '@megacommerce/shared'
 
 type Props = {
   tr: ObjString
@@ -18,7 +18,7 @@ type Props = {
 }
 
 export interface Category {
-  id: string,
+  id: string
   name: string
   image: string
   subcategories: IDName[]
@@ -38,39 +38,38 @@ export interface ProductCreateIdentityFormValues {
 }
 
 function ProductCreateIdentity({ tr, form, categories }: Props) {
-  const combobox = useCombobox();
-  const [inputValue, setInputValue] = useState('');
-  const [_, setCategoryName] = useState('');
+  const combobox = useCombobox()
+  const [inputValue, setInputValue] = useState('')
+  const [_, setCategoryName] = useState('')
 
-  const normalized = inputValue.trim().toLowerCase();
-  const filteredOptions = normalized.length === 0
-    ? categories
-    : categories.filter(c =>
-      c.subcategories.some(s => s.name.toLowerCase().includes(normalized))
-    );
+  const normalized = inputValue.trim().toLowerCase()
+  const filteredOptions =
+    normalized.length === 0
+      ? categories
+      : categories.filter((c) => c.subcategories.some((s) => s.name.toLowerCase().includes(normalized)))
 
   const options = filteredOptions.map((c) => (
     <Combobox.Group label={c.name} aria-label={c.name} key={c.id}>
       {c.subcategories
-        .filter(s => normalized.length === 0 || s.name.toLowerCase().includes(normalized))
+        .filter((s) => normalized.length === 0 || s.name.toLowerCase().includes(normalized))
         .map((s) => (
           <Combobox.Option
             value={s.id}
             key={s.id}
             onClick={() => {
               // when selecting, update both selected id (value sent to form) and visible name
-              form.setFieldValue('category', c.id);
-              form.setFieldValue('subcategory', s.id);
-              setInputValue(s.name);
-              setCategoryName(s.name);
-              combobox.closeDropdown();
+              form.setFieldValue('category', c.id)
+              form.setFieldValue('subcategory', s.id)
+              setInputValue(s.name)
+              setCategoryName(s.name)
+              combobox.closeDropdown()
             }}
             aria-label={s.name}>
             {s.name}
           </Combobox.Option>
         ))}
     </Combobox.Group>
-  ));
+  ))
 
   return (
     <div className='relative flex flex-col gap-y-4 w-full max-w-[800px] overflow-y-auto'>
@@ -78,7 +77,7 @@ function ProductCreateIdentity({ tr, form, categories }: Props) {
         label={tr.proTitle}
         placeholder={tr.proTitle}
         withAsterisk
-        size="sm"
+        size='sm'
         minLength={PRODUCT_TITLE_MIN_LENGTH}
         maxLength={PRODUCT_TITLE_MAX_LENGTH}
         {...form.getInputProps('title')}
@@ -88,16 +87,16 @@ function ProductCreateIdentity({ tr, form, categories }: Props) {
           <TextInput
             label={tr.proType}
             withAsterisk
-            placeholder="Pick value or type anything"
+            placeholder='Pick value or type anything'
             value={inputValue}
             onClick={() => combobox.openDropdown()}
             onFocus={() => combobox.openDropdown()}
             onBlur={() => combobox.closeDropdown()}
             onChange={(event) => {
-              const v = event.currentTarget.value;
-              setInputValue(v);
-              setCategoryName('');
-              combobox.openDropdown();
+              const v = event.currentTarget.value
+              setInputValue(v)
+              setCategoryName('')
+              combobox.openDropdown()
               combobox.updateSelectedOptionIndex()
             }}
           />
@@ -107,7 +106,9 @@ function ProductCreateIdentity({ tr, form, categories }: Props) {
             {options.length === 0 ? <Combobox.Empty>Nothing found</Combobox.Empty> : options}
           </Combobox.Options>
         </Combobox.Dropdown>
-        {form.getInputProps("category").error ? <p className='text-red-500 text-sm'>{form.getInputProps('category').error}</p> : null}
+        {form.getInputProps('category').error ? (
+          <p className='text-red-500 text-sm'>{form.getInputProps('category').error}</p>
+        ) : null}
       </Combobox>
       <Checkbox
         label={tr.proHasVar}
@@ -120,7 +121,7 @@ function ProductCreateIdentity({ tr, form, categories }: Props) {
         label={tr.brand}
         placeholder={tr.brand}
         withAsterisk
-        size="sm"
+        size='sm'
         minLength={PRODUCT_BRAND_NAME_MIN_LENGTH}
         maxLength={PRODUCT_BRAND_NAME_MAX_LENGTH}
         {...form.getInputProps('brand_name')}
@@ -136,7 +137,7 @@ function ProductCreateIdentity({ tr, form, categories }: Props) {
         label={tr.proID}
         placeholder={tr.proID}
         withAsterisk
-        size="sm"
+        size='sm'
         {...form.getInputProps('product_id')}
       />
       <Checkbox

@@ -11,8 +11,8 @@ interface AppState {
 }
 
 export const useAppStore = create<AppState>((set) => ({
-  clientInfo: { currency: "", language: "", country: "" },
+  clientInfo: { currency: '', language: '', country: '' },
   isAllCategoriesShown: false,
   setClientInfo: (clientInfo: ClientInformation) => set({ clientInfo }),
-  setIsAllCategoriesShown: (isAllCategoriesShown: boolean) => set({ isAllCategoriesShown })
+  setIsAllCategoriesShown: (isAllCategoriesShown: boolean) => set({ isAllCategoriesShown }),
 }))

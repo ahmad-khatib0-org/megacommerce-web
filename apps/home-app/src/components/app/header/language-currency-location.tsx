@@ -13,22 +13,24 @@ function LanguageCurrencyLocation({ tr, langs }: Props) {
   const { currency, country, language } = useAppStore((state) => state.clientInfo)
 
   const onSave = (data: OnSave) => {
-    console.log(data);
+    console.log(data)
   }
 
   if (!language) return null
-  return <LanguageCurrencyLocationComp
-    onSave={onSave}
-    selectedCountryCode={country}
-    selectedCurrency={currency}
-    selectedLanguage={language}
-    languages={langs}
-    shipTo={tr.shipTo}
-    websiteLang={tr.websiteLang}
-    language={tr.language}
-    currency={tr.currency}
-    save={tr.save}
-  />
+  return (
+    <LanguageCurrencyLocationComp
+      onSave={onSave}
+      selectedCountryCode={country}
+      selectedCurrency={currency}
+      selectedLanguage={language}
+      languages={langs}
+      shipTo={tr.shipTo}
+      websiteLang={tr.websiteLang}
+      language={tr.language}
+      currency={tr.currency}
+      save={tr.save}
+    />
+  )
 }
 
 export default LanguageCurrencyLocation

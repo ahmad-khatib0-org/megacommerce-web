@@ -26,7 +26,7 @@ async function getPageTrans(tr: TransFunction, lang: string) {
 async function checkSearchParams(
   sp: SearchParams,
   tr: TransFunction,
-  lang: string,
+  lang: string
 ): Promise<EmailConfirmationRequest> {
   const { token, token_id, email } = await sp
   const trID = 'url.search_params.missing'
@@ -57,8 +57,8 @@ async function Page({ searchParams }: Props) {
   }
 
   return (
-    <main className="">
-      <section className="min-h-screen flex justify-center items-center">
+    <main className=''>
+      <section className='min-h-screen flex justify-center items-center'>
         <EmailVerificationWrapper tr={trans} req={request} />
       </section>
     </main>

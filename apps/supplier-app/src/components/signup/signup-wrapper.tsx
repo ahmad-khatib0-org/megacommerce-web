@@ -31,9 +31,9 @@ function SignupWrapper({ tr, passwordRequirements }: Props) {
   const router = useRouter()
 
   const steps = [
-    <SignupInformationForm key="company" form={infoForm} tr={tr} />,
-    <SignupAuthInfoForm key="auth" form={authForm} tr={tr} passwordRequirements={passwordRequirements} />,
-    <SignupAdditionalInfoForm key="additional" tr={tr} uppy={uppy} errMsg={imageErr} />,
+    <SignupInformationForm key='company' form={infoForm} tr={tr} />,
+    <SignupAuthInfoForm key='auth' form={authForm} tr={tr} passwordRequirements={passwordRequirements} />,
+    <SignupAdditionalInfoForm key='additional' tr={tr} uppy={uppy} errMsg={imageErr} />,
   ]
 
   return (
@@ -51,7 +51,7 @@ function SignupWrapper({ tr, passwordRequirements }: Props) {
             image,
             setImageErr,
             router,
-            stepperRef.current?.updateStep,
+            stepperRef.current?.updateStep
           )
         }
         labels={[tr.s1Label, tr.s2Label, tr.s3Label]}
@@ -60,7 +60,7 @@ function SignupWrapper({ tr, passwordRequirements }: Props) {
         nextMsg={tr.next}
         prevMsg={tr.prev}
         onNext={(idx) => SignupHelpers.onClickNext(idx, tr, infoForm, authForm)}
-        className="pe-4 min-h-[80vh]"
+        className='pe-4 min-h-[80vh]'
       />
     </>
   )

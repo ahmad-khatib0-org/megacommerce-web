@@ -1,6 +1,6 @@
 import 'client-only'
-import { useAppStore } from "@/store/app";
+import { useAppStore } from '@/store/app'
 
 export const useStore = {
-  app: useAppStore
+  app: useAppStore,
 }

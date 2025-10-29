@@ -1,12 +1,16 @@
-import { RefObject, useEffect, useMemo } from "react"
-import { NumberInput, Select } from "@mantine/core"
-import { UseFormReturnType } from "@mantine/form"
+import { RefObject, useEffect, useMemo } from 'react'
+import { NumberInput, Select } from '@mantine/core'
+import { UseFormReturnType } from '@mantine/form'
 
-import { currencies } from "@megacommerce/ui/shared"
-import { ObjString, ValueLabel } from "@megacommerce/shared"
-import ProductCreateOfferWithoutVariations, { ProductCreateOfferWithoutVariationsForm } from "@/components/products/create/product-create-offer-without-variations"
-import ProductCreateOfferWithVariations, { ProductCreateOfferWithVariationsHandler } from "@/components/products/create/product-create-offer-with-variations"
-import { useProductsStore } from "@/store"
+import { currencies } from '@megacommerce/ui/shared'
+import { ObjString, ValueLabel } from '@megacommerce/shared'
+import ProductCreateOfferWithoutVariations, {
+  ProductCreateOfferWithoutVariationsForm,
+} from '@/components/products/create/product-create-offer-without-variations'
+import ProductCreateOfferWithVariations, {
+  ProductCreateOfferWithVariationsHandler,
+} from '@/components/products/create/product-create-offer-with-variations'
+import { useProductsStore } from '@/store'
 
 type Props = {
   tr: ObjString
@@ -21,30 +25,38 @@ type Props = {
 export type ProductCreateOfferForm = UseFormReturnType<ProductCreateOfferFormValues>
 
 /**
-  * @field processing_time Days until shipping starts
-*/
+ * @field processing_time Days until shipping starts
+ */
 export interface ProductCreateOfferFormValues {
-  currency: string;
-  fulfillment_type: string;
-  processing_time: number;
+  currency: string
+  fulfillment_type: string
+  processing_time: number
 }
 
 export interface ProductCreateOfferPriceFormValues {
-  sku: string;
-  quantity: number;
-  price: number;
-  offering_condition: string;
-  condition_note: string | null;
-  list_price: number | null;
+  sku: string
+  quantity: number
+  price: number
+  offering_condition: string
+  condition_note: string | null
+  list_price: number | null
   has_sale_price: boolean
-  sale_price: number | null;
-  sale_price_start: string | null;
-  sale_price_end: string | null;
+  sale_price: number | null
+  sale_price_start: string | null
+  sale_price_end: string | null
   has_minimum_orders: boolean
-  minimum_orders: { id: string; price: number; quantity: number }[] | null; // optional
+  minimum_orders: { id: string; price: number; quantity: number }[] | null // optional
 }
 
-function ProductCreateOffer({ tr, form, offering, filfillment, hasVariations, withouVariantForm, withVariantFormRef }: Props) {
+function ProductCreateOffer({
+  tr,
+  form,
+  offering,
+  filfillment,
+  hasVariations,
+  withouVariantForm,
+  withVariantFormRef,
+}: Props) {
   const cur = useMemo(() => Object.keys(currencies).map((c) => c), [currencies])
   const productOfferFormValues = useProductsStore((state) => state.product_offer_form_values)
 
@@ -65,7 +77,7 @@ function ProductCreateOffer({ tr, form, offering, filfillment, hasVariations, wi
         data={filfillment}
         allowDeselect={false}
         withAsterisk
-        size="sm"
+        size='sm'
         {...form.getInputProps('fulfillment_type')}
       />
       <NumberInput
@@ -73,7 +85,7 @@ function ProductCreateOffer({ tr, form, offering, filfillment, hasVariations, wi
         placeholder={tr.procTime}
         aria-label={tr.procTime}
         withAsterisk
-        size="sm"
+        size='sm'
         {...form.getInputProps('processing_time')}
       />
       <Select
@@ -83,12 +95,16 @@ function ProductCreateOffer({ tr, form, offering, filfillment, hasVariations, wi
         data={cur}
         withAsterisk
         allowDeselect={false}
-        size="sm"
+        size='sm'
         searchable
         {...form.getInputProps('currency')}
       />
-      {!hasVariations && <ProductCreateOfferWithoutVariations tr={tr} offering={offering} form={withouVariantForm} />}
-      {hasVariations && <ProductCreateOfferWithVariations ref={withVariantFormRef} tr={tr} offering={offering} />}
+      {!hasVariations && (
+        <ProductCreateOfferWithoutVariations tr={tr} offering={offering} form={withouVariantForm} />
+      )}
+      {hasVariations && (
+        <ProductCreateOfferWithVariations ref={withVariantFormRef} tr={tr} offering={offering} />
+      )}
     </div>
   )
 }

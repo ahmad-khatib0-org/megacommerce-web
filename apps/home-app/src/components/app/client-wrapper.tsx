@@ -1,9 +1,9 @@
 'use client'
-import { useEffect, useState } from "react"
+import { useEffect, useState } from 'react'
 
-import { PageLoader } from "@megacommerce/ui/shared"
-import { ClientInformation } from "@megacommerce/shared/client"
-import { useAppStore } from "@/store"
+import { PageLoader } from '@megacommerce/ui/shared'
+import { ClientInformation } from '@megacommerce/shared/client'
+import { useAppStore } from '@/store'
 
 type Props = {
   clientInfo: ClientInformation

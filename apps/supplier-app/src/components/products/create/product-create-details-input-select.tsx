@@ -1,7 +1,11 @@
-import { Select } from "@mantine/core"
+import { Select } from '@mantine/core'
 
-import { SubcategoryAttribute, SubcategoryAttributeTranslation, SubcategoryTranslations } from "@megacommerce/proto/web/products/v1/product_categories"
-import { ValueLabel } from "@megacommerce/shared"
+import {
+  SubcategoryAttribute,
+  SubcategoryAttributeTranslation,
+  SubcategoryTranslations,
+} from '@megacommerce/proto/web/products/v1/product_categories'
+import { ValueLabel } from '@megacommerce/shared'
 
 type Props = {
   fieldData: SubcategoryAttribute
@@ -12,9 +16,10 @@ type Props = {
 }
 
 function ProductCreateDetailsInputSelect({ fieldData, fieldName, fieldTrans, field, trans }: Props) {
-  const selectData: ValueLabel[] = Object
-    .entries(trans.data[fieldName].values)
-    .map(([label, value]) => ({ label, value, }));
+  const selectData: ValueLabel[] = Object.entries(trans.data[fieldName].values).map(([label, value]) => ({
+    label,
+    value,
+  }))
 
   return (
     <Select
@@ -24,10 +29,10 @@ function ProductCreateDetailsInputSelect({ fieldData, fieldName, fieldTrans, fie
       data={selectData}
       allowDeselect={!fieldData.required}
       withAsterisk
-      size="sm"
+      size='sm'
       {...field}
     />
-  );
+  )
 }
 
 export default ProductCreateDetailsInputSelect

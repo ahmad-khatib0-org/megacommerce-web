@@ -13,7 +13,7 @@ type Props = {
 async function ServerWrapper({ children }: Props) {
   const ci = await getClientInformation()
   return (
-    <html lang="en" {...mantineHtmlProps}>
+    <html lang='en' {...mantineHtmlProps}>
       <head>
         <ColorSchemeScript />
       </head>

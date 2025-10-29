@@ -7,7 +7,7 @@ import { IconSquareX } from '@tabler/icons-react'
 import { toast } from 'react-toastify'
 
 import { Attachment } from '@megacommerce/proto/web/shared/v1/attachment'
-import { Button as SharedButton } from "@megacommerce/ui/shared"
+import { Button as SharedButton } from '@megacommerce/ui/shared'
 import { ObjString, PRODUCTS_MAX_IMAGES_COUNT } from '@megacommerce/shared'
 import { useProductsStore } from '@/store'
 
@@ -17,13 +17,21 @@ type Props = {
   errMsg?: string
   images: Attachment[]
   setImages: Dispatch<SetStateAction<Attachment[]>>
-  variantsImages: { [key: string]: { title: string, images: Attachment[] } }
-  setVariantsImages: Dispatch<SetStateAction<{ [key: string]: { title: string, images: Attachment[] } }>>
+  variantsImages: { [key: string]: { title: string; images: Attachment[] } }
+  setVariantsImages: Dispatch<SetStateAction<{ [key: string]: { title: string; images: Attachment[] } }>>
 }
 
-function ProductCreateMedia({ tr, uppy, errMsg, images, setImages, variantsImages, setVariantsImages }: Props) {
+function ProductCreateMedia({
+  tr,
+  uppy,
+  errMsg,
+  images,
+  setImages,
+  variantsImages,
+  setVariantsImages,
+}: Props) {
   const titles = useProductsStore((state) => state.product_details_variations_titles)
-  const [title, setTitle] = useState<string | null>("")
+  const [title, setTitle] = useState<string | null>('')
   const [showAssign, setShowAssign] = useState(false)
 
   const assignImages = () => {
@@ -39,7 +47,7 @@ function ProductCreateMedia({ tr, uppy, errMsg, images, setImages, variantsImage
     }
 
     // Update variants images
-    setVariantsImages(prevVariants => {
+    setVariantsImages((prevVariants) => {
       const existing = prevVariants[title!]
       const newVariants = { ...prevVariants }
 
@@ -52,7 +60,7 @@ function ProductCreateMedia({ tr, uppy, errMsg, images, setImages, variantsImage
         const varImages = [...existing.images, ...currentImages]
         newVariants[title!] = {
           images: varImages,
-          title: titles.find((t) => t.value === title)?.label ?? ''
+          title: titles.find((t) => t.value === title)?.label ?? '',
         }
       } else {
         if (currentImages.length > PRODUCTS_MAX_IMAGES_COUNT) {
@@ -61,7 +69,7 @@ function ProductCreateMedia({ tr, uppy, errMsg, images, setImages, variantsImage
         }
         newVariants[title!] = {
           images: [...currentImages],
-          title: titles.find((t) => t.value === title)?.label ?? ''
+          title: titles.find((t) => t.value === title)?.label ?? '',
         }
       }
       return newVariants
@@ -96,23 +104,24 @@ function ProductCreateMedia({ tr, uppy, errMsg, images, setImages, variantsImage
       setVariantsImages(newVariants)
     }
     toast.warn(
-      <div className="flex flex-col px-6">
-        <p className="font-light">{tr.rmImgVar}</p>
-        <div className="flex gap-6 mt-2">
+      <div className='flex flex-col px-6'>
+        <p className='font-light'>{tr.rmImgVar}</p>
+        <div className='flex gap-6 mt-2'>
+          <SharedButton onClick={() => toast.dismiss(toastId)} className='border border-orange-300'>
+            {tr.can}
+          </SharedButton>
           <SharedButton
-            onClick={() => toast.dismiss(toastId)}
-            className="border border-orange-300"
-          >{tr.can}</SharedButton>
-          <SharedButton className="bg-orange-400 text-white"
+            className='bg-orange-400 text-white'
             onClick={() => {
               confirmDelete()
               toast.dismiss(toastId)
-            }}
-          >{tr.confirm}</SharedButton>
+            }}>
+            {tr.confirm}
+          </SharedButton>
         </div>
       </div>,
       { autoClose: false, closeOnClick: false, toastId }
-    );
+    )
   }
 
   useEffect(() => {
@@ -120,36 +129,42 @@ function ProductCreateMedia({ tr, uppy, errMsg, images, setImages, variantsImage
   }, [uppy.getFiles().length])
 
   return (
-    <div className="flex flex-col justify-center w-full px-2 mt-4 h-full">
-      {errMsg && <p className="block font-medium text-center my-3 text-red-500 text-lg">{errMsg}</p>}
+    <div className='flex flex-col justify-center w-full px-2 mt-4 h-full'>
+      {errMsg && <p className='block font-medium text-center my-3 text-red-500 text-lg'>{errMsg}</p>}
       <div className='grid grid-cols-[62%,1fr] h-full'>
         <div className='flex flex-col'>
-          <p className="text-center my-4">{tr.proMediaDesc}</p>
-          {titles.length > 0 && <div className='flex justify-evenly items-end mb-2'>
-            <Select
-              className='w-80'
-              styles={{ dropdown: { zIndex: 99999 } }}
-              label={tr.imgRelVar}
-              placeholder={tr.varImages}
-              aria-label={tr.varImages}
-              data={titles}
-              value={title}
-              onChange={setTitle}
-              allowDeselect={false}
-              withAsterisk
-              size="sm"
-            />
-            {showAssign && <HoverCard width={380} shadow="md">
-              <HoverCard.Target>
-                <Button onClick={() => assignImages()}>{tr.assign}</Button>
-              </HoverCard.Target>
-              <HoverCard.Dropdown style={{ zIndex: 999999 }}><p>{tr.assignInfo}</p></HoverCard.Dropdown>
-            </HoverCard>}
-          </div>}
+          <p className='text-center my-4'>{tr.proMediaDesc}</p>
+          {titles.length > 0 && (
+            <div className='flex justify-evenly items-end mb-2'>
+              <Select
+                className='w-80'
+                styles={{ dropdown: { zIndex: 99999 } }}
+                label={tr.imgRelVar}
+                placeholder={tr.varImages}
+                aria-label={tr.varImages}
+                data={titles}
+                value={title}
+                onChange={setTitle}
+                allowDeselect={false}
+                withAsterisk
+                size='sm'
+              />
+              {showAssign && (
+                <HoverCard width={380} shadow='md'>
+                  <HoverCard.Target>
+                    <Button onClick={() => assignImages()}>{tr.assign}</Button>
+                  </HoverCard.Target>
+                  <HoverCard.Dropdown style={{ zIndex: 999999 }}>
+                    <p>{tr.assignInfo}</p>
+                  </HoverCard.Dropdown>
+                </HoverCard>
+              )}
+            </div>
+          )}
           <Dashboard
             uppy={uppy}
             height={350}
-            width="100%"
+            width='100%'
             proudlyDisplayPoweredByUppy={false}
             note={tr.maxImgSz}
             hideUploadButton={true}
@@ -163,21 +178,38 @@ function ProductCreateMedia({ tr, uppy, errMsg, images, setImages, variantsImage
         </div>
         <div className='flex items-center justify-center'>Video Selection</div>
       </div>
-      {Object.keys(variantsImages).length > 0 && Object.keys(variantsImages).map((variant) => {
-        return <div key={variant} className='flex flex-col border border-black/70 px-2 py-4 mb-8'>
-          <p className='text-center mb-2 font-medium w-full border border-orange-300 py-3'>{tr.imgRelVar}: {variantsImages[variant].title}</p>
-          <div className='flex flex-wrap gap-x-6 gap-y-4 mt-2'>
-            {variantsImages[variant].images.map((img) => {
-              return <div key={img.id} className='relative size-60 border border-black/20 rounded-md shadow-sm'>
-                <Image src={img.base64} alt={img.filename} sizes="100%" fill className='object-cover rounded-md' />
-                <div onClick={() => removeVariantImage(variant, img.id)} className='absolute -right-2 -top-2 bg-white cursor-pointer'>
-                  <IconSquareX />
-                </div>
+      {Object.keys(variantsImages).length > 0 &&
+        Object.keys(variantsImages).map((variant) => {
+          return (
+            <div key={variant} className='flex flex-col border border-black/70 px-2 py-4 mb-8'>
+              <p className='text-center mb-2 font-medium w-full border border-orange-300 py-3'>
+                {tr.imgRelVar}: {variantsImages[variant].title}
+              </p>
+              <div className='flex flex-wrap gap-x-6 gap-y-4 mt-2'>
+                {variantsImages[variant].images.map((img) => {
+                  return (
+                    <div
+                      key={img.id}
+                      className='relative size-60 border border-black/20 rounded-md shadow-sm'>
+                      <Image
+                        src={img.base64}
+                        alt={img.filename}
+                        sizes='100%'
+                        fill
+                        className='object-cover rounded-md'
+                      />
+                      <div
+                        onClick={() => removeVariantImage(variant, img.id)}
+                        className='absolute -right-2 -top-2 bg-white cursor-pointer'>
+                        <IconSquareX />
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
-            })}
-          </div>
-        </div>
-      })}
+            </div>
+          )
+        })}
     </div>
   )
 }

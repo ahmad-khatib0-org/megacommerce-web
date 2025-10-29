@@ -15,9 +15,12 @@ function HomeCarousel({ }: Props) {
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [emblaRef, emblaApi] = useEmblaCarousel({}, [autoplay()])
 
-  const onClick = useCallback((idx: number) => {
-    if (emblaApi) emblaApi.scrollTo(idx)
-  }, [emblaApi])
+  const onClick = useCallback(
+    (idx: number) => {
+      if (emblaApi) emblaApi.scrollTo(idx)
+    },
+    [emblaApi]
+  )
 
   const carousels = ['this is the 1', 'this is the 2', 'this is the 3']
 
@@ -31,7 +34,6 @@ function HomeCarousel({ }: Props) {
     return () => {
       emblaApi.off('select', update)
     }
-
   }, [emblaApi])
 
   return (
@@ -50,13 +52,16 @@ function HomeCarousel({ }: Props) {
       </div>
       <div className='absolute w-max left-1/2 -translate-x-1/2 bottom-2'>
         <ul className='flex gap-x-2'>
-          {carousels.map((c, idx) => <li
-            key={c}
-            onClick={() => onClick(idx)}
-            className='embla__prev flex items-center cursor-pointer h-4'
-          >
-            <span className={`block h-1.5 w-10 border border-black/10 ${selectedIndex === idx ? 'bg-white' : 'bg-white/40'}`}></span>
-          </li>)}
+          {carousels.map((c, idx) => (
+            <li
+              key={c}
+              onClick={() => onClick(idx)}
+              className='embla__prev flex items-center cursor-pointer h-4'>
+              <span
+                className={`block h-1.5 w-10 border border-black/10 ${selectedIndex === idx ? 'bg-white' : 'bg-white/40'
+                  }`}></span>
+            </li>
+          ))}
         </ul>
       </div>
     </div>

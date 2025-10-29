@@ -5,7 +5,10 @@ import { ProductDataResponseData } from '@megacommerce/proto/web/products/v1/pro
 import { ProductVariationsFormValues } from '@/components/products/create/product-create-details-with-variations'
 
 import { ValueLabel } from '@megacommerce/shared'
-import { ProductCreateOfferFormValues, ProductCreateOfferPriceFormValues } from '@/components/products/create/product-create-offer'
+import {
+  ProductCreateOfferFormValues,
+  ProductCreateOfferPriceFormValues,
+} from '@/components/products/create/product-create-offer'
 import { ProductCreateOfferWithVariationsFormValues } from '@/components/products/create/product-create-offer-with-variations'
 
 interface ProductCategoryInfo {
@@ -22,7 +25,7 @@ interface OfferFormValues {
 interface ProductsState {
   product_details_data: ProductDataResponseData | null
   product_details_form_values: Record<string, any>
-  set_product_details_form_values: (product_details_form_values: Record<string, any>) => void,
+  set_product_details_form_values: (product_details_form_values: Record<string, any>) => void
   product_details_variations_form_values: ProductVariationsFormValues
   set_product_details_variations_form_values: (v: ProductVariationsFormValues) => void
   product_details_variations_titles: ValueLabel[]
@@ -38,17 +41,18 @@ const storeFn: StateCreator<ProductsState> = (set) => ({
   product_details_form_values: {},
   set_product_details_form_values: (product_details_form_values) => set({ product_details_form_values }),
   product_details_variations_form_values: { variations: [] },
-  set_product_details_variations_form_values: (product_details_variations_form_values) => set({ product_details_variations_form_values }),
+  set_product_details_variations_form_values: (product_details_variations_form_values) =>
+    set({ product_details_variations_form_values }),
   product_details_variations_titles: [],
-  set_product_details_variations_titles: (product_details_variations_titles: ValueLabel[]) => set({ product_details_variations_titles }),
-  product_category_info: { category: "", subcategory: "" },
+  set_product_details_variations_titles: (product_details_variations_titles: ValueLabel[]) =>
+    set({ product_details_variations_titles }),
+  product_category_info: { category: '', subcategory: '' },
   set_product_details_data: (product_details_data) => set({ product_details_data }),
   product_offer_form_values: null,
-  set_product_offer_form_values: (product_offer_form_values) => set({ product_offer_form_values })
+  set_product_offer_form_values: (product_offer_form_values) => set({ product_offer_form_values }),
 })
 
 export const useProductsStore =
   process.env.NODE_ENV === 'development'
     ? create<ProductsState>()(devtools(storeFn, { name: 'Products Store' }))
     : create<ProductsState>()(storeFn)
-

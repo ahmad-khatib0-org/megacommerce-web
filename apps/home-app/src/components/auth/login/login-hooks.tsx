@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
-import { useForm } from "@mantine/form"
-import { object, string } from "yup"
-import { toast } from "react-toastify"
-import { yupResolver } from "mantine-form-yup-resolver"
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useForm } from '@mantine/form'
+import { object, string } from 'yup'
+import { toast } from 'react-toastify'
+import { yupResolver } from 'mantine-form-yup-resolver'
 
-import { AppError } from "@megacommerce/proto/shared/v1/error"
-import { SuccessResponseData } from "@megacommerce/proto/shared/v1/types"
-import { ObjString, UserPasswordMaxLength, UserPasswordMinLength } from "@megacommerce/shared"
-import { handleGrpcWebErr } from "@megacommerce/shared/client"
-import { LoginHelpers, PagesPaths, usersClient } from "@/helpers/client"
+import { AppError } from '@megacommerce/proto/shared/v1/error'
+import { SuccessResponseData } from '@megacommerce/proto/shared/v1/types'
+import { ObjString, UserPasswordMaxLength, UserPasswordMinLength } from '@megacommerce/shared'
+import { handleGrpcWebErr } from '@megacommerce/shared/client'
+import { LoginHelpers, PagesPaths, usersClient } from '@/helpers/client'
 
 type Props = {
   tr: ObjString
@@ -18,21 +18,23 @@ type Props = {
 function LoginHooks({ tr }: Props) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
-  const [challenge, setChallenge] = useState("")
+  const [challenge, setChallenge] = useState('')
 
   const form = useForm({
     validateInputOnBlur: true,
     initialValues: { email: '', password: '' },
-    validate: yupResolver(object().shape({
-      email: string().email().required(tr.emailErr),
-      password: string()
-        .min(UserPasswordMinLength, tr.passMinErr)
-        .max(UserPasswordMaxLength, tr.passMaxErr)
-        .required(tr.r),
-    }))
+    validate: yupResolver(
+      object().shape({
+        email: string().email().required(tr.emailErr),
+        password: string()
+          .min(UserPasswordMinLength, tr.passMinErr)
+          .max(UserPasswordMaxLength, tr.passMaxErr)
+          .required(tr.r),
+      })
+    ),
   })
 
-  const onSubmit = async ({ email, password }: { email: string, password: string }) => {
+  const onSubmit = async ({ email, password }: { email: string; password: string }) => {
     if (loading) return
     setLoading(true)
     try {
@@ -49,14 +51,14 @@ function LoginHooks({ tr }: Props) {
   const handleError = (error: AppError) => {
     const errors = error.errors
     if (errors) {
-      const e = errors.data
+      const e = errors.values
       if (e['error']) {
         const url = `${PagesPaths.loginError}?error=${e['error']}&error_description=${e['error_description']}`
         router.replace(url)
         return
       }
-      if (e['email']) form.setFieldError("email", e['email'])
-      if (e['password']) form.setFieldError("password", e['password'])
+      if (e['email']) form.setFieldError('email', e['email'])
+      if (e['password']) form.setFieldError('password', e['password'])
       if (error.message) toast.error(error.message)
     }
   }
@@ -82,7 +84,11 @@ function LoginHooks({ tr }: Props) {
   }, [])
 
   return {
-    router, loading, form, setLoading, onSubmit,
+    router,
+    loading,
+    form,
+    setLoading,
+    onSubmit,
   }
 }
 
