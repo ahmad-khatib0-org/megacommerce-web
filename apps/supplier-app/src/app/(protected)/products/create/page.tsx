@@ -19,8 +19,6 @@ import {
   PRODUCT_FULFILLMENT_TYPE,
   PRODUCT_MINIMUM_ORDER_MAX_OPTIONS,
   PRODUCTS_MAX_IMAGES_COUNT,
-  PRODUCT_BATTERIES_NOTE_MIN_LENGTH,
-  PRODUCT_BATTERIES_NOTE_MAX_LENGTH,
 } from '@megacommerce/shared'
 
 import ProductCreateWrapper from '@/components/products/create/product-create-wrapper'
@@ -130,14 +128,11 @@ const getTranslations = (lang: string) => {
     proImgVar: tr(lang, 'products.media.variant_images.not_provided'),
     sel1Optoin: tr(lang, 'form.field.select.at_least_one'),
     notAppOr: tr(lang, 'form.field.select.not_applicable_or_rest'),
-    batteryNoteErr: tr(lang, 'products.safety_and_compliance.batteries_note.error', {
-      Min: PRODUCT_BATTERIES_NOTE_MIN_LENGTH,
-      Max: PRODUCT_BATTERIES_NOTE_MAX_LENGTH,
-    }),
+    mustChecked: tr(lang, 'form.field.checkbox.checked.error'),
   }
 }
 
-async function Page({}) {
+async function Page({ }) {
   const lang = await Trans.getUserLang()
   const tr = getTranslations(lang)
 

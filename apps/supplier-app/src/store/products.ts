@@ -23,21 +23,25 @@ interface OfferFormValues {
 }
 
 interface ProductsState {
+  product_category_info: ProductCategoryInfo
   product_details_data: ProductDataResponseData | null
+  set_product_details_data: (product_details_data: ProductDataResponseData) => void
   product_details_form_values: Record<string, any>
   set_product_details_form_values: (product_details_form_values: Record<string, any>) => void
   product_details_variations_form_values: ProductVariationsFormValues
   set_product_details_variations_form_values: (v: ProductVariationsFormValues) => void
   product_details_variations_titles: ValueLabel[]
   set_product_details_variations_titles: (titles: ValueLabel[]) => void
-  product_category_info: ProductCategoryInfo
-  set_product_details_data: (product_details_data: ProductDataResponseData) => void
   product_offer_form_values: OfferFormValues | null
   set_product_offer_form_values: (product_offer_form: OfferFormValues) => void
+  product_safety_form_values: Record<string, any>
+  set_product_safety_form_values: (values: Record<string, any>) => void
 }
 
 const storeFn: StateCreator<ProductsState> = (set) => ({
+  product_category_info: { category: '', subcategory: '' },
   product_details_data: null,
+  set_product_details_data: (product_details_data) => set({ product_details_data }),
   product_details_form_values: {},
   set_product_details_form_values: (product_details_form_values) => set({ product_details_form_values }),
   product_details_variations_form_values: { variations: [] },
@@ -46,10 +50,10 @@ const storeFn: StateCreator<ProductsState> = (set) => ({
   product_details_variations_titles: [],
   set_product_details_variations_titles: (product_details_variations_titles: ValueLabel[]) =>
     set({ product_details_variations_titles }),
-  product_category_info: { category: '', subcategory: '' },
-  set_product_details_data: (product_details_data) => set({ product_details_data }),
   product_offer_form_values: null,
   set_product_offer_form_values: (product_offer_form_values) => set({ product_offer_form_values }),
+  product_safety_form_values: {},
+  set_product_safety_form_values: (product_safety_form_values) => set({ product_safety_form_values }),
 })
 
 export const useProductsStore =
