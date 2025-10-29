@@ -22,6 +22,7 @@ import {
   ProductCreateOfferFormValues,
   ProductCreateOfferPriceFormValues,
 } from '@/components/products/create/product-create-offer'
+import { ProductCreateSafetyAndCompliance } from '@/components/products/create/product-create-safety-and-compliance'
 import { Products, productsClient } from '@/helpers/client'
 import { useAppStore, useProductsStore } from '@/store'
 
@@ -32,6 +33,8 @@ type Props = {
 function ProductCreateHooks({ tr }: Props) {
   const detailsFormRef = useRef<ProductCreateDetailsHandlers>(null)
   const offerWithVariantFormRef = useRef<ProductCreateOfferWithVariationsHandler>(null)
+  const safetyFormRef = useRef<ProductCreateSafetyAndCompliance>(null)
+
   const [active, setActive] = useState(0)
   const [images, setImages] = useState<Attachment[]>([])
   const [variantsImages, setVariantsImages] = useState<{
@@ -52,6 +55,7 @@ function ProductCreateHooks({ tr }: Props) {
   )
   const productDetailsVariationsTitles = useProductsStore((state) => state.product_details_variations_titles)
   const setProductOfferFormValues = useProductsStore((state) => state.set_product_offer_form_values)
+  const setProductSafetyFormValues = useProductsStore((state) => state.set_product_safety_form_values)
 
   const identityForm = useForm({
     validateInputOnBlur: true,
@@ -93,6 +97,8 @@ function ProductCreateHooks({ tr }: Props) {
       else errMsg = err
     } else if (active === 4) {
       valid = validateOfferForm()
+    } else if (active === 5) {
+      valid = validateSafetyForm()
     }
 
     if (!valid) {
@@ -192,6 +198,16 @@ function ProductCreateHooks({ tr }: Props) {
     return valid
   }
 
+  const validateSafetyForm = (): boolean => {
+    let valid = false
+    const form = safetyFormRef.current?.getForm
+    if (form) {
+      valid = !form().validate().hasErrors
+      setProductSafetyFormValues(form().getValues())
+    }
+    return valid
+  }
+
   const prevStep = () => {
     const sharedForm = detailsFormRef.current?.getForm()
     const varForm = detailsFormRef.current?.getVariationsForm
@@ -214,6 +230,8 @@ function ProductCreateHooks({ tr }: Props) {
         withoutVariant,
         withVariant: withVariant ? withVariant().getValues() : undefined,
       })
+    } else if (active === 5 && safetyFormRef.current) {
+      setProductSafetyFormValues(safetyFormRef.current.getForm().getValues())
     }
 
     setActive((current) => (current > 0 ? current - 1 : current))
@@ -268,6 +286,7 @@ function ProductCreateHooks({ tr }: Props) {
 
   // Return a stable object without causing re-renders
   return {
+    info,
     active,
     setActive,
     identityForm,
@@ -282,6 +301,7 @@ function ProductCreateHooks({ tr }: Props) {
     setImages,
     variantsImages,
     setVariantsImages,
+    safetyFormRef,
     nextStep,
     prevStep,
   }

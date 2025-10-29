@@ -17,7 +17,7 @@ async function ServerWrapper({ children }: Props) {
         <ColorSchemeScript />
       </head>
       <body>
-        <MantineProvider>{children}</MantineProvider>
+        <MantineProvider theme={{ cursorType: 'pointer' }}>{children}</MantineProvider>
         <ToastContainer />
         <ClientWrapper clientInfo={{ language: ci.language, country: ci.location, currency: ci.currency }} />
       </body>

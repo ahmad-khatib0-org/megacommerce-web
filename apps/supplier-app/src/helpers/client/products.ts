@@ -333,8 +333,7 @@ export class Products {
 
   static safetyForm(fields: ProductDataResponseData, tr: ObjString, lang: string) {
     const data = fields.subcategory?.data?.safety
-    const trans = fields.subcategory?.translations?.safety
-    if (!data || !trans)
+    if (!data)
       return {
         formFields: {} as { [key: string]: any },
         initialVals: {} as Record<string, any>,
@@ -342,6 +341,10 @@ export class Products {
       }
 
     const { formFields, initialVals } = this.buildFormFieldsValidators(lang, tr, data)
+
+    formFields['attestation'] = booleanSchema().oneOf([true], tr.mustChecked)
+    initialVals['attestation'] = false
+
     const formShape = object().shape(formFields)
     return { formShape, initialVals }
   }

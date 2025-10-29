@@ -129,6 +129,7 @@ const getTranslations = (lang: string) => {
     sel1Optoin: tr(lang, 'form.field.select.at_least_one'),
     notAppOr: tr(lang, 'form.field.select.not_applicable_or_rest'),
     mustChecked: tr(lang, 'form.field.checkbox.checked.error'),
+    attestation: tr(lang, 'products.safety_and_compliance.attestation'),
   }
 }
 

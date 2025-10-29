@@ -11,6 +11,7 @@ import ProductCreateDescription from '@/components/products/create/product-creat
 import ProductCreateMedia from '@/components/products/create/product-create-media'
 import ProductCreateOffer from '@/components/products/create/product-create-offer'
 import ProductCreateDetails from '@/components/products/create/product-create-details'
+import ProductCreateSafetyAndCompliance from '@/components/products/create/product-create-safety-and-compliance'
 
 type Props = {
   tr: ObjString
@@ -21,6 +22,7 @@ type Props = {
 
 const ProductCreateWrapper = ({ tr, categories, offering, filfillment }: Props) => {
   const {
+    info,
     active,
     setActive,
     identityForm,
@@ -36,6 +38,7 @@ const ProductCreateWrapper = ({ tr, categories, offering, filfillment }: Props) 
     variantsImages,
     setVariantsImages,
     offerWithVariantFormRef,
+    safetyFormRef,
   } = ProductCreateHooks({ tr })
 
   return (
@@ -52,8 +55,7 @@ const ProductCreateWrapper = ({ tr, categories, offering, filfillment }: Props) 
             step: { display: 'felx', flexDirection: 'column', rowGap: '1rem' },
             steps: { marginTop: '1rem', justifyContent: 'space-evenly', width: '100%' },
             content: { display: 'flex', justifyContent: 'center', padding: '2rem 0px' },
-          }}
-        >
+          }}>
           <Stepper.Step label={tr.proIden} aria-label={tr.proIden}>
             <ProductCreateIdentity tr={tr} form={identityForm} categories={categories} />
           </Stepper.Step>
@@ -88,7 +90,9 @@ const ProductCreateWrapper = ({ tr, categories, offering, filfillment }: Props) 
               withVariantFormRef={offerWithVariantFormRef}
             />
           </Stepper.Step>
-          <Stepper.Step label={tr.safety} aria-label={tr.safety}></Stepper.Step>
+          <Stepper.Step label={tr.safety} aria-label={tr.safety}>
+            <ProductCreateSafetyAndCompliance tr={tr} lang={info.language} ref={safetyFormRef} />
+          </Stepper.Step>
         </Stepper>
         <div className='flex items-center justify-between px-12 border-t py-4'>
           <Button>{tr.can}</Button>
