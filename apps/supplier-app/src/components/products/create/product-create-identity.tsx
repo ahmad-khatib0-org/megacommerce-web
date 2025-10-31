@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Checkbox, Combobox, TextInput, useCombobox } from '@mantine/core'
+import { Checkbox, Combobox, Select, TextInput, useCombobox } from '@mantine/core'
 import { UseFormReturnType } from '@mantine/form'
 
 import {
@@ -7,6 +7,7 @@ import {
   ObjString,
   PRODUCT_BRAND_NAME_MAX_LENGTH,
   PRODUCT_BRAND_NAME_MIN_LENGTH,
+  PRODUCT_ID_TYPES,
   PRODUCT_TITLE_MAX_LENGTH,
   PRODUCT_TITLE_MIN_LENGTH,
 } from '@megacommerce/shared'
@@ -34,6 +35,7 @@ export interface ProductCreateIdentityFormValues {
   brand_name: string
   no_brand: boolean
   product_id: string
+  product_id_type: string
   no_product_id: boolean
 }
 
@@ -70,6 +72,24 @@ function ProductCreateIdentity({ tr, form, categories }: Props) {
         ))}
     </Combobox.Group>
   ))
+
+  form.watch('brand_name', ({ value }) => {
+    if (value && form.values.no_brand) form.setFieldValue('no_brand', false)
+  })
+  form.watch('no_brand', ({ value }) => {
+    if (value && form.values.brand_name) form.setFieldValue('brand_name', '')
+  })
+
+  form.watch('product_id', ({ value }) => {
+    if (value && form.values.no_product_id) form.setFieldValue('no_product_id', false)
+  })
+  form.watch('product_id_type', ({ value }) => {
+    if (value && form.values.no_product_id) form.setFieldValue('no_product_id', false)
+  })
+  form.watch('no_product_id', ({ value }) => {
+    if (value && form.values.product_id) form.setFieldValue('product_id', '')
+    if (value && form.values.product_id_type) form.setFieldValue('product_id_type', '')
+  })
 
   return (
     <div className='relative flex flex-col gap-y-4 w-full max-w-[800px] overflow-y-auto'>
@@ -133,13 +153,25 @@ function ProductCreateIdentity({ tr, form, categories }: Props) {
         styles={{ label: { fontSize: 16 } }}
         {...form.getInputProps('no_brand')}
       />
-      <TextInput
-        label={tr.proID}
-        placeholder={tr.proID}
-        withAsterisk
-        size='sm'
-        {...form.getInputProps('product_id')}
-      />
+      <div className='grid grid-cols-2 gap-x-4'>
+        <TextInput
+          label={tr.proID}
+          placeholder={tr.proID}
+          withAsterisk
+          size='sm'
+          {...form.getInputProps('product_id')}
+        />
+        <Select
+          label={tr.proIDType}
+          placeholder={tr.proIDType}
+          aria-label={tr.proIDType}
+          data={Object.values(PRODUCT_ID_TYPES).map((typ) => ({ label: typ.toUpperCase(), value: typ }))}
+          allowDeselect={true}
+          withCheckIcon
+          size='sm'
+          {...form.getInputProps('product_id_type')}
+        />
+      </div>
       <Checkbox
         label={tr.noProID}
         checked={form.values.no_product_id}

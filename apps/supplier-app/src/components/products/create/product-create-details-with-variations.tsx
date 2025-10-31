@@ -24,7 +24,7 @@ type Props = {
   lang: string
 }
 
-export type ProductVariationsForm = UseFormReturnType<ProductVariationsFormValues>
+export type ProductCreateDetailsWithVariationsForm = UseFormReturnType<ProductVariationsFormValues>
 
 export interface ProductVariationsFormValues {
   variations: Record<string, any>[]
@@ -44,7 +44,7 @@ const ProductCreateDetailsWithVariations = forwardRef<ProductCreateDetailsHandle
       sharedInitialValues,
       variationsFormShape,
       variationsInitialValues,
-    } = Products.buildProductDetailsWithVariationsFormFields(productDetailsData, tr, lang)
+    } = Products.detailsWithVariationsForm(productDetailsData, tr, lang)
 
     const sharedForm = useForm({
       initialValues: sharedInitialValues,

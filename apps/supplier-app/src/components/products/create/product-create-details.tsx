@@ -5,25 +5,24 @@ import { ObjString } from '@megacommerce/shared'
 
 import ProductCreateDetailsWithoutVariations from '@/components/products/create/product-create-details-without-variations'
 import ProductCreateDetailsWithVariations, {
-  ProductVariationsForm,
+  ProductCreateDetailsWithVariationsForm,
 } from '@/components/products/create/product-create-details-with-variations'
-import { useAppStore, useProductsStore } from '@/store'
+import { useProductsStore } from '@/store'
 
 type Props = {
   tr: ObjString
+  lang: string
   hasVariations: boolean
   reference: RefObject<ProductCreateDetailsHandlers | null>
 }
 
-type FormType = UseFormReturnType<Record<string, any>, (values: Record<string, any>) => Record<string, any>>
 export type ProductCreateDetailsHandlers = {
-  getForm: () => FormType
-  getVariationsForm?: () => ProductVariationsForm
+  getForm: () => UseFormReturnType<Record<string, any>, (values: Record<string, any>) => Record<string, any>>
+  getVariationsForm?: () => ProductCreateDetailsWithVariationsForm
 }
 
-const ProductCreateDetails = ({ tr, hasVariations, reference }: Props) => {
+const ProductCreateDetails = ({ tr, lang, hasVariations, reference }: Props) => {
   const productDetailsData = useProductsStore((state) => state.product_details_data)
-  const lang = useAppStore((state) => state.clientInfo.language)
 
   if (!productDetailsData) return null
 

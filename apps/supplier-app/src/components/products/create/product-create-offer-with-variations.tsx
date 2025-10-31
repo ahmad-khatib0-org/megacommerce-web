@@ -16,11 +16,12 @@ import { Button as SharedButton } from '@megacommerce/ui/shared'
 import { tr as translator } from '@megacommerce/shared/client'
 
 import { ProductCreateOfferPriceFormValues } from '@/components/products/create/product-create-offer'
-import { useAppStore, useProductsStore } from '@/store'
+import { useProductsStore } from '@/store'
 import { Products } from '@/helpers/client'
 
 type Props = {
   tr: ObjString
+  lang: string
   offering: ValueLabel[]
 }
 
@@ -39,8 +40,7 @@ export interface ProductCreateOfferWithVariationsFormValues {
 }
 
 const ProductCreateOfferWithVariations = forwardRef<ProductCreateOfferWithVariationsHandler, Props>(
-  ({ tr, offering }, ref) => {
-    const lang = useAppStore((state) => state.clientInfo.language)
+  ({ tr, offering, lang }, ref) => {
     const productDetailsVariationsTitles = useProductsStore(
       (state) => state.product_details_variations_titles
     )
@@ -74,8 +74,7 @@ const ProductCreateOfferWithVariations = forwardRef<ProductCreateOfferWithVariat
                   form.setFieldValue(`variations.${idx}.minimum_orders`, null)
                   form.setFieldValue(`variations.${idx}.has_minimum_orders`, false)
                   toast.dismiss(toastId)
-                }}
-              >
+                }}>
                 {tr.confirm}
               </SharedButton>
             </div>
@@ -130,8 +129,7 @@ const ProductCreateOfferWithVariations = forwardRef<ProductCreateOfferWithVariat
           return (
             <div
               key={field}
-              className='flex flex-col gap-y-3  mb-3 border border-black border-dashed py-4 px-3 rounded-md'
-            >
+              className='flex flex-col gap-y-3  mb-3 border border-black border-dashed py-4 px-3 rounded-md'>
               <div className='border border-orange-700 py-3 px-2 rounded-md'>
                 <p className='font-semibold'>
                   {translator(lang, 'products.offer.variant_pricing', {
@@ -239,13 +237,11 @@ const ProductCreateOfferWithVariations = forwardRef<ProductCreateOfferWithVariat
                   {(form.values.variations[idx].minimum_orders ?? []).map((mo, j) => (
                     <div
                       key={mo.id}
-                      className={`relative grid grid-cols-2 justify-center items-center gap-x-4 pt-2`}
-                    >
+                      className={`relative grid grid-cols-2 justify-center items-center gap-x-4 pt-2`}>
                       {j > 0 && (
                         <div
                           onClick={() => form.removeListItem(`variations.${idx}.minimum_orders`, j)}
-                          className='absolute right-0 top-0 cursor-pointer'
-                        >
+                          className='absolute right-0 top-0 cursor-pointer'>
                           <IconSquareXFilled aria-label={tr.delItem} />
                         </div>
                       )}
@@ -269,8 +265,7 @@ const ProductCreateOfferWithVariations = forwardRef<ProductCreateOfferWithVariat
                   ))}
                   <Button
                     className='bg-orange-500 text-white font-bold hover:bg-orange-400 w-max px-12 py-1 mt-4'
-                    onClick={() => onAddMinOrder(idx)}
-                  >
+                    onClick={() => onAddMinOrder(idx)}>
                     {tr.addMore}
                   </Button>
                 </div>

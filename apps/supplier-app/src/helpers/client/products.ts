@@ -1,12 +1,25 @@
 import 'client-only'
+import { RefObject } from 'react'
 import { array, boolean as booleanSchema, number, object, string, TestContext } from 'yup'
 
+import {
+  ProductCreateRequest,
+  ProductCreateRequestDetailsWithoutVariants,
+  ProductCreateRequestDetailsWithVariants,
+  ProductCreateRequestMediaWithoutVariants,
+  ProductCreateRequestMediaWithVariants,
+  ProductCreateRequestOfferWithoutVariants,
+  ProductCreateRequestOfferWithVariants,
+  ProductCreateRequestSafety,
+} from '@megacommerce/proto/web/products/v1/product_create'
+import { ProductDataResponseData } from '@megacommerce/proto/web/products/v1/product_data'
+import { NumericRuleType, StringRuleType } from '@megacommerce/proto/web/shared/v1/validation'
+import { Attachment, Attachments } from '@megacommerce/proto/web/shared/v1/attachment'
 import {
   SubcategoryAttribute,
   SubcategorySafety,
 } from '@megacommerce/proto/web/products/v1/product_categories'
-import { ProductDataResponseData } from '@megacommerce/proto/web/products/v1/product_data'
-import { NumericRuleType, StringRuleType } from '@megacommerce/proto/web/shared/v1/validation'
+
 import { tr as translator } from '@megacommerce/shared/client'
 import {
   ObjString,
@@ -28,7 +41,21 @@ import {
   PRODUCT_OFFERING_CONDITION_NOTE_MAX_LENGTH,
   PRODUCT_VARIATION_TITLE_MIN_LENGTH,
   PRODUCT_VARIATION_TITLE_MAX_LENGTH,
+  PRODUCT_ID_TYPES,
+  productIDValidate,
+  getProductIDType,
 } from '@megacommerce/shared'
+
+import { ProductCreateIdentityForm } from '@/components/products/create/product-create-identity'
+import { ProductCreateDescriptionForm } from '@/components/products/create/product-create-description'
+import { ProductCreateDetailsHandlers } from '@/components/products/create/product-create-details'
+import {
+  ProductCreateOfferForm,
+  ProductCreateOfferPriceFormValues,
+} from '@/components/products/create/product-create-offer'
+import { ProductCreateOfferWithoutVariationsForm } from '@/components/products/create/product-create-offer-without-variations'
+import { ProductCreateOfferWithVariationsHandler } from '@/components/products/create/product-create-offer-with-variations'
+import { ProductCreateSafetyAndCompliance } from '@/components/products/create/product-create-safety-and-compliance'
 
 export class Products {
   constructor() { }
@@ -51,7 +78,18 @@ export class Products {
       no_brand: booleanSchema().required(),
       product_id: string().when('no_product_id', {
         is: false,
-        then: (s) => s.required(tr.required),
+        then: (s) =>
+          s.required(tr.required).test('product-id-validation', tr.proIDErr, function (value) {
+            const { product_id_type, no_product_id } = this.parent
+            // Skip validation if no_product_id is true or fields are missing
+            if (no_product_id || !product_id_type || !value) return true
+            return productIDValidate(getProductIDType(product_id_type), value)
+          }),
+        otherwise: (s) => s.notRequired(),
+      }),
+      product_id_type: string().when('no_product_id', {
+        is: false,
+        then: (s) => s.required(tr.required).oneOf(Object.values(PRODUCT_ID_TYPES), tr.invInp),
         otherwise: (s) => s.notRequired(),
       }),
       no_product_id: booleanSchema().required(),
@@ -67,6 +105,7 @@ export class Products {
       brand_name: '',
       no_brand: false,
       product_id: '',
+      product_id_type: '',
       no_product_id: false,
     }
   }
@@ -95,11 +134,7 @@ export class Products {
     return { description: '', bullet_points: [{ id: Date.now().toString(), bullet_point: '' }] }
   }
 
-  static buildProductDetailsWithoutVariationsFormFields(
-    fields: ProductDataResponseData,
-    tr: ObjString,
-    lang: string
-  ) {
+  static detailsWithoutVariationsForm(fields: ProductDataResponseData, tr: ObjString, lang: string) {
     const data = fields.subcategory?.data
     const trans = fields.subcategory?.translations
     if (!data || !trans)
@@ -115,11 +150,7 @@ export class Products {
     return { formShape, initialVals }
   }
 
-  static buildProductDetailsWithVariationsFormFields(
-    fields: ProductDataResponseData,
-    tr: ObjString,
-    lang: string
-  ) {
+  static detailsWithVariationsForm(fields: ProductDataResponseData, tr: ObjString, lang: string) {
     const { fieldsVariations, fieldsShared, trans } = this.buildProductDetailsFormFieldsVariations(fields)
     const { formFields: sharedFormFields, initialVals: sharedInitialValues } = this.buildFormFieldsValidators(
       lang,
@@ -410,4 +441,135 @@ export class Products {
 
     return { formFields, initialVals }
   }
+
+  static buildRequest(
+    identity: ProductCreateIdentityForm,
+    desc: ProductCreateDescriptionForm,
+    details: RefObject<ProductCreateDetailsHandlers>,
+    media:
+      | { images: Attachment[]; videos: Attachment[] }
+      | { images: Record<string, Attachment[]>; videos: Record<string, Attachment[]> },
+    mediaTotalSize: number,
+    offer: {
+      base: ProductCreateOfferForm
+      withoutVariant?: ProductCreateOfferWithoutVariationsForm
+      withVariants?: RefObject<ProductCreateOfferWithVariationsHandler>
+    },
+    safety: RefObject<ProductCreateSafetyAndCompliance>
+  ): ProductCreateRequest {
+    const hasVariants = identity.values.has_variations
+    const detailsVariants: ProductCreateRequestDetailsWithVariants = { variants: [] }
+    const detailsWithouVariants: ProductCreateRequestDetailsWithoutVariants = { form: {} }
+    const mediaVariants: ProductCreateRequestMediaWithVariants = { images: {}, videos: {} }
+    const mediaWithouVariants: ProductCreateRequestMediaWithoutVariants = { videos: [], images: [] }
+    const offerVariants: ProductCreateRequestOfferWithVariants = { variants: [] }
+    let offerWithouVariants: ProductCreateRequestOfferWithoutVariants
+
+    if (hasVariants) {
+      const values = details.current.getVariationsForm!().getValues().variations
+      detailsVariants.variants = values.map((variant) => ({ form: variant }))
+    } else {
+      detailsWithouVariants.form = details.current.getForm().getValues()
+    }
+
+    if (isWithVariantsMedia(media)) {
+      const images: { [key: string]: Attachments } = {}
+      const videos: { [key: string]: Attachments } = {}
+      for (const img of Object.entries(media.images)) images[img[0]] = { attachments: img[1] }
+      for (const vid of Object.entries(media.videos)) videos[vid[0]] = { attachments: vid[1] }
+      mediaVariants.images = images
+      mediaVariants.videos = videos
+    } else if (isWithoutVariantsMedia(media)) {
+      mediaWithouVariants.images = media.images
+      mediaWithouVariants.videos = media.videos
+    }
+
+    const buildOfferForm = (v: ProductCreateOfferPriceFormValues) => {
+      return {
+        sku: v.sku,
+        quantity: v.quantity.toFixed(0).toString(),
+        price: v.price.toString(),
+        offeringCondition: v.offering_condition,
+        conditionNote: v.condition_note ?? undefined,
+        listPrice: v.list_price ? v.list_price.toString() : undefined,
+        hasSalePrice: v.has_sale_price,
+        salePrice: v.sale_price ? v.sale_price.toString() : undefined,
+        salePriceStart: v.sale_price_start ?? undefined,
+        salePriceEnd: v.sale_price_end ?? undefined,
+        hasMinimumOrders: v.has_minimum_orders,
+        minimumOrders: (v.minimum_orders ?? []).map((mo) => ({
+          id: mo.id,
+          quantity: mo.quantity.toString(),
+          price: mo.price.toString(),
+        })),
+      }
+    }
+
+    if (hasVariants) {
+      const values = offer.withVariants!.current.getForm().getValues()
+      offerVariants.variants = values.variations.map((v) => ({ id: v.id, ...buildOfferForm(v) }))
+    } else {
+      offerWithouVariants = buildOfferForm(offer.withoutVariant!.getValues())
+    }
+
+    const buildSafetyForm = (values: Record<string, any>): ProductCreateRequestSafety => {
+      let attestation = false
+      if ('attestation' in values && typeof values.attestation === 'boolean') {
+        attestation = values.attestation
+        delete values.attestation
+      }
+      return { attestation, form: values }
+    }
+
+    return {
+      identity: {
+        title: identity.values.title,
+        category: identity.values.category,
+        subcategory: identity.values.subcategory,
+        hasVariations: identity.values.has_variations,
+        brandName: identity.values.brand_name,
+        noBrand: identity.values.no_brand,
+        productId: identity.values.product_id,
+        productIdType: identity.values.product_id_type,
+        noProductId: identity.values.no_product_id,
+      },
+      description: {
+        description: desc.values.description,
+        bulletPoints: desc.values.bullet_points.map((bp) => ({ id: bp.id, bulletPoint: bp.bullet_point })),
+      },
+      details: {
+        shared: details.current.getForm().getValues(),
+        withVariants: hasVariants ? detailsVariants : undefined,
+        withoutVariants: !hasVariants ? detailsWithouVariants : undefined,
+      },
+      media: {
+        withVariants: hasVariants ? mediaVariants : undefined,
+        withoutVariants: !hasVariants ? mediaWithouVariants : undefined,
+        totalSize: mediaTotalSize.toString(),
+      },
+      offer: {
+        withVariants: hasVariants ? offerVariants : undefined,
+        withoutVariants: !hasVariants ? offerWithouVariants! : undefined,
+        currency: offer.base.values.currency,
+        fulfillmentType: offer.base.values.fulfillment_type,
+        processingTime: offer.base.values.processing_time.toString(),
+      },
+      safety: buildSafetyForm(safety.current.getForm().getValues()),
+    }
+  }
+}
+
+function isWithoutVariantsMedia(media: any): media is { images: Attachment[]; videos: Attachment[] } {
+  return Array.isArray(media.images) && Array.isArray(media.videos)
+}
+
+function isWithVariantsMedia(
+  media: any
+): media is { images: Record<string, Attachment[]>; videos: Record<string, Attachment[]> } {
+  return (
+    media.images instanceof Object &&
+    !Array.isArray(media.images) &&
+    media.videos instanceof Object &&
+    !Array.isArray(media.videos)
+  )
 }

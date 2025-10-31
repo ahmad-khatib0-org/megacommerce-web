@@ -22,3 +22,20 @@ export function buildAttachment(file: UppyFile<Meta, Record<string, never>>): Pr
     }
   })
 }
+
+export async function cryptoBase64Checksum(base: string): Promise<string> {
+  const base64 = base.replace(/^data:[^;]+;base64,/, '')
+
+  const binaryString = atob(base64)
+  const bytes = new Uint8Array(binaryString.length)
+  for (let i = 0; i < binaryString.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i)
+  }
+
+  // Generate SHA-256 hash
+  const hashBuffer = await crypto.subtle.digest('SHA-256', bytes)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
+
+  return hashHex
+}

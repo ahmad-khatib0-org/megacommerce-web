@@ -18,6 +18,28 @@ export const PRODUCTS_MIN_IMAGES_COUNT = 1
 export const PRODUCTS_IMAGE_MAX_SIZE_BYTES = 1024 * 1024 * 2
 export const PRODUCTS_IMAGE_ACCEPTED_TYPES = ['image/png', 'image/webp', 'image/jpeg', 'image/jpg']
 
+export enum PRODUCT_ID_TYPES {
+  Upc = 'upc',
+  Ean = 'ean',
+  Isbn = 'isbn',
+  Gtin = 'gtin',
+}
+
+export function getProductIDType(type: any): PRODUCT_ID_TYPES {
+  switch (type) {
+    case 'upc':
+      return PRODUCT_ID_TYPES.Upc
+    case 'ean':
+      return PRODUCT_ID_TYPES.Ean
+    case 'isbn':
+      return PRODUCT_ID_TYPES.Isbn
+    case 'gtin':
+      return PRODUCT_ID_TYPES.Gtin
+    default:
+      return PRODUCT_ID_TYPES.Upc
+  }
+}
+
 export const PRODUCT_MINIMUM_INVENTORY_QUANTITY = 1
 export enum PRODUCT_OFFERING_CONDITION {
   New = 'new',

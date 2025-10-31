@@ -48,7 +48,7 @@ function ProductCreateMedia({
 
     // Update variants images
     setVariantsImages((prevVariants) => {
-      const existing = prevVariants[title!]
+      const existing = prevVariants[title]
       const newVariants = { ...prevVariants }
 
       if (existing) {

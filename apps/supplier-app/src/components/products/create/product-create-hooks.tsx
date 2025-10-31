@@ -41,7 +41,6 @@ function ProductCreateHooks({ tr }: Props) {
     [key: string]: { title: string; images: Attachment[] }
   }>({})
   const [productDetailsLoading, setProductDetailsLoading] = useState(false)
-  const [imageErr, setImageErr] = useState<string | undefined>()
   const [submitting, setSubmitting] = useState(false)
 
   const info = useAppStore((state) => state.clientInfo)
@@ -108,6 +107,7 @@ function ProductCreateHooks({ tr }: Props) {
 
     if (active === 0) {
       try {
+        setProductDetailsLoading(true)
         const response = await productsClient.ProductData({
           subcategory: {
             category: identityForm.values.category,
@@ -122,6 +122,8 @@ function ProductCreateHooks({ tr }: Props) {
       } catch (err) {
         toast.error(handleGrpcWebErr(err))
         return
+      } finally {
+        setProductDetailsLoading(false)
       }
     }
     setActive((current) => (current < 6 ? current + 1 : current))
@@ -207,6 +209,8 @@ function ProductCreateHooks({ tr }: Props) {
     }
     return valid
   }
+
+  const submit = () => { }
 
   const prevStep = () => {
     const sharedForm = detailsFormRef.current?.getForm()

@@ -55,6 +55,8 @@ const getTranslations = (lang: string) => {
     required: tr(lang, 'required'),
     proID: tr(lang, 'products.external_product_id'),
     noProID: tr(lang, 'products.no_external_product_id'),
+    proIDErr: tr(lang, 'products.external_product_id.invalid'),
+    proIDType: tr(lang, 'products.external_product_id_type'),
     correct: tr(lang, 'form.fields.invalid'),
     descErr: tr(lang, 'products.description.error', {
       Min: PRODUCT_DESCRIPTION_MIN_LENGTH,

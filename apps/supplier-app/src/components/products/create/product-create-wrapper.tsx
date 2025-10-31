@@ -64,8 +64,9 @@ const ProductCreateWrapper = ({ tr, categories, offering, filfillment }: Props) 
           </Stepper.Step>
           <Stepper.Step label={tr.proDet} aria-label={tr.proDet}>
             <ProductCreateDetails
-              reference={detailsFormRef}
               tr={tr}
+              lang={info.language}
+              reference={detailsFormRef}
               hasVariations={identityForm.values.has_variations}
             />
           </Stepper.Step>
@@ -82,6 +83,7 @@ const ProductCreateWrapper = ({ tr, categories, offering, filfillment }: Props) 
           <Stepper.Step label={tr.offer} aria-label={tr.offer}>
             <ProductCreateOffer
               tr={tr}
+              lang={info.language}
               offering={offering}
               filfillment={filfillment}
               hasVariations={identityForm.values.has_variations}

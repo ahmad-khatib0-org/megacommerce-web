@@ -14,6 +14,7 @@ import { useProductsStore } from '@/store'
 
 type Props = {
   tr: ObjString
+  lang: string
   form: ProductCreateOfferForm
   withouVariantForm: ProductCreateOfferWithoutVariationsForm
   withVariantFormRef: RefObject<ProductCreateOfferWithVariationsHandler | null>
@@ -50,6 +51,7 @@ export interface ProductCreateOfferPriceFormValues {
 
 function ProductCreateOffer({
   tr,
+  lang,
   form,
   offering,
   filfillment,
@@ -103,7 +105,7 @@ function ProductCreateOffer({
         <ProductCreateOfferWithoutVariations tr={tr} offering={offering} form={withouVariantForm} />
       )}
       {hasVariations && (
-        <ProductCreateOfferWithVariations ref={withVariantFormRef} tr={tr} offering={offering} />
+        <ProductCreateOfferWithVariations ref={withVariantFormRef} tr={tr} offering={offering} lang={lang} />
       )}
     </div>
   )

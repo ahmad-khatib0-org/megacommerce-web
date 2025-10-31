@@ -19,11 +19,7 @@ type Props = {
 const ProductCreateDetailsWithoutVariations = forwardRef<ProductCreateDetailsHandlers, Props>(
   ({ tr, productDetailsData, lang }, ref) => {
     const productDetailsFormValues = useProductsStore((state) => state.product_details_form_values)
-    const { formShape, initialVals } = Products.buildProductDetailsWithoutVariationsFormFields(
-      productDetailsData,
-      tr,
-      lang
-    )
+    const { formShape, initialVals } = Products.detailsWithoutVariationsForm(productDetailsData, tr, lang)
 
     const form = useForm({
       initialValues: initialVals,
