@@ -1,7 +1,10 @@
 import 'client-only'
-import { RefObject } from 'react'
+import { Dispatch, RefObject, SetStateAction } from 'react'
+import Uppy, { Meta } from '@uppy/core'
 import { array, boolean as booleanSchema, number, object, string, TestContext } from 'yup'
 
+import { AppError } from '@megacommerce/proto/web/shared/v1/error'
+import { Any } from '@megacommerce/proto/web/shared/v1/types'
 import {
   ProductCreateRequest,
   ProductCreateRequestDetailsWithoutVariants,
@@ -20,7 +23,7 @@ import {
   SubcategorySafety,
 } from '@megacommerce/proto/web/products/v1/product_categories'
 
-import { tr as translator } from '@megacommerce/shared/client'
+import { getFirstErroredStepV2, toAnyGrpc, tr as translator } from '@megacommerce/shared/client'
 import {
   ObjString,
   ValueLabel,
@@ -49,12 +52,18 @@ import {
 import { ProductCreateIdentityForm } from '@/components/products/create/product-create-identity'
 import { ProductCreateDescriptionForm } from '@/components/products/create/product-create-description'
 import { ProductCreateDetailsHandlers } from '@/components/products/create/product-create-details'
+import { ProductCreateDetailsVariationsFormValues } from '@/components/products/create/product-create-details-with-variations'
 import {
   ProductCreateOfferForm,
+  ProductCreateOfferFormValuesPayload,
   ProductCreateOfferPriceFormValues,
 } from '@/components/products/create/product-create-offer'
 import { ProductCreateOfferWithoutVariationsForm } from '@/components/products/create/product-create-offer-without-variations'
-import { ProductCreateOfferWithVariationsHandler } from '@/components/products/create/product-create-offer-with-variations'
+import {
+  ProductCreateOfferWithVariationsForm,
+  ProductCreateOfferWithVariationsHandler,
+} from '@/components/products/create/product-create-offer-with-variations'
+import { ProductCreateCustomErrors } from '@/store'
 import { ProductCreateSafetyAndCompliance } from '@/components/products/create/product-create-safety-and-compliance'
 
 export class Products {
@@ -98,15 +107,15 @@ export class Products {
 
   static identityFormValues() {
     return {
-      title: '',
+      title: 'product title',
       category: '',
       subcategory: '',
       has_variations: false,
-      brand_name: '',
+      brand_name: 'brand name',
       no_brand: false,
       product_id: '',
       product_id_type: '',
-      no_product_id: false,
+      no_product_id: true,
     }
   }
 
@@ -131,7 +140,10 @@ export class Products {
   }
 
   static descriptionFormValues() {
-    return { description: '', bullet_points: [{ id: Date.now().toString(), bullet_point: '' }] }
+    return {
+      description: 'the description........ and again again ',
+      bullet_points: [{ id: Date.now().toString(), bullet_point: 'the bullet point....................' }],
+    }
   }
 
   static detailsWithoutVariationsForm(fields: ProductDataResponseData, tr: ObjString, lang: string) {
@@ -221,7 +233,7 @@ export class Products {
   }
 
   static offerFormValues() {
-    return { currency: '', fulfillment_type: '', processing_time: 0 }
+    return { currency: 'USD', fulfillment_type: 'megacommerce', processing_time: 3 }
   }
 
   static offerPriceForm(tr: ObjString) {
@@ -328,10 +340,10 @@ export class Products {
 
   static offerPriceFormValues() {
     return {
-      sku: '',
-      quantity: 0,
-      price: 0,
-      offering_condition: '',
+      sku: 'Product sku',
+      quantity: 44,
+      price: 33,
+      offering_condition: 'new',
       condition_note: '',
       list_price: null,
       has_sale_price: false,
@@ -442,20 +454,41 @@ export class Products {
     return { formFields, initialVals }
   }
 
+  static getMediaSizeInBytes(
+    media:
+      | { images: Attachment[]; videos: Attachment[] }
+      | {
+        images: Record<string, { title: string; images: Attachment[] }>
+        videos: Record<string, Attachment[]>
+      }
+  ) {
+    let totalSize = 0
+    if (isWithVariantsMedia(media)) {
+      for (const [_, value] of Object.entries(media.images)) {
+        totalSize += value
+          .map((image) => parseInt(image.fileSize))
+          .reduce((total, current, _) => total + current, 0)
+      }
+    } else if (isWithoutVariantsMedia(media)) {
+      for (const [_, value] of Object.entries(media.images)) totalSize += parseInt(value.fileSize)
+    }
+    return totalSize
+  }
+
   static buildRequest(
     identity: ProductCreateIdentityForm,
     desc: ProductCreateDescriptionForm,
-    details: RefObject<ProductCreateDetailsHandlers>,
+    details: { variants: ProductCreateDetailsVariationsFormValues; noVariants: Record<string, any> },
     media:
       | { images: Attachment[]; videos: Attachment[] }
-      | { images: Record<string, Attachment[]>; videos: Record<string, Attachment[]> },
-    mediaTotalSize: number,
-    offer: {
-      base: ProductCreateOfferForm
-      withoutVariant?: ProductCreateOfferWithoutVariationsForm
-      withVariants?: RefObject<ProductCreateOfferWithVariationsHandler>
-    },
-    safety: RefObject<ProductCreateSafetyAndCompliance>
+      | {
+        images: {
+          [key: string]: { title: string; images: Attachment[] }
+        }
+        videos: Record<string, Attachment[]>
+      },
+    offer: ProductCreateOfferFormValuesPayload,
+    safety: Record<string, any>
   ): ProductCreateRequest {
     const hasVariants = identity.values.has_variations
     const detailsVariants: ProductCreateRequestDetailsWithVariants = { variants: [] }
@@ -465,13 +498,19 @@ export class Products {
     const offerVariants: ProductCreateRequestOfferWithVariants = { variants: [] }
     let offerWithouVariants: ProductCreateRequestOfferWithoutVariants
 
-    if (hasVariants) {
-      const values = details.current.getVariationsForm!().getValues().variations
-      detailsVariants.variants = values.map((variant) => ({ form: variant }))
-    } else {
-      detailsWithouVariants.form = details.current.getForm().getValues()
+    const toAny = (form: Record<string, any>): Record<string, Any> => {
+      const result: Record<string, Any> = {}
+      for (const [key, value] of Object.entries(form)) result[key] = toAnyGrpc(value)
+      return result
     }
 
+    if (hasVariants) {
+      detailsVariants.variants = details.variants.variations.map((variant) => ({ form: toAny(variant) }))
+    } else {
+      detailsWithouVariants.form = toAny(details.noVariants)
+    }
+
+    const mediaTotalSize = this.getMediaSizeInBytes(media)
     if (isWithVariantsMedia(media)) {
       const images: { [key: string]: Attachments } = {}
       const videos: { [key: string]: Attachments } = {}
@@ -506,10 +545,10 @@ export class Products {
     }
 
     if (hasVariants) {
-      const values = offer.withVariants!.current.getForm().getValues()
-      offerVariants.variants = values.variations.map((v) => ({ id: v.id, ...buildOfferForm(v) }))
+      offerVariants.variants =
+        offer.withVariant?.variations.map((v) => ({ id: v.id, ...buildOfferForm(v) })) ?? []
     } else {
-      offerWithouVariants = buildOfferForm(offer.withoutVariant!.getValues())
+      offerWithouVariants = buildOfferForm(offer.withoutVariant!)
     }
 
     const buildSafetyForm = (values: Record<string, any>): ProductCreateRequestSafety => {
@@ -518,7 +557,7 @@ export class Products {
         attestation = values.attestation
         delete values.attestation
       }
-      return { attestation, form: values }
+      return { attestation, form: toAny(values) }
     }
 
     return {
@@ -538,7 +577,7 @@ export class Products {
         bulletPoints: desc.values.bullet_points.map((bp) => ({ id: bp.id, bulletPoint: bp.bullet_point })),
       },
       details: {
-        shared: details.current.getForm().getValues(),
+        shared: hasVariants ? toAny(details.noVariants) : {},
         withVariants: hasVariants ? detailsVariants : undefined,
         withoutVariants: !hasVariants ? detailsWithouVariants : undefined,
       },
@@ -550,12 +589,370 @@ export class Products {
       offer: {
         withVariants: hasVariants ? offerVariants : undefined,
         withoutVariants: !hasVariants ? offerWithouVariants! : undefined,
-        currency: offer.base.values.currency,
-        fulfillmentType: offer.base.values.fulfillment_type,
-        processingTime: offer.base.values.processing_time.toString(),
+        currency: offer.base!.currency,
+        fulfillmentType: offer.base!.fulfillment_type,
+        processingTime: offer.base!.processing_time.toString(),
       },
-      safety: buildSafetyForm(safety.current.getForm().getValues()),
+      safety: buildSafetyForm(safety),
     }
+  }
+
+  static getStepsIndexAndNames(): Map<string, { stepNumber: number }> {
+    return new Map([
+      ['identity', { stepNumber: 0 }],
+      ['description', { stepNumber: 1 }],
+      ['details', { stepNumber: 2 }],
+      ['media', { stepNumber: 3 }],
+      ['offer', { stepNumber: 4 }],
+      ['safety', { stepNumber: 5 }],
+    ])
+  }
+
+  // 'description.bullet_points.count'
+  // '{step_name}.form.missing'
+  // '{step_name}.form_id.missing'
+  // media.count  => missing product images
+  // media.{form_id}.count =>  images count error
+  // media.{form_id}.{attachment_id}
+  // offer.[{form_id}].minimum_orders.count
+  // offer.[{form_id}].minimum_orders.form_id.missing
+  // offer.[{form_id}].minimum_orders.{id}.{quantity/price}
+
+  // TODO: for the getInitialValues and similar functions that depends on the present
+  // of the RefObjec.current, consider passing the stored values in the global store
+  // in case if these functions (getInitialValues or ...) returns Record<string, any>
+  // of length zero, which i think can happen, because of the mounting and unmounting of step
+  static handleCreateError(
+    error: AppError,
+    setStep: Dispatch<SetStateAction<number>>,
+    setProductCustomErrors: (errors: Partial<ProductCreateCustomErrors | null>) => void,
+    identity: ProductCreateIdentityForm,
+    description: ProductCreateDescriptionForm,
+    media: {
+      uppy: Uppy<Meta, Record<string, never>>
+      variantsImages: { [key: string]: { title: string; images: Attachment[] } }
+      setVariantsImages: Dispatch<SetStateAction<{ [key: string]: { title: string; images: Attachment[] } }>>
+    },
+    offer: {
+      base: ProductCreateOfferForm
+      noVariants: ProductCreateOfferWithoutVariationsForm
+      variants: RefObject<ProductCreateOfferWithVariationsHandler | null>
+    }
+  ) {
+    if (error.errors) {
+      const customErrors: Partial<ProductCreateCustomErrors> = {}
+      const hasVariations = identity.values.has_variations
+      let variantImagesShouldUpdate = false
+      let variantImages = { ...media.variantsImages }
+      const detailsVariantsErrors: { [key: string]: Record<string, any> } = {}
+      const detailsVariantsSharedErrors: Record<string, any> = {}
+      const detailsNoVariantsErrors: Record<string, any> = {}
+      const offerVariantsErrors: { [key: string]: Record<string, any> } = {}
+      const offerNoVariantsErrors: Record<string, any> = {}
+      const safetyErrors: Record<string, any> = {}
+
+      for (const [field, err] of Object.entries(error.errors.values)) {
+        if (field.startsWith('identity')) {
+          this.invalidateIdentity(identity, field, err, customErrors)
+        } else if (field.startsWith('description')) {
+          this.invalidateDescription(description, field, err, customErrors)
+        } else if (field.startsWith('details')) {
+          this.invalidateDetails(
+            field,
+            err,
+            customErrors,
+            hasVariations,
+            detailsNoVariantsErrors,
+            detailsVariantsErrors,
+            detailsVariantsSharedErrors
+          )
+        } else if (field.startsWith('media')) {
+          const updatedVariantImages = this.invalidateMedia(
+            media.uppy,
+            variantImages,
+            field,
+            err,
+            customErrors,
+            hasVariations,
+            () => (variantImagesShouldUpdate = true)
+          )
+          if (updatedVariantImages) {
+            variantImages = updatedVariantImages
+          }
+        } else if (field.startsWith('offer')) {
+          this.invalidateOffer(
+            offer,
+            field,
+            err,
+            customErrors,
+            hasVariations,
+            offerNoVariantsErrors,
+            offerVariantsErrors
+          )
+        } else if (field.startsWith('safety')) {
+          this.invalidateSafety(field, err, customErrors, safetyErrors)
+        }
+      }
+
+      if (variantImagesShouldUpdate) {
+        media.setVariantsImages(variantImages)
+      }
+      setProductCustomErrors(customErrors)
+      let stepNumber = getFirstErroredStepV2(error.errors, this.getStepsIndexAndNames())
+      if (stepNumber != -1) setStep(stepNumber)
+    }
+  }
+
+  private static invalidateIdentity(
+    form: ProductCreateIdentityForm,
+    field: string,
+    err: string,
+    custom: Partial<ProductCreateCustomErrors>
+  ) {
+    if (field === 'identity.title') form.setFieldError('title', err)
+    else if (field === 'identity.category' || field === 'identity.subcategory') {
+      custom.identity = { ...custom.identity, product_type: err }
+    } else if (field === 'identity.brand') form.setFieldError('brand_name', err)
+    else if (field === 'identity.product_id') form.setFieldError('product_id', err)
+    else if (field === 'identity.product_id_type') form.setFieldError('product_id_type', err)
+    else if (field === 'identity.form.missing') {
+      custom.identity = { ...custom.identity, missing_form: err }
+    }
+  }
+
+  private static invalidateDescription(
+    form: ProductCreateDescriptionForm,
+    field: string,
+    err: string,
+    custom: Partial<ProductCreateCustomErrors>
+  ) {
+    if (field === 'description.description') form.setFieldError('title', err)
+    else if (field === 'description.bullet_points.count') {
+      custom.description = { ...custom.description, bullet_points_count: err }
+    } else if (field === 'identity.form.missing') {
+      custom.description = { ...custom.description, missing_form: err }
+    } else {
+      for (const bp of form.values.bullet_points) {
+        if (field === `description.bullet_points.${bp.id}.bullet_point`) {
+          form.setFieldError(`bullet_points.${bp}.bullet_point`, err)
+        }
+      }
+    }
+  }
+
+  private static invalidateDetails(
+    field: string,
+    err: string,
+    custom: Partial<ProductCreateCustomErrors>,
+    hasVariations: boolean,
+    noVariantsErrors: Record<string, any>,
+    variantsErrors: { [key: string]: Record<string, any> },
+    variantsSharedErrors: Record<string, any>
+  ) {
+    if (field === 'details.form.missing') {
+      custom.details = { ...custom.details, missing_form: err }
+      return
+    }
+
+    const split = field.split('.')
+    if (hasVariations) {
+      if (field === 'details.form_id.missing') {
+        custom.details = { ...custom.details, missing_form_id: err }
+        return
+      }
+      if (split.length === 3 /*details.{form_id}.{field_name}*/) {
+        variantsErrors[split[1]] = { ...(variantsErrors[split[1]] || {}), [split[2]]: err }
+      } else if (split.length === 2 /*details.{field_name}*/) {
+        variantsSharedErrors[split[1]] = err
+      }
+    } else if (split.length === 2 /*details.{field_name}*/) {
+      noVariantsErrors[split[1]] = err
+    }
+  }
+
+  static invalidateMedia(
+    uppy: Uppy<Meta, Record<string, never>>,
+    variantsImages: { [key: string]: { title: string; images: Attachment[] } },
+    field: string,
+    err: string,
+    custom: Partial<ProductCreateCustomErrors>,
+    hasVariants: boolean,
+    variantImagesShouldUpdate: () => void
+  ): { [key: string]: { title: string; images: Attachment[] } } | null {
+    if (field === 'media.form.missing') {
+      custom.media = { ...custom.media, missing_form: err }
+      return null
+    } else if (field === 'media.form_id.missing') {
+      custom.media = { ...custom.media, missing_form_id: err }
+      return null
+    } else if (field === 'media.count') {
+      custom.media = { ...custom.media, missing_form: err }
+      return null
+    }
+
+    const split = field.split('.')
+    if (hasVariants && split.length === 3) {
+      const variantId = split[1]
+      const imageId = split[2]
+
+      const variant = variantsImages[variantId]
+      if (!variant) return null
+
+      const imageIndex = variant.images.findIndex((img) => img.id === imageId)
+      if (imageIndex === -1) return null
+
+      const updatedVariantsImages = {
+        ...variantsImages,
+        [variantId]: {
+          ...variant,
+          images: [
+            ...variant.images.slice(0, imageIndex),
+            { ...variant.images[imageIndex], error: err },
+            ...variant.images.slice(imageIndex + 1),
+          ],
+        },
+      }
+
+      variantImagesShouldUpdate()
+      return updatedVariantsImages
+    } else if (split.length === 2) {
+      if (uppy.getFile(split[1])) {
+        uppy.setFileState(split[1], { error: err })
+      }
+    }
+
+    return null
+  }
+
+  static invalidateOffer(
+    step: {
+      base: ProductCreateOfferForm
+      noVariants: ProductCreateOfferWithoutVariationsForm
+      variants: RefObject<ProductCreateOfferWithVariationsHandler | null>
+    },
+    field: string,
+    err: string,
+    custom: Partial<ProductCreateCustomErrors>,
+    hasVariations: boolean,
+    noVariantsErrors: Record<string, any>,
+    variantsErrors: { [key: string]: Record<string, any> }
+  ) {
+    if (field === 'offer.form.missing') {
+      custom.offer = { ...custom.offer, missing_form: err }
+      return
+    } else if (field === 'offer.form_id.missing') {
+      custom.offer = { ...custom.offer, missing_form_id: err }
+      return
+    } else if (field === 'offer.currency') {
+      step.base.setFieldError('currency', err)
+      return
+    } else if (field === 'offer.fulfillment_type') {
+      step.base.setFieldError('fulfillment_type', err)
+      return
+    } else if (field === 'offer.processing_time') {
+      step.base.setFieldError('processing_time', err)
+      return
+    }
+
+    const split = field.split('.')
+    const variants = step.variants.current?.getForm
+    if (hasVariations && variants && split.length === 3) {
+      /*offer.{form_id}.{field_name}*/
+      variantsErrors[split[1]] = { ...(variantsErrors[split[1]] || {}), [split[2]]: err }
+    } else if (hasVariations && variants && field.includes('minimum_orders')) {
+      /*offer.{form_id}.minimum_orders.count*/
+      if (field.includes('minimum_orders.count') && split.length === 4) {
+        custom.offer = {
+          ...custom.offer,
+          variants: {
+            ...custom.offer?.variants,
+            [split[1]]: { ...custom.offer?.variants?.[split[1]], count: err },
+          },
+        }
+        /*offer.{form_id}.minimum_orders.form_id.missing*/
+      } else if (field.includes('minimum_orders.form_id.missing') && split.length === 5) {
+        /*offer.{form_id}.minimum_orders.form_id.missing*/
+        custom.offer = {
+          ...custom.offer,
+          variants: {
+            ...custom.offer?.variants,
+            [split[1]]: { ...custom.offer?.variants?.[split[1]], missing_form_id: err },
+          },
+        }
+        /*offer.{form_id}.minimum_orders.{min_order_id}.quantity*/
+      } else if (field.includes('quantity') && split.length === 5) {
+        variantsErrors[split[1]] = {
+          ...(variantsErrors[split[1]] || {}),
+          minimum_orders: {
+            ...(variantsErrors[split[1]]['minimum_orders'] || {}),
+            [split[3]]: {
+              ...(variantsErrors[split[1]]['minimum_orders'][split[3]] || {}),
+              quantity: err,
+            },
+          },
+        }
+        /*offer.{form_id}.minimum_orders.{min_order_id}.price*/
+      } else if (field.includes('price') && split.length === 5) {
+        variantsErrors[split[1]] = {
+          ...(variantsErrors[split[1]] || {}),
+          minimum_orders: {
+            ...(variantsErrors[split[1]]['minimum_orders'] || {}),
+            [split[3]]: {
+              ...(variantsErrors[split[1]]['minimum_orders'][split[3]] || {}),
+              price: err,
+            },
+          },
+        }
+      }
+    } else if (!hasVariations && field.includes('minimum_orders')) {
+      if (field === 'offer.minimum_orders.form_id.missing') {
+        custom.offer = {
+          ...custom.offer,
+          no_variants: { ...custom.offer?.no_variants, missing_form_id: err },
+        }
+      } else if (field === 'offer.minimum_orders.count') {
+        custom.offer = {
+          ...custom.offer,
+          no_variants: { ...custom.offer?.no_variants, count: err },
+        }
+        /*offer.minimum_orders.{min_order_id}.quantity*/
+      } else if (field.includes('quantity') && split.length === 4) {
+        noVariantsErrors['minimum_orders'] = {
+          ...(noVariantsErrors['minimum_orders'] || {}),
+          [split[2]]: {
+            ...(noVariantsErrors['minimum_orders'][split[2]] || {}),
+            quantity: err,
+          },
+        }
+        /*offer.minimum_orders.{min_order_id}.price*/
+      } else if (field.includes('price') && split.length === 4) {
+        noVariantsErrors['minimum_orders'] = {
+          ...(noVariantsErrors['minimum_orders'] || {}),
+          [split[2]]: {
+            ...(noVariantsErrors['minimum_orders'][split[2]] || {}),
+            price: err,
+          },
+        }
+      }
+      /*offer.{field_name}*/
+    } else if (split.length === 2) {
+      noVariantsErrors[split[1]] = err
+    }
+  }
+
+  static invalidateSafety(
+    field: string,
+    err: string,
+    custom: Partial<ProductCreateCustomErrors>,
+    errors: Record<string, any>
+  ) {
+    if (field === 'safety.form.missing') {
+      custom.safety = { ...custom.safety, missing_form: err }
+      return
+    }
+
+    const split = field.split('.')
+    if (split.length === 2) errors[split[1]] = err
   }
 }
 

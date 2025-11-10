@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Checkbox, Combobox, Select, TextInput, useCombobox } from '@mantine/core'
 import { UseFormReturnType } from '@mantine/form'
+import { IconMathGreater } from '@tabler/icons-react'
 
 import {
   IDName,
@@ -11,6 +12,7 @@ import {
   PRODUCT_TITLE_MAX_LENGTH,
   PRODUCT_TITLE_MIN_LENGTH,
 } from '@megacommerce/shared'
+import { useProductsStore } from '@/store'
 
 type Props = {
   tr: ObjString
@@ -42,7 +44,8 @@ export interface ProductCreateIdentityFormValues {
 function ProductCreateIdentity({ tr, form, categories }: Props) {
   const combobox = useCombobox()
   const [inputValue, setInputValue] = useState('')
-  const [_, setCategoryName] = useState('')
+  const categoryInfo = useProductsStore((state) => state.product_category_info)
+  const setCategoryInfo = useProductsStore((state) => state.set_product_category_info)
 
   const normalized = inputValue.trim().toLowerCase()
   const filteredOptions =
@@ -63,7 +66,12 @@ function ProductCreateIdentity({ tr, form, categories }: Props) {
               form.setFieldValue('category', c.id)
               form.setFieldValue('subcategory', s.id)
               setInputValue(s.name)
-              setCategoryName(s.name)
+              setCategoryInfo({
+                category: c.id,
+                subcategory: s.id,
+                category_name: c.name,
+                subcategory_name: s.name,
+              })
               combobox.closeDropdown()
             }}
             aria-label={s.name}>
@@ -91,6 +99,16 @@ function ProductCreateIdentity({ tr, form, categories }: Props) {
     if (value && form.values.product_id_type) form.setFieldValue('product_id_type', '')
   })
 
+  const init = () => {
+    if (categoryInfo.subcategory && categoryInfo.subcategory) {
+      setInputValue(categoryInfo.subcategory)
+    }
+  }
+
+  useEffect(() => {
+    init()
+  }, [])
+
   return (
     <div className='relative flex flex-col gap-y-4 w-full max-w-[800px] overflow-y-auto'>
       <TextInput
@@ -115,7 +133,6 @@ function ProductCreateIdentity({ tr, form, categories }: Props) {
             onChange={(event) => {
               const v = event.currentTarget.value
               setInputValue(v)
-              setCategoryName('')
               combobox.openDropdown()
               combobox.updateSelectedOptionIndex()
             }}
@@ -129,6 +146,13 @@ function ProductCreateIdentity({ tr, form, categories }: Props) {
         {form.getInputProps('category').error ? (
           <p className='text-red-500 text-sm'>{form.getInputProps('category').error}</p>
         ) : null}
+        {categoryInfo.category && categoryInfo.subcategory && (
+          <div className='flex items-center py-2 px-2 gap-x-4 border border-dashed border-black/25'>
+            <p>{categoryInfo.category_name}</p>
+            <IconMathGreater size={22} />
+            <p>{categoryInfo.subcategory_name}</p>
+          </div>
+        )}
       </Combobox>
       <Checkbox
         label={tr.proHasVar}

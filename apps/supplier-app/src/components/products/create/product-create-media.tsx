@@ -58,7 +58,7 @@ function ProductCreateMedia({
           return prevVariants
         }
         const varImages = [...existing.images, ...currentImages]
-        newVariants[title!] = {
+        newVariants[title] = {
           images: varImages,
           title: titles.find((t) => t.value === title)?.label ?? '',
         }
@@ -67,7 +67,7 @@ function ProductCreateMedia({
           toast.error(tr.maxForVar)
           return prevVariants
         }
-        newVariants[title!] = {
+        newVariants[title] = {
           images: [...currentImages],
           title: titles.find((t) => t.value === title)?.label ?? '',
         }
@@ -188,20 +188,21 @@ function ProductCreateMedia({
               <div className='flex flex-wrap gap-x-6 gap-y-4 mt-2'>
                 {variantsImages[variant].images.map((img) => {
                   return (
-                    <div
-                      key={img.id}
-                      className='relative size-60 border border-black/20 rounded-md shadow-sm'>
-                      <Image
-                        src={img.base64}
-                        alt={img.filename}
-                        sizes='100%'
-                        fill
-                        className='object-cover rounded-md'
-                      />
-                      <div
-                        onClick={() => removeVariantImage(variant, img.id)}
-                        className='absolute -right-2 -top-2 bg-white cursor-pointer'>
-                        <IconSquareX />
+                    <div key={img.id} className='flex flex-col w-60'>
+                      {img.error && <p className='text-red-500 font-medium'>{img.error}</p>}
+                      <div className='relative size-60 border border-black/20 rounded-md shadow-sm'>
+                        <Image
+                          src={img.base64}
+                          alt={img.filename}
+                          sizes='100%'
+                          fill
+                          className='object-cover rounded-md'
+                        />
+                        <div
+                          onClick={() => removeVariantImage(variant, img.id)}
+                          className='absolute -right-2 -top-2 bg-white cursor-pointer'>
+                          <IconSquareX />
+                        </div>
                       </div>
                     </div>
                   )

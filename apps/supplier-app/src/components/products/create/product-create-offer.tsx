@@ -8,6 +8,7 @@ import ProductCreateOfferWithoutVariations, {
   ProductCreateOfferWithoutVariationsForm,
 } from '@/components/products/create/product-create-offer-without-variations'
 import ProductCreateOfferWithVariations, {
+  ProductCreateOfferWithVariationsFormValues,
   ProductCreateOfferWithVariationsHandler,
 } from '@/components/products/create/product-create-offer-with-variations'
 import { useProductsStore } from '@/store'
@@ -21,6 +22,12 @@ type Props = {
   offering: ValueLabel[]
   filfillment: ValueLabel[]
   hasVariations: boolean
+}
+
+export interface ProductCreateOfferFormValuesPayload {
+  base?: ProductCreateOfferFormValues
+  withoutVariant?: ProductCreateOfferPriceFormValues
+  withVariant?: ProductCreateOfferWithVariationsFormValues
 }
 
 export type ProductCreateOfferForm = UseFormReturnType<ProductCreateOfferFormValues>

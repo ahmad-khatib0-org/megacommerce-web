@@ -2,5 +2,6 @@ onlyBuiltDependencies:
   - '@swc/core'
   - esbuild
   - nx
+  - protobufjs
   - sharp
   - unrs-resolver

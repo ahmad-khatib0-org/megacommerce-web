@@ -23,7 +23,7 @@ const ProductCreateSafetyAndCompliance = forwardRef<ProductCreateSafetyAndCompli
     const data = useProductsStore((state) => state.product_details_data)
     const safety = data?.subcategory?.data?.safety
 
-    if (!safety) return
+    if (!safety) return null
 
     const { formShape, initialVals } = Products.safetyForm(data, tr, lang)
 
@@ -33,8 +33,6 @@ const ProductCreateSafetyAndCompliance = forwardRef<ProductCreateSafetyAndCompli
       validate: yupResolver(formShape!),
     })
 
-    form.getValues()
-
     useImperativeHandle(ref, () => ({
       getForm: () => form,
     }))
@@ -43,7 +41,7 @@ const ProductCreateSafetyAndCompliance = forwardRef<ProductCreateSafetyAndCompli
       if (Object.keys(formValues).length > 0) form.setValues(formValues)
     }, [])
 
-    const trans = data.subcategory?.translations!.safety
+    const trans = data.subcategory?.translations?.safety
 
     return (
       <div className='relative flex flex-col gap-y-4 w-full max-w-[800px]'>

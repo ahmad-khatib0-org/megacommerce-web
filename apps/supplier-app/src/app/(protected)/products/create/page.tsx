@@ -64,7 +64,7 @@ const getTranslations = (lang: string) => {
     }),
     bullets: tr(lang, 'products.bullet_points'),
     bullet: tr(lang, 'products.bullet_points.bullet_point'),
-    bulletErr: tr(lang, 'products.bullet_points.error', {
+    bulletErr: tr(lang, 'products.bullet_point.length.error', {
       Min: PRODUCT_BULLET_POINT_MIN_LENGTH,
       Max: PRODUCT_BULLET_POINT_MAX_LENGTH,
     }),
@@ -132,10 +132,11 @@ const getTranslations = (lang: string) => {
     notAppOr: tr(lang, 'form.field.select.not_applicable_or_rest'),
     mustChecked: tr(lang, 'form.field.checkbox.checked.error'),
     attestation: tr(lang, 'products.safety_and_compliance.attestation'),
+    proCreate: tr(lang, 'products.create'),
   }
 }
 
-async function Page({ }) {
+async function Page({}) {
   const lang = await Trans.getUserLang()
   const tr = getTranslations(lang)
 

@@ -24,9 +24,10 @@ type Props = {
   lang: string
 }
 
-export type ProductCreateDetailsWithVariationsForm = UseFormReturnType<ProductVariationsFormValues>
+export type ProductCreateDetailsWithVariationsForm =
+  UseFormReturnType<ProductCreateDetailsVariationsFormValues>
 
-export interface ProductVariationsFormValues {
+export interface ProductCreateDetailsVariationsFormValues {
   variations: Record<string, any>[]
 }
 

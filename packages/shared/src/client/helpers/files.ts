@@ -26,14 +26,12 @@ export function buildAttachment(file: UppyFile<Meta, Record<string, never>>): Pr
 export async function cryptoBase64Checksum(base: string): Promise<string> {
   const base64 = base.replace(/^data:[^;]+;base64,/, '')
 
-  const binaryString = atob(base64)
-  const bytes = new Uint8Array(binaryString.length)
-  for (let i = 0; i < binaryString.length; i++) {
-    bytes[i] = binaryString.charCodeAt(i)
-  }
+  // Convert base64 to Buffer and then to Uint8Array for crypto.subtle
+  const buffer = Buffer.from(base64, 'base64')
+  const uint8Array = new Uint8Array(buffer)
 
   // Generate SHA-256 hash
-  const hashBuffer = await crypto.subtle.digest('SHA-256', bytes)
+  const hashBuffer = await crypto.subtle.digest('SHA-256', uint8Array)
   const hashArray = Array.from(new Uint8Array(hashBuffer))
   const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
 

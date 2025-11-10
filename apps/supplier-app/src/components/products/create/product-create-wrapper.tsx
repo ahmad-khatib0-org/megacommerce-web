@@ -5,6 +5,7 @@ import '@uppy/image-editor/dist/style.min.css'
 import { Button, Stepper } from '@mantine/core'
 import { ObjString, ValueLabel } from '@megacommerce/shared'
 
+import { PageLoader } from '@megacommerce/ui/shared'
 import ProductCreateHooks from '@/components/products/create/product-create-hooks'
 import ProductCreateIdentity, { Category } from '@/components/products/create/product-create-identity'
 import ProductCreateDescription from '@/components/products/create/product-create-description'
@@ -39,10 +40,14 @@ const ProductCreateWrapper = ({ tr, categories, offering, filfillment }: Props) 
     setVariantsImages,
     offerWithVariantFormRef,
     safetyFormRef,
+    showSubmitButton,
+    submitting,
+    submit,
   } = ProductCreateHooks({ tr })
 
   return (
     <main>
+      {submitting && <PageLoader />}
       <section className='grid grid-rows-[1fr,auto] bg-slate-100/90 h-full'>
         <Stepper
           active={active}
@@ -102,7 +107,8 @@ const ProductCreateWrapper = ({ tr, categories, offering, filfillment }: Props) 
             <Button onClick={prevStep} variant='default'>
               {tr.back}
             </Button>
-            <Button onClick={async () => await nextStep()}>{tr.svAndCon}</Button>
+            {showSubmitButton && <Button onClick={async () => await submit()}>{tr.proCreate}</Button>}
+            {!showSubmitButton && <Button onClick={async () => await nextStep()}>{tr.svAndCon}</Button>}
           </div>
         </div>
       </section>
