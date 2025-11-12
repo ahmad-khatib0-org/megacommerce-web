@@ -1,11 +1,10 @@
 import { NumberInput, TextInput } from '@mantine/core'
 
+import { NumericRuleType, StringRuleType } from '@megacommerce/proto/web/shared/v1/validation'
 import {
   SubcategoryAttribute,
   SubcategoryAttributeTranslation,
 } from '@megacommerce/proto/web/products/v1/product_categories'
-
-import { StringRuleType } from '@megacommerce/proto/web/shared/v1/validation'
 
 type Props = {
   fieldData: SubcategoryAttribute
@@ -13,6 +12,7 @@ type Props = {
   field: any
 }
 
+// TODO: complete the regex field type and validation
 function ProductCreateDetailsInputString({ fieldData, field, fieldTrans }: Props) {
   const str = fieldData.validation?.str
   const num = fieldData.validation?.numeric
@@ -31,7 +31,7 @@ function ProductCreateDetailsInputString({ fieldData, field, fieldTrans }: Props
         label={fieldTrans.label}
         placeholder={fieldTrans.placeholder}
         aria-label={fieldTrans.label}
-        withAsterisk
+        withAsterisk={fieldData.required}
         size='sm'
         minLength={minLength}
         maxLength={maxLength}
@@ -39,13 +39,21 @@ function ProductCreateDetailsInputString({ fieldData, field, fieldTrans }: Props
       />
     )
   } else if (num) {
+    let min: number | undefined = undefined
+    let max: number | undefined = undefined
+    for (const rule of num.rules) {
+      if (rule.type === NumericRuleType.NUMERIC_RULE_TYPE_MIN) min = rule.value
+      if (rule.type === NumericRuleType.NUMERIC_RULE_TYPE_MAX) max = rule.value
+    }
     return (
       <NumberInput
         label={fieldTrans.label}
         placeholder={fieldTrans.placeholder}
         aria-label={fieldTrans.label}
-        withAsterisk
+        withAsterisk={fieldData.required}
         size='sm'
+        min={min}
+        max={max}
         {...field}
       />
     )

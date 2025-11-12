@@ -1,5 +1,5 @@
 import 'client-only'
-import { Dispatch, RefObject, SetStateAction } from 'react'
+import { Dispatch, SetStateAction } from 'react'
 import Uppy, { Meta } from '@uppy/core'
 import { array, boolean as booleanSchema, number, object, string, TestContext } from 'yup'
 
@@ -27,6 +27,8 @@ import { getFirstErroredStepV2, toAnyGrpc, tr as translator } from '@megacommerc
 import {
   ObjString,
   ValueLabel,
+  productIDValidate,
+  getProductIDType,
   PRODUCT_TITLE_MAX_LENGTH,
   PRODUCT_TITLE_MIN_LENGTH,
   PRODUCT_BRAND_NAME_MIN_LENGTH,
@@ -45,29 +47,20 @@ import {
   PRODUCT_VARIATION_TITLE_MIN_LENGTH,
   PRODUCT_VARIATION_TITLE_MAX_LENGTH,
   PRODUCT_ID_TYPES,
-  productIDValidate,
-  getProductIDType,
 } from '@megacommerce/shared'
 
 import { ProductCreateIdentityForm } from '@/components/products/create/product-create-identity'
 import { ProductCreateDescriptionForm } from '@/components/products/create/product-create-description'
-import { ProductCreateDetailsHandlers } from '@/components/products/create/product-create-details'
 import { ProductCreateDetailsVariationsFormValues } from '@/components/products/create/product-create-details-with-variations'
 import {
   ProductCreateOfferForm,
   ProductCreateOfferFormValuesPayload,
   ProductCreateOfferPriceFormValues,
 } from '@/components/products/create/product-create-offer'
-import { ProductCreateOfferWithoutVariationsForm } from '@/components/products/create/product-create-offer-without-variations'
-import {
-  ProductCreateOfferWithVariationsForm,
-  ProductCreateOfferWithVariationsHandler,
-} from '@/components/products/create/product-create-offer-with-variations'
 import { ProductCreateCustomErrors } from '@/store'
-import { ProductCreateSafetyAndCompliance } from '@/components/products/create/product-create-safety-and-compliance'
 
 export class Products {
-  constructor() { }
+  constructor() {}
 
   static identityForm(tr: ObjString) {
     return object().shape({
@@ -77,7 +70,7 @@ export class Products {
         .required(tr.titErr),
       category: string().required(tr.proTypeErr),
       subcategory: string().required(tr.proTypeErr),
-      has_variations: booleanSchema().optional(),
+      has_variations: booleanSchema().required(),
       brand_name: string().when('no_brand', {
         is: false,
         then: (s) =>
@@ -110,7 +103,7 @@ export class Products {
       title: 'product title',
       category: '',
       subcategory: '',
-      has_variations: false,
+      has_variations: true,
       brand_name: 'brand name',
       no_brand: false,
       product_id: '',
@@ -209,14 +202,15 @@ export class Products {
     }
   }
 
-  static buildProductDetailsFormFieldsVariations(productDetailsData: ProductDataResponseData) {
+  private static buildProductDetailsFormFieldsVariations(productDetailsData: ProductDataResponseData) {
     const trans = productDetailsData.subcategory?.translations!
     const attrs = productDetailsData.subcategory?.data!.attributes ?? {}
+
     const fieldsVariations: { [key: string]: SubcategoryAttribute } = {}
     const fieldsShared: { [key: string]: SubcategoryAttribute } = {}
-    for (const field of Object.entries(attrs)) {
-      if (field[1].includeInVariants) fieldsVariations[field[0]] = field[1]
-      else fieldsShared[field[0]] = field[1]
+    for (const [fieldName, fieldValue] of Object.entries(attrs)) {
+      if (fieldValue.includeInVariants) fieldsVariations[fieldName] = fieldValue
+      else fieldsShared[fieldName] = fieldValue
     }
 
     return { attrs, trans, fieldsVariations, fieldsShared }
@@ -374,16 +368,8 @@ export class Products {
     return { variations }
   }
 
-  static safetyForm(fields: ProductDataResponseData, tr: ObjString, lang: string) {
-    const data = fields.subcategory?.data?.safety
-    if (!data)
-      return {
-        formFields: {} as { [key: string]: any },
-        initialVals: {} as Record<string, any>,
-        formShape: undefined,
-      }
-
-    const { formFields, initialVals } = this.buildFormFieldsValidators(lang, tr, data)
+  static safetyForm(fields: { [key: string]: SubcategorySafety }, tr: ObjString, lang: string) {
+    const { formFields, initialVals } = this.buildFormFieldsValidators(lang, tr, fields)
 
     formFields['attestation'] = booleanSchema().oneOf([true], tr.mustChecked)
     initialVals['attestation'] = false
@@ -447,7 +433,9 @@ export class Products {
         formFields[fieldName] = schema
       } else if (fieldData.type === 'boolean') {
         initialVals[fieldName] = false
-        formFields[fieldName] = booleanSchema()
+        formFields[fieldName] = fieldData.required
+          ? booleanSchema().oneOf([true], tr.mustChecked)
+          : booleanSchema()
       }
     }
 
@@ -458,14 +446,14 @@ export class Products {
     media:
       | { images: Attachment[]; videos: Attachment[] }
       | {
-        images: Record<string, { title: string; images: Attachment[] }>
-        videos: Record<string, Attachment[]>
-      }
+          images: { [key: string]: { title: string; images: Attachment[] } }
+          videos: { [key: string]: { title: string; videos: Attachment[] } }
+        }
   ) {
     let totalSize = 0
     if (isWithVariantsMedia(media)) {
-      for (const [_, value] of Object.entries(media.images)) {
-        totalSize += value
+      for (const value of Object.values(media.images)) {
+        totalSize += value.images
           .map((image) => parseInt(image.fileSize))
           .reduce((total, current, _) => total + current, 0)
       }
@@ -482,11 +470,11 @@ export class Products {
     media:
       | { images: Attachment[]; videos: Attachment[] }
       | {
-        images: {
-          [key: string]: { title: string; images: Attachment[] }
-        }
-        videos: Record<string, Attachment[]>
-      },
+          images: {
+            [key: string]: { title: string; images: Attachment[] }
+          }
+          videos: { [key: string]: { title: string; videos: Attachment[] } }
+        },
     offer: ProductCreateOfferFormValuesPayload,
     safety: Record<string, any>
   ): ProductCreateRequest {
@@ -514,8 +502,8 @@ export class Products {
     if (isWithVariantsMedia(media)) {
       const images: { [key: string]: Attachments } = {}
       const videos: { [key: string]: Attachments } = {}
-      for (const img of Object.entries(media.images)) images[img[0]] = { attachments: img[1] }
-      for (const vid of Object.entries(media.videos)) videos[vid[0]] = { attachments: vid[1] }
+      for (const img of Object.entries(media.images)) images[img[0]] = { attachments: img[1].images }
+      for (const vid of Object.entries(media.videos)) videos[vid[0]] = { attachments: vid[1].videos }
       mediaVariants.images = images
       mediaVariants.videos = videos
     } else if (isWithoutVariantsMedia(media)) {
@@ -628,6 +616,11 @@ export class Products {
     setProductCustomErrors: (errors: Partial<ProductCreateCustomErrors | null>) => void,
     identity: ProductCreateIdentityForm,
     description: ProductCreateDescriptionForm,
+    details: {
+      setDetailsVariantsErrors: (errors: { [key: string]: Record<string, any> }) => void
+      setDetailsVariantsSharedErrors: (errors: Record<string, any>) => void
+      setDetailsNoVariantsErrors: (errors: Record<string, any>) => void
+    },
     media: {
       uppy: Uppy<Meta, Record<string, never>>
       variantsImages: { [key: string]: { title: string; images: Attachment[] } }
@@ -635,8 +628,11 @@ export class Products {
     },
     offer: {
       base: ProductCreateOfferForm
-      noVariants: ProductCreateOfferWithoutVariationsForm
-      variants: RefObject<ProductCreateOfferWithVariationsHandler | null>
+      setOfferVariantsErrors: (errors: { [key: string]: Record<string, any> }) => void
+      setOfferNoVariantsErrors: (errors: Record<string, any>) => void
+    },
+    safety: {
+      setSafetyErrors: (errors: Record<string, any>) => void
     }
   ) {
     if (error.errors) {
@@ -681,13 +677,15 @@ export class Products {
           }
         } else if (field.startsWith('offer')) {
           this.invalidateOffer(
-            offer,
+            {
+              base: offer.base,
+              noVariantsErrors: offerNoVariantsErrors,
+              variantsErrors: offerVariantsErrors,
+            },
             field,
             err,
             customErrors,
-            hasVariations,
-            offerNoVariantsErrors,
-            offerVariantsErrors
+            hasVariations
           )
         } else if (field.startsWith('safety')) {
           this.invalidateSafety(field, err, customErrors, safetyErrors)
@@ -697,6 +695,24 @@ export class Products {
       if (variantImagesShouldUpdate) {
         media.setVariantsImages(variantImages)
       }
+
+      if (Object.keys(detailsVariantsErrors).length > 0) {
+        details.setDetailsVariantsErrors(detailsVariantsErrors)
+      }
+      if (Object.keys(detailsVariantsSharedErrors).length > 0) {
+        details.setDetailsVariantsSharedErrors(detailsVariantsSharedErrors)
+      }
+      if (Object.keys(detailsNoVariantsErrors).length > 0) {
+        details.setDetailsNoVariantsErrors(detailsNoVariantsErrors)
+      }
+      if (Object.keys(offerVariantsErrors).length > 0) {
+        offer.setOfferVariantsErrors(offerVariantsErrors)
+      }
+      if (Object.keys(offerNoVariantsErrors).length > 0) {
+        offer.setOfferNoVariantsErrors(offerNoVariantsErrors)
+      }
+      if (Object.keys(safetyErrors).length > 0) safety.setSafetyErrors(safetyErrors)
+
       setProductCustomErrors(customErrors)
       let stepNumber = getFirstErroredStepV2(error.errors, this.getStepsIndexAndNames())
       if (stepNumber != -1) setStep(stepNumber)
@@ -827,15 +843,13 @@ export class Products {
   static invalidateOffer(
     step: {
       base: ProductCreateOfferForm
-      noVariants: ProductCreateOfferWithoutVariationsForm
-      variants: RefObject<ProductCreateOfferWithVariationsHandler | null>
+      noVariantsErrors: Record<string, any>
+      variantsErrors: { [key: string]: Record<string, any> }
     },
     field: string,
     err: string,
     custom: Partial<ProductCreateCustomErrors>,
-    hasVariations: boolean,
-    noVariantsErrors: Record<string, any>,
-    variantsErrors: { [key: string]: Record<string, any> }
+    hasVariations: boolean
   ) {
     if (field === 'offer.form.missing') {
       custom.offer = { ...custom.offer, missing_form: err }
@@ -854,12 +868,13 @@ export class Products {
       return
     }
 
+    const { variantsErrors, noVariantsErrors } = step
+
     const split = field.split('.')
-    const variants = step.variants.current?.getForm
-    if (hasVariations && variants && split.length === 3) {
+    if (hasVariations && split.length === 3) {
       /*offer.{form_id}.{field_name}*/
       variantsErrors[split[1]] = { ...(variantsErrors[split[1]] || {}), [split[2]]: err }
-    } else if (hasVariations && variants && field.includes('minimum_orders')) {
+    } else if (hasVariations && field.includes('minimum_orders')) {
       /*offer.{form_id}.minimum_orders.count*/
       if (field.includes('minimum_orders.count') && split.length === 4) {
         custom.offer = {
@@ -960,9 +975,10 @@ function isWithoutVariantsMedia(media: any): media is { images: Attachment[]; vi
   return Array.isArray(media.images) && Array.isArray(media.videos)
 }
 
-function isWithVariantsMedia(
-  media: any
-): media is { images: Record<string, Attachment[]>; videos: Record<string, Attachment[]> } {
+function isWithVariantsMedia(media: any): media is {
+  images: { [key: string]: { title: string; images: Attachment[] } }
+  videos: { [key: string]: { title: string; videos: Attachment[] } }
+} {
   return (
     media.images instanceof Object &&
     !Array.isArray(media.images) &&

@@ -25,12 +25,14 @@ import {
 import { ProductCreateSafetyAndCompliance } from '@/components/products/create/product-create-safety-and-compliance'
 import { Products, productsClient } from '@/helpers/client'
 import { useAppStore, useProductsStore } from '@/store'
+import { useRouter } from 'next/navigation'
 
 type Props = {
   tr: ObjString
 }
 
 function ProductCreateHooks({ tr }: Props) {
+  const router = useRouter()
   const detailsFormRef = useRef<ProductCreateDetailsHandlers>(null)
   const offerWithVariantFormRef = useRef<ProductCreateOfferWithVariationsHandler>(null)
   const safetyFormRef = useRef<ProductCreateSafetyAndCompliance>(null)
@@ -41,10 +43,12 @@ function ProductCreateHooks({ tr }: Props) {
     [key: string]: { title: string; images: Attachment[] }
   }>({})
   const [productDetailsLoading, setProductDetailsLoading] = useState(false)
+  const [showSubmitButton, setShowSubmitButton] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 
   const info = useAppStore((state) => state.clientInfo)
-  const setProductsData = useProductsStore((s) => s.set_product_details_data)
+  const setProductsData = useProductsStore((state) => state.set_product_details_data)
+
   const setProductDetailsFormValues = useProductsStore((state) => state.set_product_details_form_values)
   const setProductDetailsVariationFormValues = useProductsStore(
     (state) => state.set_product_details_variations_form_values
@@ -52,9 +56,24 @@ function ProductCreateHooks({ tr }: Props) {
   const setProductDetailsVariationsTitles = useProductsStore(
     (state) => state.set_product_details_variations_titles
   )
-  const productDetailsVariationsTitles = useProductsStore((state) => state.product_details_variations_titles)
   const setProductOfferFormValues = useProductsStore((state) => state.set_product_offer_form_values)
   const setProductSafetyFormValues = useProductsStore((state) => state.set_product_safety_form_values)
+  const setProductCreateCustomErrors = useProductsStore((state) => state.set_product_create_custom_errors)
+
+  const productDetailsVariationsTitles = useProductsStore((state) => state.product_details_variations_titles)
+  const productDetailsFormValues = useProductsStore((state) => state.product_details_form_values)
+  const productDetailsVarFormValues = useProductsStore(
+    (state) => state.product_details_variations_form_values
+  )
+  const productOfferFormValues = useProductsStore((state) => state.product_offer_form_values)
+  const productSafetyFormValues = useProductsStore((state) => state.product_safety_form_values)
+
+  const setDetailsVariantsErrors = useProductsStore((state) => state.set_details_errors_variants)
+  const setDetailsVariantsSharedErrors = useProductsStore((state) => state.set_details_errors_variants_shared)
+  const setDetailsNoVariantsErrors = useProductsStore((state) => state.set_details_errors_no_variants)
+  const setOfferVariantsErrors = useProductsStore((state) => state.set_offer_errors_variants)
+  const setOfferNoVariantsErrors = useProductsStore((state) => state.set_offer_errors_no_variants)
+  const setSafetyErrors = useProductsStore((state) => state.set_safety_errors)
 
   const identityForm = useForm({
     validateInputOnBlur: true,
@@ -120,32 +139,37 @@ function ProductCreateHooks({ tr }: Props) {
         }
         setProductsData(response.data!)
       } catch (err) {
-        toast.error(handleGrpcWebErr(err))
+        console.error(err)
+        toast.error(handleGrpcWebErr(err, info.language))
         return
       } finally {
         setProductDetailsLoading(false)
       }
     }
-    setActive((current) => (current < 6 ? current + 1 : current))
+    setActive((current) => (current < 5 ? current + 1 : current))
   }
 
   const validateDetailsForm = (): boolean => {
     let valid = false
-    const shared = detailsFormRef.current?.getForm()!
     const variations = detailsFormRef.current?.getVariationsForm
     if (variations) {
       valid = !variations().validate().hasErrors
       const values = variations().getValues()
       setProductDetailsVariationFormValues(values)
-      if (!valid) return false
+      if (!valid) return valid
+
       const titles = values.variations.map((variation) => ({
         label: variation['title'] as string,
         value: variation['id'] as string,
       }))
       setProductDetailsVariationsTitles(titles)
     }
-    valid = !shared.validate().hasErrors
-    setProductDetailsFormValues(shared.getValues())
+
+    const shared = detailsFormRef.current?.getForm
+    if (shared) {
+      valid = !shared().validate().hasErrors
+      setProductDetailsFormValues(shared().getValues())
+    }
     return valid
   }
 
@@ -207,10 +231,9 @@ function ProductCreateHooks({ tr }: Props) {
       valid = !form().validate().hasErrors
       setProductSafetyFormValues(form().getValues())
     }
+    if (valid) setShowSubmitButton(true)
     return valid
   }
-
-  const submit = () => { }
 
   const prevStep = () => {
     const sharedForm = detailsFormRef.current?.getForm()
@@ -261,6 +284,56 @@ function ProductCreateHooks({ tr }: Props) {
     })
   })
 
+  const submit = async () => {
+    if (submitting) return
+    setSubmitting(true)
+    const hasVar = identityForm.values.has_variations
+    try {
+      const request = Products.buildRequest(
+        identityForm,
+        descForm,
+        { variants: productDetailsVarFormValues, noVariants: productDetailsFormValues },
+        hasVar ? { images: variantsImages, videos: {} } : { images: images, videos: [] },
+        { ...productOfferFormValues },
+        Object.keys(productSafetyFormValues).length > 0
+          ? productSafetyFormValues
+          : safetyFormRef.current?.getForm().getValues() ?? {}
+      )
+
+      console.log(request)
+      const result = await productsClient.ProductCreate(request)
+      console.log(result)
+
+      if (result.error) {
+        Products.handleCreateError(
+          result.error,
+          setActive,
+          setProductCreateCustomErrors,
+          identityForm,
+          descForm,
+          { setDetailsNoVariantsErrors, setDetailsVariantsErrors, setDetailsVariantsSharedErrors },
+          { uppy, variantsImages, setVariantsImages },
+          { base: offerForm, setOfferVariantsErrors, setOfferNoVariantsErrors },
+          { setSafetyErrors }
+        )
+        toast.error(result.error.message)
+        setShowSubmitButton(false)
+        return
+      }
+
+      if (result.data) {
+        toast.success(result.data.message)
+        router.push('/products')
+      }
+    } catch (err) {
+      console.error(err)
+      toast.error(handleGrpcWebErr(err, info.language))
+      setShowSubmitButton(false)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
   useEffect(() => {
     const handleFileAdded = async (f: UppyFile<Meta, Record<string, never>>) => {
       const newAttachment = await buildAttachment(f)
@@ -308,6 +381,9 @@ function ProductCreateHooks({ tr }: Props) {
     safetyFormRef,
     nextStep,
     prevStep,
+    showSubmitButton,
+    submitting,
+    submit,
   }
 }
 

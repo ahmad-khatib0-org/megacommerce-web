@@ -1,3 +1,4 @@
+import { Checkbox } from '@mantine/core'
 import {
   SubcategoryAttribute,
   SubcategoryTranslations,
@@ -5,7 +6,6 @@ import {
 
 import ProductCreateDetailsInputString from '@/components/products/create/product-create-details-input-string'
 import ProductCreateDetailsInputSelect from '@/components/products/create/product-create-details-input-select'
-import ProductCreateDetailsInputCheckbox from '@/components/products/create/product-create-details-input-checkbox'
 
 type Props = {
   fieldData: SubcategoryAttribute
@@ -14,7 +14,6 @@ type Props = {
   trans: SubcategoryTranslations
 }
 
-// TODO: complete the regex field type and validation
 function ProductCreateDetailsInputWrapper({ fieldData, fieldName, field, trans }: Props) {
   const fieldTrans = trans.attributes[fieldName]
   const type = fieldData.type
@@ -25,7 +24,25 @@ function ProductCreateDetailsInputWrapper({ fieldData, fieldName, field, trans }
   } else if (type === 'select') {
     return <ProductCreateDetailsInputSelect trans={trans} fieldName={fieldName} {...sharedProps} />
   } else if (type === 'boolean') {
-    return <ProductCreateDetailsInputCheckbox {...sharedProps} />
+    return (
+      <Checkbox
+        label={
+          fieldData.required ? (
+            <div className='flex justify-center gap-x-1'>
+              <p>{fieldTrans.label}</p>
+              <span className='block text-red-500'>*</span>
+            </div>
+          ) : (
+            <p>{fieldTrans.label}</p>
+          )
+        }
+        aria-label={fieldTrans.label}
+        className='font-medium mt-4'
+        required={fieldData.required}
+        styles={{ label: { fontSize: 16 } }}
+        {...field}
+      />
+    )
   }
   return null
 }

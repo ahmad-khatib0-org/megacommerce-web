@@ -28,7 +28,7 @@ function ProductCreateDetailsInputSelect({ fieldData, fieldName, fieldTrans, fie
       aria-label={fieldTrans.label}
       data={selectData}
       allowDeselect={!fieldData.required}
-      withAsterisk
+      withAsterisk={fieldData.required}
       size='sm'
       {...field}
     />

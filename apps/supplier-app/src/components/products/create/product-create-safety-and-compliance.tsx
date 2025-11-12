@@ -20,12 +20,12 @@ export interface ProductCreateSafetyAndCompliance {
 const ProductCreateSafetyAndCompliance = forwardRef<ProductCreateSafetyAndCompliance, Props>(
   ({ tr, lang }, ref) => {
     const formValues = useProductsStore((state) => state.product_safety_form_values)
-    const data = useProductsStore((state) => state.product_details_data)
-    const safety = data?.subcategory?.data?.safety
+    const safety = useProductsStore((state) => state.product_details_data?.subcategory?.data?.safety)
+    const trans = useProductsStore((state) => state.product_details_data?.subcategory?.translations?.safety)
 
-    if (!safety) return null
+    if (!safety || !trans) return null
 
-    const { formShape, initialVals } = Products.safetyForm(data, tr, lang)
+    const { formShape, initialVals } = Products.safetyForm(safety, tr, lang)
 
     const form = useForm({
       initialValues: initialVals,
@@ -40,8 +40,6 @@ const ProductCreateSafetyAndCompliance = forwardRef<ProductCreateSafetyAndCompli
     useEffect(() => {
       if (Object.keys(formValues).length > 0) form.setValues(formValues)
     }, [])
-
-    const trans = data.subcategory?.translations?.safety
 
     return (
       <div className='relative flex flex-col gap-y-4 w-full max-w-[800px]'>
@@ -106,7 +104,7 @@ const ProductCreateSafetyAndCompliance = forwardRef<ProductCreateSafetyAndCompli
                 aria-label={label}
                 data={selectData}
                 allowDeselect={!required}
-                withAsterisk
+                withAsterisk={required}
                 size='sm'
                 {...form.getInputProps(field)}
               />
@@ -115,9 +113,19 @@ const ProductCreateSafetyAndCompliance = forwardRef<ProductCreateSafetyAndCompli
             return (
               <Checkbox
                 key={field}
-                label={label}
+                label={
+                  required ? (
+                    <div className='flex justify-center gap-x-1'>
+                      <p>{label}</p>
+                      <span className='block text-red-500'>*</span>
+                    </div>
+                  ) : (
+                    <p>{label}</p>
+                  )
+                }
                 placeholder={placeholder}
                 aria-label={label}
+                required={required}
                 className='font-medium mt-4'
                 styles={{ label: { fontSize: 16 } }}
                 {...form.getInputProps(field)}
@@ -131,6 +139,7 @@ const ProductCreateSafetyAndCompliance = forwardRef<ProductCreateSafetyAndCompli
           placeholder={tr.attestation}
           aria-label={tr.attestation}
           className='font-medium mt-4'
+          required={true}
           styles={{ label: { fontSize: 16 } }}
           {...form.getInputProps('attestation')}
         />

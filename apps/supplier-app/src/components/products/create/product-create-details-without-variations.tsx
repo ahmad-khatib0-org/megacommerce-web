@@ -19,6 +19,8 @@ type Props = {
 const ProductCreateDetailsWithoutVariations = forwardRef<ProductCreateDetailsHandlers, Props>(
   ({ tr, productDetailsData, lang }, ref) => {
     const productDetailsFormValues = useProductsStore((state) => state.product_details_form_values)
+    const detailsErrorsNoVariants = useProductsStore((state) => state.details_errors_no_variants)
+    const setDetailsErrorsNoVariants = useProductsStore((state) => state.set_details_errors_no_variants)
     const { formShape, initialVals } = Products.detailsWithoutVariationsForm(productDetailsData, tr, lang)
 
     const form = useForm({
@@ -31,8 +33,17 @@ const ProductCreateDetailsWithoutVariations = forwardRef<ProductCreateDetailsHan
       getForm: () => form,
     }))
 
+    const init = () => {
+      if (Object.keys(productDetailsFormValues).length > 0) {
+        form.setValues(productDetailsFormValues)
+      }
+      if (Object.keys(detailsErrorsNoVariants).length > 0) {
+        form.setErrors(detailsErrorsNoVariants)
+      }
+    }
+
     useEffect(() => {
-      if (Object.keys(productDetailsFormValues).length > 0) form.setValues(productDetailsFormValues)
+      init()
     }, [])
 
     const trans = productDetailsData.subcategory?.translations!

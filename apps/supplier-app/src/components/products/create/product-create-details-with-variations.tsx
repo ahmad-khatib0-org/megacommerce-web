@@ -37,6 +37,9 @@ const ProductCreateDetailsWithVariations = forwardRef<ProductCreateDetailsHandle
     const productDetailsVariationFormValues = useProductsStore(
       (state) => state.product_details_variations_form_values
     )
+    const detailsVariantsErrors = useProductsStore((state) => state.details_errors_variants)
+    const detailsVariantsSharedErrors = useProductsStore((state) => state.details_errors_variants_shared)
+
     const {
       trans,
       fieldsShared,
@@ -92,10 +95,30 @@ const ProductCreateDetailsWithVariations = forwardRef<ProductCreateDetailsHandle
       getVariationsForm: () => variationForm,
     }))
 
-    useEffect(() => {
-      if (Object.keys(productDetailsFormValues).length > 0) sharedForm.setValues(productDetailsFormValues)
-      if (productDetailsVariationFormValues.variations.length > 0)
+    const init = () => {
+      if (Object.keys(productDetailsFormValues).length > 0) {
+        sharedForm.setValues(productDetailsFormValues)
+      }
+      if (productDetailsVariationFormValues.variations.length > 0) {
         variationForm.setValues(productDetailsVariationFormValues)
+        if (Object.keys(detailsVariantsErrors).length > 0) {
+          for (const [varID, errors] of Object.entries(detailsVariantsErrors)) {
+            const idx = productDetailsVariationFormValues.variations.findIndex((variant) => {
+              const id = variant['id']
+              return id && id === varID
+            })
+            if (idx !== -1) {
+              for (const [fieldName, error] of Object.entries(errors)) {
+                variationForm.setFieldError(`variations.${idx}.${fieldName}`, error)
+              }
+            }
+          }
+        }
+      }
+    }
+
+    useEffect(() => {
+      init()
     }, [])
 
     return (

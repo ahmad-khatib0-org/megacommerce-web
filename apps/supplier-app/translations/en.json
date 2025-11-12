@@ -74,7 +74,7 @@
   "templates.verify.part4": "Please note that this is a one-time use token and it will expire in {{Hours}} hours.",
   "templates.footer.part1": "Any questions at all, mail us any time: {{SupportEmail}}, Best wishes, The {{SiteName}} Team",
   "products.create": "Create Product",
-  "products.create.successfully": "title should be between {{Min}} and {{Max}} characters",
+  "products.create.successfully": "The product created successfully",
   "products.category.missing.error": "The Product's category is missing",
   "products.subcategory.missing.error": "The Product's subcategory is missing",
   "products.title.error": "title should be between {{Min}} and {{Max}} characters",
