@@ -1,5 +1,6 @@
 'use client'
-import { ReactNode, useCallback } from 'react'
+
+import { ReactNode, useCallback, useState, useEffect } from 'react'
 import Image from 'next/image'
 import useEmblaCarousel from 'embla-carousel-react'
 import { IconArrowLeft, IconArrowRight } from '@tabler/icons-react'
@@ -18,6 +19,23 @@ type Props = {
 
 function HomeProductsWrapper({ title, products }: Props) {
   const [emblaRef, emblaApi] = useEmblaCarousel({ dragFree: false, slidesToScroll: 2, loop: true }, [])
+  const [current, setCurrent] = useState(0)
+
+  const dotsCount = Math.ceil(products.length / 2)
+
+  // Update current state when carousel changes
+  useEffect(() => {
+    if (!emblaApi) return
+
+    const onSelect = () => {
+      setCurrent(emblaApi.selectedScrollSnap())
+    }
+
+    emblaApi.on('select', onSelect)
+    return () => {
+      emblaApi.off('select', onSelect)
+    }
+  }, [emblaApi])
 
   const prev = useCallback(() => {
     if (emblaApi) emblaApi.scrollPrev()
@@ -26,6 +44,14 @@ function HomeProductsWrapper({ title, products }: Props) {
   const next = useCallback(() => {
     if (emblaApi) emblaApi.scrollNext()
   }, [emblaApi])
+
+  // Navigate to a specific slide when a dot is clicked
+  const scrollTo = useCallback(
+    (index: number) => {
+      if (emblaApi) emblaApi.scrollTo(index)
+    },
+    [emblaApi]
+  )
 
   return (
     <div className='embla relative group/item border border-black/20 hover:shadow-md hover:bg-slate-100'>
@@ -53,6 +79,17 @@ function HomeProductsWrapper({ title, products }: Props) {
         className='absolute top-1/2 -translate-y-1/2 right-0 invisible group-hover/item:visible bg-slate-500 p-2'>
         <IconArrowRight color='#fbfbfb' />
       </button>
+      <div className='flex justify-center gap-2 py-2'>
+        {Array.from({ length: dotsCount }).map((_, index) => (
+          <button
+            key={index}
+            onClick={() => scrollTo(index)}
+            className={`w-2 h-2 rounded-full transition-colors ${current === index ? 'bg-orange-500' : 'bg-gray-300'
+              }`}
+            aria-label={`Go to slide ${index + 1}`}
+          />
+        ))}
+      </div>
     </div>
   )
 }
