@@ -14,17 +14,6 @@ export class GrpcWebError extends Error {
   }
 }
 
-/**
- * ClientInformation represents essential information about a user, like 
- * 
- * language, currency, ship to location, ...
-*/
-export interface ClientInformation {
-  country: string
-  language: string
-  currency: string
-}
-
 export interface UploadFileStatus {
   id: string
   fileName: string
