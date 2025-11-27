@@ -1,8 +1,12 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ObjString } from '@megacommerce/shared'
+import { handleGrpcWebErr } from '@megacommerce/shared/client'
+import { BigDiscountProductListItem } from '@megacommerce/proto/web/products/v1/big_discount_products'
 
 import HomeProductsWrapper from '@/components/home/home-products-wrapper'
+import { useAppStore } from '@/store'
+import { productsClient } from '@/helpers/client'
 
 type Props = {
   tr: ObjString
@@ -10,25 +14,61 @@ type Props = {
 
 function HomeBigDiscount({ tr }: Props) {
   const [loading, setLoading] = useState(false)
+  const [err, setErr] = useState('')
+  const [products, setProducts] = useState<BigDiscountProductListItem[]>([])
+  const clientInfo = useAppStore((state) => state.clientInfo)
 
-  const products = new Array(6).fill(null).map((_, i) => ({
-    id: `product-${i}`,
-    name: 'the product name and this is ...',
-    image: '/images/login.png',
+  const tryAgain = async () => {
+    setErr('')
+    setProducts([])
+    await init()
+  }
+
+  const init = async () => {
+    if (loading) return
+    setLoading(true)
+    try {
+      const res = await productsClient(clientInfo).BigDiscountProducts({})
+      if (res.error) setErr(res.error.message)
+      if (res.data) setProducts(res.data.products)
+    } catch (err) {
+      setErr(handleGrpcWebErr(err, clientInfo.language))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    init()
+  }, [])
+
+  const _products = products.map((pro) => ({
+    id: pro.id,
+    name: pro.title,
+    image: `${process.env['NEXT_PUBLIC_MEDIA_BASE_URL'] as string}/${pro.image}`,
     body: (
       <>
         <div className='flex items-center gap-x-2'>
-          <p className='font-bold text-base'>40.44$</p>
-          <p className='line-through text-sm'>44.44$</p>
+          <p className='font-bold text-base text-red-700'>{(pro.discountPriceCents / 100).toFixed(2)}$ </p>
+          <p className='line-through text-sm text-gray-500'>{(pro.priceCents / 100).toFixed(2)}$ </p>
         </div>
         <div className='bg-red-500 px-2 py-1 mt-1 w-max'>
-          <p className='text-white text-sm'>-6%</p>
+          <p className='text-white text-sm'>-{pro.discountPercentage}%</p>
         </div>
       </>
     ),
   }))
 
-  return <HomeProductsWrapper title={tr.bigDisc} products={products} loading={loading} />
+  return (
+    <HomeProductsWrapper
+      title={tr.bestSellers}
+      products={_products}
+      loading={loading}
+      error={err}
+      tryAgain={tryAgain}
+      tryAgainMsg={tr.tryAgain}
+    />
+  )
 }
 
 export default HomeBigDiscount

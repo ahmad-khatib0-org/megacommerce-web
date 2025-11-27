@@ -29,8 +29,6 @@ function HomeBestSellers({ tr }: Props) {
     if (loading) return
     setLoading(true)
     try {
-      console.log('the language is: ', clientInfo.language)
-      await new Promise((res) => setTimeout(() => res(''), 2000))
       const res = await productsClient(clientInfo).BestSellingProducts({})
       if (res.error) setErr(res.error.message)
       if (res.data) setProducts(res.data.products)
