@@ -308,5 +308,11 @@
   "actions.delete_item": "Delete this item",
   "actions.try_again": "Try again",
   "upload.uploading_file": "Uploading file...",
-  "upload.uploading_complete": "Uploading Completed"
+  "upload.uploading_complete": "Uploading Completed",
+  "products.best_sellers": "Best Sellers",
+  "products.big_discount": "Big Discount",
+  "products.sold": "sold",
+  "products.hot_and_new": "Hot And New",
+  "products.more_to_like": "More products to like",
+  "products.today_deals": "Today's deals"
 }

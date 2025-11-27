@@ -10,12 +10,14 @@ import { SuccessResponseData } from '@megacommerce/proto/shared/v1/types'
 import { ObjString, UserPasswordMaxLength, UserPasswordMinLength } from '@megacommerce/shared'
 import { handleGrpcWebErr } from '@megacommerce/shared/client'
 import { LoginHelpers, PagesPaths, usersClient } from '@/helpers/client'
+import { useAppStore } from '@/store'
 
 type Props = {
   tr: ObjString
 }
 
 function LoginHooks({ tr }: Props) {
+  const clientInfo = useAppStore((state) => state.clientInfo)
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [challenge, setChallenge] = useState('')
@@ -42,7 +44,7 @@ function LoginHooks({ tr }: Props) {
       if (res.error) handleError(res.error)
       if (res.data) handleSuccess(res.data)
     } catch (err) {
-      toast.error(handleGrpcWebErr(err))
+      toast.error(handleGrpcWebErr(err, clientInfo.language))
     } finally {
       setLoading(false)
     }

@@ -19,6 +19,7 @@ const getTranslations = (lang: string) => {
     language: tr(lang, 'translation.language'),
     currency: tr(lang, 'currencies.currency'),
     save: tr(lang, 'save'),
+    lookingFor: tr(lang, 'search.looking_for'),
     welcome: tr(lang, 'welcome'),
     signin: tr(lang, 'signin'),
     register: tr(lang, 'register'),
@@ -34,7 +35,7 @@ const Header = ({ userLang }: Props) => {
         <p className='font-bold text-3xl text-black'>Mega</p>
         <p className='font-bold text-3xl text-orange-600'>Commerce</p>
       </a>
-      <SearchBar />
+      <SearchBar tr={tr} />
       <div className='grid grid-cols-[minmax(0,1fr),minmax(0,1fr),max-content] items-center'>
         <LanguageCurrencyLocation tr={tr} langs={AVAILABLE_LANGUAGES} />
         <Account tr={tr} />

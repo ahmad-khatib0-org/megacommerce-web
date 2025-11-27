@@ -23,12 +23,13 @@ const getTranslations = (lang: string) => {
     freeReturn: tr(lang, 'shipping.free_return'),
     freeReturnOn: tr(lang, 'shipping.free_return_on_millions_of_items'),
     freeReturnDesc: tr(lang, 'shipping.free_return_desc'),
-    bestSellers: 'Best Sellers',
-    bigDisc: 'Big Discount',
-    sold: 'sold',
-    hot: 'Hot And New',
-    more: 'More products to like',
-    tdDel: "Today's deals",
+    bestSellers: tr(lang, 'products.best_sellers'),
+    bigDisc: tr(lang, 'products.big_discount'),
+    sold: tr(lang, 'products.sold'),
+    hot: tr(lang, 'products.hot_and_new'),
+    more: tr(lang, 'products.more_to_like'),
+    tdDel: tr(lang, 'products.today_deals'),
+    tryAgain: tr(lang, 'actions.try_again'),
   }
 }
 

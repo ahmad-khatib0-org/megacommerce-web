@@ -1,5 +1,7 @@
 'use client'
+import { useState } from 'react'
 import { ObjString } from '@megacommerce/shared'
+
 import HomeProductsWrapper from '@/components/home/home-products-wrapper'
 
 type Props = {
@@ -7,6 +9,8 @@ type Props = {
 }
 
 function HomeBigDiscount({ tr }: Props) {
+  const [loading, setLoading] = useState(false)
+
   const products = new Array(6).fill(null).map((_, i) => ({
     id: `product-${i}`,
     name: 'the product name and this is ...',
@@ -24,7 +28,7 @@ function HomeBigDiscount({ tr }: Props) {
     ),
   }))
 
-  return <HomeProductsWrapper title={tr.bigDisc} products={products} />
+  return <HomeProductsWrapper title={tr.bigDisc} products={products} loading={loading} />
 }
 
 export default HomeBigDiscount

@@ -10,6 +10,7 @@ import { PageLoader } from '@megacommerce/ui/shared'
 
 import { Assets } from '@/helpers/shared'
 import { PagesPaths, usersClient } from '@/helpers/client'
+import { useAppStore } from '@/store'
 
 type Props = {
   tr: ObjString
@@ -17,6 +18,7 @@ type Props = {
 }
 
 function EmailVerificationWrapper({ tr, req }: Props) {
+  const clientInfo = useAppStore((state) => state.clientInfo)
   const [successMsg, setSuccessMsg] = useState('')
   const [errorMsg, setErrorMsg] = useState('')
   const [loading, setLoading] = useState(false)
@@ -32,7 +34,7 @@ function EmailVerificationWrapper({ tr, req }: Props) {
       }
       setSuccessMsg(res.data!.message!)
     } catch (err) {
-      setErrorMsg(handleGrpcWebErr(err))
+      setErrorMsg(handleGrpcWebErr(err, clientInfo.language))
     } finally {
       setLoading(false)
     }

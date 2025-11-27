@@ -48,7 +48,7 @@ function Categories({ tr, categories }: Props) {
       },
       { id: 'id1', name: 'the name of the product', price: 22.45 },
     ]
-    return new Promise((res, rej) => {
+    return new Promise((res, _) => {
       setTimeout(() => {
         setLoading(false)
         res(data)
@@ -72,8 +72,9 @@ function Categories({ tr, categories }: Props) {
             {categories.map((c, idx) => (
               <li
                 key={c.id}
-                className={`flex items-center px-4 gap-x-2 mb-3 cursor-pointer py-2 ${current === idx ? 'bg-white' : ''
-                  }`}
+                className={`flex items-center px-4 gap-x-2 mb-3 cursor-pointer py-2 ${
+                  current === idx ? 'bg-white' : ''
+                }`}
                 onMouseEnter={() => onCategoryChange(idx, c.id)}>
                 <div className='relative size-8'>
                   <Image src={c.image} alt={c.name} sizes='100%' fill style={{ objectFit: 'cover' }} />

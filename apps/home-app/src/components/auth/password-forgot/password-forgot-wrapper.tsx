@@ -7,10 +7,11 @@ import { object, string } from 'yup'
 import { toast } from 'react-toastify'
 import { IconMail } from '@tabler/icons-react'
 
+import { ObjString } from '@megacommerce/shared'
 import { handleGrpcWebErr } from '@megacommerce/shared/client'
 import { PageLoader, SuccessMessage } from '@megacommerce/ui/shared'
-import { ObjString } from '@megacommerce/shared'
 import { PagesPaths, usersClient } from '@/helpers/client'
+import { useAppStore } from '@/store'
 
 type Props = {
   Header: ReactNode
@@ -19,6 +20,7 @@ type Props = {
 }
 
 function PasswordForgotWrapper({ tr, BackButton, Header }: Props) {
+  const clientInfo = useAppStore((state) => state.clientInfo)
   const [loading, setLoading] = useState(false)
   const [successMsg, setSuccessMsg] = useState<{ message: string; description: string } | undefined>()
 
@@ -42,7 +44,7 @@ function PasswordForgotWrapper({ tr, BackButton, Header }: Props) {
         description: res.data?.metadata['description'] ?? '',
       })
     } catch (err) {
-      toast.error(handleGrpcWebErr(err))
+      toast.error(handleGrpcWebErr(err, clientInfo.language))
     } finally {
       setLoading(false)
     }

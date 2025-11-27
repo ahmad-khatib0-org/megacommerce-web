@@ -1,16 +1,13 @@
 'use client'
 import { useEffect, useMemo } from 'react'
 import { IconSearch } from '@tabler/icons-react'
+import { debounce, ObjString } from '@megacommerce/shared'
 
-import { debounce } from '@megacommerce/shared'
-import { tr } from '@/helpers/client'
+type Props = {
+  tr: ObjString
+}
 
-type Props = {}
-
-function SearchBar({ }: Props) {
-  const lang = tr.getUserLang()
-  const t = tr.tr
-
+function SearchBar({ tr }: Props) {
   const onSearch = async (term: string) => {
     console.log(term)
   }
@@ -26,7 +23,7 @@ function SearchBar({ }: Props) {
       <input
         type='text'
         name='search'
-        placeholder={t(lang, 'search.looking_for')}
+        placeholder={tr.lookingFor}
         onChange={(e) => debouncedSearch(e.target.value)}
         className='border border-transparent focus:border-transparent focus:outline-none focus:shadow-none selection:text-white selection:bg-orange-500'
       />

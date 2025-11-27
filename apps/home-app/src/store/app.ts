@@ -1,18 +1,20 @@
 import 'client-only'
 import { create } from 'zustand'
 
-import { ClientInformation } from '@megacommerce/shared/client'
+import { ClientInformation, createDefaultClientInformation } from '@megacommerce/shared/client'
 
 interface AppState {
   clientInfo: ClientInformation
-  isAllCategoriesShown: boolean
   setClientInfo: (info: ClientInformation) => void
+  setClientEssentialInfo: (info: { language: string; currency: string; country: string }) => void
+  isAllCategoriesShown: boolean
   setIsAllCategoriesShown: (isAllCategoriesShown: boolean) => void
 }
 
 export const useAppStore = create<AppState>((set) => ({
-  clientInfo: { currency: '', language: '', country: '' },
-  isAllCategoriesShown: false,
+  clientInfo: createDefaultClientInformation(),
   setClientInfo: (clientInfo: ClientInformation) => set({ clientInfo }),
+  setClientEssentialInfo: (info) => set((state) => ({ clientInfo: state.clientInfo, ...info })),
+  isAllCategoriesShown: false,
   setIsAllCategoriesShown: (isAllCategoriesShown: boolean) => set({ isAllCategoriesShown }),
 }))

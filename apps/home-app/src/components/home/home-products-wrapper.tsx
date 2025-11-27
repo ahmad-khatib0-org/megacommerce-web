@@ -4,6 +4,7 @@ import { ReactNode, useCallback, useState, useEffect } from 'react'
 import Image from 'next/image'
 import useEmblaCarousel from 'embla-carousel-react'
 import { IconArrowLeft, IconArrowRight } from '@tabler/icons-react'
+import { Button, Loader } from '@mantine/core'
 
 interface Product {
   id: string
@@ -15,9 +16,13 @@ interface Product {
 type Props = {
   title: string
   products: Product[]
+  loading: boolean
+  error?: string
+  tryAgain?: () => void
+  tryAgainMsg?: string
 }
 
-function HomeProductsWrapper({ title, products }: Props) {
+function HomeProductsWrapper({ title, products, loading, error, tryAgain, tryAgainMsg }: Props) {
   const [emblaRef, emblaApi] = useEmblaCarousel({ dragFree: false, slidesToScroll: 2, loop: true }, [])
   const [current, setCurrent] = useState(0)
 
@@ -52,6 +57,29 @@ function HomeProductsWrapper({ title, products }: Props) {
     },
     [emblaApi]
   )
+
+  if (error) {
+    return (
+      <div className='size-full grid grid-rows-[auto,1fr] justify-center border border-black/20 px-2'>
+        <p className='text-center font-semibold my-4 text-2xl'>{title}</p>
+        <div className='flex flex-col justify-center items-center h-full'>
+          <p className='text-red-500'>{error}</p>
+          {tryAgain && <Button className='mt-4 bg-red-600 hover:bg-red-500'>{tryAgainMsg}</Button>}
+        </div>
+      </div>
+    )
+  }
+
+  if (loading) {
+    return (
+      <div className='size-full grid grid-rows-[auto,1fr] justify-center border border-black/20 px-2'>
+        <p className='text-center font-semibold my-4 text-2xl'>{title}</p>
+        <div className='flex justify-center items-center h-full'>
+          <Loader />
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className='embla relative group/item border border-black/20 hover:shadow-md hover:bg-slate-100'>
