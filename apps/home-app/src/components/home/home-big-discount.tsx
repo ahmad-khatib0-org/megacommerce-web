@@ -28,7 +28,7 @@ function HomeBigDiscount({ tr }: Props) {
     if (loading) return
     setLoading(true)
     try {
-      const res = await productsClient(clientInfo).BigDiscountProducts({})
+      const res = await (await productsClient()).BigDiscountProducts({})
       if (res.error) setErr(res.error.message)
       if (res.data) setProducts(res.data.products)
     } catch (err) {
@@ -52,8 +52,13 @@ function HomeBigDiscount({ tr }: Props) {
           <p className='font-bold text-base text-red-700'>{(pro.discountPriceCents / 100).toFixed(2)}$ </p>
           <p className='line-through text-sm text-gray-500'>{(pro.priceCents / 100).toFixed(2)}$ </p>
         </div>
-        <div className='bg-red-500 px-2 py-1 mt-1 w-max'>
-          <p className='text-white text-sm'>-{pro.discountPercentage}%</p>
+        <div className='flex items-center gap-x-2'>
+          <div className='bg-red-500 px-2 py-1 mt-1 w-max'>
+            <p className='text-white text-sm'>-{pro.discountPercentage}%</p>
+          </div>
+          <p>
+            {pro.soldCount} {tr.sold}
+          </p>
         </div>
       </>
     ),
@@ -61,7 +66,7 @@ function HomeBigDiscount({ tr }: Props) {
 
   return (
     <HomeProductsWrapper
-      title={tr.bestSellers}
+      title={tr.bigDisc}
       products={_products}
       loading={loading}
       error={err}

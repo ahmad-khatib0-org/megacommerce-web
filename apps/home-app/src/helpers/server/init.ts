@@ -1,9 +1,13 @@
 import 'server-only'
+import { mkdir, readFile, stat, writeFile } from 'fs/promises'
 import { Pool } from 'pg'
+import yaml from 'yaml'
 import { Trans, waitForServiceToBeReady } from '@megacommerce/shared/server'
 import { Config } from '@megacommerce/proto/common/v1/config'
 
 import { commonClient, System, AppData } from '@/helpers/server'
+
+const CONFIG_DIR = './config'
 
 let _initPromise: Promise<System> | null = null
 let _initialized = false
@@ -38,7 +42,7 @@ async function init(): Promise<System> {
       _initialized = true
       return _system
     } catch (err) {
-      console.log(err)
+      console.error(err)
       throw Error('An Error occurred while initing server data & config')
     }
   })()
@@ -47,13 +51,34 @@ async function init(): Promise<System> {
 }
 
 async function initConfig(): Promise<Config> {
+  const env = process.env.NODE_ENV
+  const storePath = `${CONFIG_DIR}/config.${env}.yaml`
+  const exists = await stat(storePath)
+    .then(() => true)
+    .catch(() => false)
+  if (exists) {
+    try {
+      const fileData = await readFile(storePath, 'utf8')
+      const config = yaml.parse(fileData) as Config
+      return config
+    } catch (err) {
+      console.error('failed to read the config, err: ', err)
+    }
+  }
+
   return new Promise((resolve, reject) => {
-    // if (isBuildStage()) { }
-    commonClient.configGet({}, (err, res) => {
+    commonClient.configGet({}, async (err, res) => {
       const errMsg = 'failed to retrieve config from common service'
       if (err) return reject(new Error(`${errMsg}: ${err.message}`))
       if (res?.error) return reject(new Error(`${errMsg}: ${res.error}`))
       if (!res?.data) return reject(new Error(`${errMsg}: no config data received`))
+      try {
+        const payload = yaml.stringify(res.data)
+        await mkdir(CONFIG_DIR, { recursive: true })
+        await writeFile(storePath, payload, 'utf8')
+      } catch (err) {
+        console.error('failed to store the config, err: ', err)
+      }
       resolve(res.data)
     })
   })

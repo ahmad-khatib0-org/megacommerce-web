@@ -83,7 +83,7 @@
     "@mantine/dates": "^8.3.6",
     "@mantine/form": "^8.3.6",
     "@mantine/hooks": "^8.3.6",
-    "@megacommerce/proto": "0.4.35",
+    "@megacommerce/proto": "0.4.39",
     "@radix-ui/react-popover": "^1.1.15",
     "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-slot": "^1.2.4",

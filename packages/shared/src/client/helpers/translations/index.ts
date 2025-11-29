@@ -17,6 +17,7 @@ export interface Translations {
   'error.data_loss': string
   'error.unauthenticated': string
   'error.internal': string
+  'error.network_unavailable': string
   'form.fields.length_between': string
   'form.fields.min_length': string
   'form.fields.max_length': string

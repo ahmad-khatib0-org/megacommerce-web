@@ -29,7 +29,7 @@ function HomeBestSellers({ tr }: Props) {
     if (loading) return
     setLoading(true)
     try {
-      const res = await productsClient(clientInfo).BestSellingProducts({})
+      const res = await (await productsClient()).BestSellingProducts({})
       if (res.error) setErr(res.error.message)
       if (res.data) setProducts(res.data.products)
     } catch (err) {

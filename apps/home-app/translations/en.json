@@ -314,5 +314,16 @@
   "products.sold": "sold",
   "products.hot_and_new": "Hot And New",
   "products.more_to_like": "More products to like",
-  "products.today_deals": "Today's deals"
+  "products.today_deals": "Today's deals",
+  "time.just_now": "just now",
+  "time.one_minute_ago": "one minute ago",
+  "time.minutes_ago": "{{Minutes}} minutes ago",
+  "time.one_hour_ago": "one hour ago",
+  "time.hours_ago": "{{Hours}} hours ago",
+  "time.yesterday": "yesterday",
+  "time.days_ago": "{{Days}} days ago",
+  "time.one_week_ago": "one week ago",
+  "time.weeks_ago": "{{Weeks}} weeks ago",
+  "time.one_month_ago": "one month ago",
+  "time.months_ago": "{{Months}} months ago"
 }

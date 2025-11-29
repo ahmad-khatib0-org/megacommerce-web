@@ -17,6 +17,7 @@ export const TranslationsEN: Translations = {
   'error.unavailable': 'Service is temporarily unavailable. Please try again in a few moments.',
   'error.data_loss': 'Unrecoverable data loss or corruption.',
   'error.unauthenticated': 'Authentication required. Please log in and try again.',
+  'error.network_unavailable': 'Network connection unavailable. Please check your internet connection.',
   'form.fields.length_between': 'This field must be between {{Min}} and {{Max}} characters',
   'form.fields.min_length': 'Field must be at least {{Min}} characters',
   'form.fields.max_length': 'Field must be at most {{Max}} characters',

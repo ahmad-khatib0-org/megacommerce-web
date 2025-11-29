@@ -20,6 +20,7 @@ export const Headers = {
   XSessionCreatedAt: 'x-session-created-at',
   XSessionExpiresAt: 'x-session-expires-at',
   XLastActivityAt: 'x-last-activity-at',
+  XTimezone: 'x-timezone',
   XProps: 'x-props',
   XAPIKey: 'x-api-key',
   XCSRFToken: 'x-csrf-token',

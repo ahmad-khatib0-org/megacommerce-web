@@ -202,7 +202,7 @@ async function fetchOrLoadTransFromCache(client: Common.CommonServiceClient, for
       const cached = await loadCachedTranslations()
       if (Object.keys(cached).length > 0) return cached
     } catch (err) {
-      console.log(err)
+      console.error(err)
     }
   }
 

@@ -1,6 +1,9 @@
 import { UAParser } from 'ua-parser-js'
 import { Agent, load } from '@fingerprintjs/fingerprintjs'
-import { ClientInformation } from '../models/client-information'
+import { getCookie } from 'cookies-next/client'
+
+import { ClientInformation, getDefaultLocationInfo, LocationInfo } from '../models/client-information'
+import { Cookies, DEFAULT_COUNTRY, DEFAULT_CURRENCY, DEFAULT_LANGUAGE_SYMBOL } from '../../constants'
 
 export interface TrackClientOptions {
   enableFingerprinting?: boolean
@@ -83,7 +86,7 @@ class ClientTracker {
   }
 
   async trackClient(
-    baseInfo: Pick<ClientInformation, 'country' | 'language' | 'currency'>,
+    baseInfo: Partial<ClientInformation>,
     options: TrackClientOptions = {}
   ): Promise<ClientInformation> {
     const { enableFingerprinting = true, enableGeoIP = false, timeout = 5000 } = options
@@ -112,13 +115,27 @@ class ClientTracker {
     }
 
     // Get geo data if enabled
-    let geoData = {}
+    let geoData: LocationInfo = getDefaultLocationInfo()
     if (enableGeoIP) {
-      geoData = await this.getGeoData().catch(() => ({}))
+      geoData = await this.getGeoData()
+        .then((res) => res!)
+        .catch(() => getDefaultLocationInfo())
     }
+
+    const language = getCookie(Cookies.acceptLanguage) ?? DEFAULT_LANGUAGE_SYMBOL
+    const currency =
+      getCookie(Cookies.currencyCode) ??
+      (geoData.currency.trim().length > 0 ? geoData.currency : DEFAULT_CURRENCY)
+    const country =
+      getCookie(Cookies.countryCode) ??
+      (geoData.country_code.trim().length > 0 ? geoData.country_code : DEFAULT_COUNTRY)
+    console.log('the 128', geoData.currency.trim(), geoData.country_code.trim())
+
+    console.log('client-info 128', language, currency, country)
 
     return {
       ...baseInfo,
+      language,
       fingerprint,
       userAgent: browserInfo.userAgent,
       browser: uaInfo.browser,
@@ -132,28 +149,19 @@ class ClientTracker {
       javaEnabled: browserInfo.javaEnabled,
       firstSeenAt: timestamp,
       lastSeenAt: timestamp,
-      ...geoData,
+      geoData: { ...geoData, currency, country_code: country },
     }
   }
 
-  private async getGeoData() {
+  private async getGeoData(): Promise<LocationInfo | null> {
     try {
       const response = await fetch('https://ipapi.co/json/')
       if (!response.ok) throw new Error('Geo IP failed')
-
-      const data = await response.json()
-      return {
-        ipAddress: data.ip,
-        continent: data.continent_code,
-        country: data.country_name,
-        city: data.city,
-        region: data.region,
-        isp: data.org,
-        connectionType: data.asn,
-      }
+      const data = (await response.json()) as LocationInfo
+      return data
     } catch (error) {
       console.error('Geo IP error:', error)
-      return {}
+      return null
     }
   }
 
@@ -181,7 +189,7 @@ export const clientTracker = new ClientTracker()
 
 // Convenience function
 export async function trackClient(
-  baseInfo: Pick<ClientInformation, 'country' | 'language' | 'currency'>,
+  baseInfo: Partial<ClientInformation>,
   options?: TrackClientOptions
 ): Promise<ClientInformation> {
   return clientTracker.trackClient(baseInfo, options)

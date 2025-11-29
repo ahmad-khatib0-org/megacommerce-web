@@ -1,5 +1,6 @@
 import 'client-only'
 import { grpc } from '@improbable-eng/grpc-web'
+
 import {
   GrpcWebImpl as UsersGrpcWebImpl,
   UsersServiceClientImpl,
@@ -9,7 +10,7 @@ import {
   ProductsServiceClientImpl,
 } from '@megacommerce/proto/web/products/v1/products'
 
-import { ClientInformation } from '@megacommerce/shared/client'
+import { ClientInformation, trackClient } from '@megacommerce/shared/client'
 
 const usersGrpc = new UsersGrpcWebImpl(process.env['NEXT_PUBLIC_USERS_GRPC_ENDPOINT'] as string, {
   transport: grpc.CrossBrowserHttpTransport({ withCredentials: true }),
@@ -18,26 +19,32 @@ const usersGrpc = new UsersGrpcWebImpl(process.env['NEXT_PUBLIC_USERS_GRPC_ENDPO
 
 export const usersClient = new UsersServiceClientImpl(usersGrpc)
 
-// Create a proper transport factory that implements the full Transport interface
-function createTransportWithMetadata(clientInfo: ClientInformation): grpc.TransportFactory {
-  return (opts: grpc.TransportOptions) => {
-    // Create the base transport
-    const baseTransport = grpc.CrossBrowserHttpTransport({ withCredentials: true })(opts)
+let clientInformation: ClientInformation | null
 
-    // Return a new transport that wraps the base one
+// Create a proper transport factory that implements the full Transport interface
+async function createTransportWithMetadata(): Promise<grpc.TransportFactory> {
+  if (!clientInformation) {
+    try {
+      // const options = { enableFingerprinting: true, enableGeoIP: true, timeout: 3000 }
+      const options = { enableFingerprinting: true, timeout: 3000 }
+      clientInformation = await trackClient({}, options)
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  return (opts: grpc.TransportOptions) => {
+    const baseTransport = grpc.CrossBrowserHttpTransport({ withCredentials: true })(opts)
     return {
-      // Preserve all methods from base transport
       ...baseTransport,
 
-      // Override the start method to add metadata
       start: (metadata: grpc.Metadata) => {
-        // Add your custom metadata
         metadata.set('x-request-id', crypto.randomUUID())
-        metadata.set('accept-language', clientInfo.language)
-        metadata.set('x-ip-address', clientInfo.ipAddress ?? '')
-        metadata.set('user-agent', clientInfo.userAgent)
+        metadata.set('accept-language', clientInformation?.language ?? '')
+        metadata.set('x-ip-address', clientInformation?.ipAddress ?? '')
+        metadata.set('user-agent', clientInformation?.userAgent ?? '')
+        metadata.set('x-timezone', clientInformation?.timezone ?? '')
 
-        // Call the original start method
         return baseTransport.start(metadata)
       },
 
@@ -51,14 +58,14 @@ function createTransportWithMetadata(clientInfo: ClientInformation): grpc.Transp
 
 let _productsClient: ProductsServiceClientImpl | null = null
 
-export function productsClient(clientInfo: ClientInformation): ProductsServiceClientImpl {
+export async function productsClient(): Promise<ProductsServiceClientImpl> {
   if (_productsClient) return _productsClient
 
   const endpoint = process.env['NEXT_PUBLIC_PRODUCTS_GRPC_ENDPOINT']
   if (!endpoint) throw new Error('Missing PRODUCTS_GRPC_ENDPOINT')
 
   const productsGrpc = new ProductsGrpcWebImpl(endpoint, {
-    transport: createTransportWithMetadata(clientInfo),
+    transport: await createTransportWithMetadata(),
     debug: process.env.NODE_ENV !== 'production',
   })
 

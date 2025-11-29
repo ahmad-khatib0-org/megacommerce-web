@@ -82,7 +82,7 @@ function HomeProductsWrapper({ title, products, loading, error, tryAgain, tryAga
   }
 
   return (
-    <div className='embla relative group/item border border-black/20 hover:shadow-md hover:bg-slate-100'>
+    <div className='min-h-80 embla relative group/item border border-black/20 hover:shadow-md hover:bg-slate-100'>
       <p className='text-center font-semibold my-4 text-2xl'>{title}</p>
       <div ref={emblaRef} className='embla__viewport overflow-hidden mb-4 px-4'>
         <div className='embla__container flex gap-x-3'>

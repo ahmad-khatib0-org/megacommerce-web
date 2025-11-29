@@ -20,11 +20,7 @@ function ClientWrapper({ clientInfo }: Props) {
     setClientEssentialInfo(clientInfo)
 
     try {
-      const enhancedClientInfo = await trackClient(clientInfo, {
-        enableFingerprinting: true,
-        enableGeoIP: true,
-        timeout: 3000,
-      })
+      const enhancedClientInfo = await trackClient({}, { enableFingerprinting: true })
       setClientInfo({ ...enhancedClientInfo })
     } catch (err) {
       console.error(err)

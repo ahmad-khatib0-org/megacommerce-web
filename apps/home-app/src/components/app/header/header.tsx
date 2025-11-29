@@ -37,7 +37,13 @@ const Header = ({ userLang }: Props) => {
       </a>
       <SearchBar tr={tr} />
       <div className='grid grid-cols-[minmax(0,1fr),minmax(0,1fr),max-content] items-center'>
-        <LanguageCurrencyLocation tr={tr} langs={AVAILABLE_LANGUAGES} />
+        <LanguageCurrencyLocation
+          tr={tr}
+          langs={Object.entries(AVAILABLE_LANGUAGES).map(([symbol, name]) => ({
+            label: name,
+            value: symbol,
+          }))}
+        />
         <Account tr={tr} />
         <Cart tr={tr} />
       </div>
