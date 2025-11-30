@@ -129,9 +129,6 @@ class ClientTracker {
     const country =
       getCookie(Cookies.countryCode) ??
       (geoData.country_code.trim().length > 0 ? geoData.country_code : DEFAULT_COUNTRY)
-    console.log('the 128', geoData.currency.trim(), geoData.country_code.trim())
-
-    console.log('client-info 128', language, currency, country)
 
     return {
       ...baseInfo,

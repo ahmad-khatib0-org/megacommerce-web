@@ -23,10 +23,7 @@ function LanguageCurrencyLocation({ tr, langs }: Props) {
   }
 
   const init = () => {
-    console.log('the init called')
-
     if (clientInfo) {
-      console.log('the geo data is ', clientInfo)
       setData({
         country: clientInfo.geoData?.country_code ?? '',
         currency: clientInfo.geoData?.currency ?? '',

@@ -42,7 +42,7 @@ export default async function Index() {
     <>
       <HomeNavbar tr={tr} />
       <Categories tr={tr} categories={cats} />
-      <HomeCarousel />
+      <HomeCarousel tr={tr} />
       <HomeShippingFeatures tr={tr} />
       <h1 className='my-8 text-center font-semibold text-4xl'>{tr.tdDel}</h1>
       <div className='grid grid-cols-3 w-11/12 mx-auto mb-10 gap-x-6'>
