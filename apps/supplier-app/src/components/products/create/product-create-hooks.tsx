@@ -300,9 +300,7 @@ function ProductCreateHooks({ tr }: Props) {
           : safetyFormRef.current?.getForm().getValues() ?? {}
       )
 
-      console.log(request)
       const result = await productsClient.ProductCreate(request)
-      console.log(result)
 
       if (result.error) {
         Products.handleCreateError(

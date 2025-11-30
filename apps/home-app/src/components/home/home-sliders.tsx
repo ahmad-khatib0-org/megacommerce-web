@@ -13,7 +13,9 @@ function HomeSliders({ res }: Props) {
   const buildPrice = (price: number, salePrice?: number) => {
     return (
       <div className='absolute h-max w-full flex justify-center items-center gap-x-2 bottom-0 backdrop-blur-md bg-white/30 border border-white/20'>
-        <p>{(salePrice ?? 0) > 0 ? (salePrice! / 100).toFixed(2) : (price / 100).toFixed(2)}$</p>
+        <p className='font-bold'>
+          {(salePrice ?? 0) > 0 ? (salePrice! / 100).toFixed(2) : (price / 100).toFixed(2)}$
+        </p>
         {(salePrice ?? 0) > 0 && <p className='line-through'>{(price / 100).toFixed(2)}$</p>}
       </div>
     )
@@ -38,8 +40,8 @@ function HomeSliders({ res }: Props) {
     return (
       <div className='flex justify-evenly items-center gap-x-4 bg-[#e1e8ed] h-full'>
         <div className='flex flex-col'>
-          <h2 className='text-4xl text-black mb-2'>{res.categorySlider?.title}</h2>
-          <h4 className='text-xl text-black mb-10'>{res.categorySlider?.subtitle}</h4>
+          <h1 className='text-4xl font-bold text-black mb-2'>{res.categorySlider?.title}</h1>
+          <h3 className='text-xl text-black mb-10'>{res.categorySlider?.subtitle}</h3>
           <Button color='black'>{res.categorySlider?.buttonText}</Button>
         </div>
         <div className='h-full flex items-center'>
@@ -73,9 +75,44 @@ function HomeSliders({ res }: Props) {
     )
   }
 
-  const welecomeSlider = () => {}
+  const welcomeSlider = () => {
+    const first = res.welcomeDealsSlider?.products[0]!
+    const second = res.welcomeDealsSlider?.products[1]!
+    const third = res.welcomeDealsSlider?.products[2]!
+    const title = res.welcomeDealsSlider?.title
+    const subtitle = res.welcomeDealsSlider?.subtitle
+    const button = res.welcomeDealsSlider?.buttonText
 
-  const sliders = [categorySlider(), <div>second div</div>]
+    return (
+      <div className='flex justify-evenly items-center h-full bg-[#e1e8ed] opacity-95'>
+        <div className='relative size-56 border border-black/10'>
+          <div className='size-full rounded-md'>{buildImage(first.image, first.title)}</div>
+          {first.discountPriceCents && (
+            <div className='absolute size-14 flex items-center justify-center -top-6 -right-6 bg-red-700 rounded-full'>
+              <p className='text-white'>-{first.discountPercentage}%</p>
+            </div>
+          )}
+        </div>
+        <div className='flex flex-col'>
+          <h1 className='text-3xl text-black font-bold mb-2'>{title}</h1>
+          <h3 className='text-xl text-black mb-10'>{subtitle}</h3>
+          <Button color='black'>{button}</Button>
+        </div>
+        <div className='flex gap-x-2'>
+          <div className='relative size-40 border-2 border-white shadow-xl'>
+            {buildImage(second.image, second.title)}
+            {buildPrice(second.priceCents, second.discountPriceCents)}
+          </div>
+          <div className='relative size-40 border-2 border-white shadow-xl'>
+            {buildImage(third.image, third.title)}
+            {buildPrice(third.priceCents, third.discountPriceCents)}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const sliders = [categorySlider(), welcomeSlider()]
 
   return (
     <>
