@@ -30,8 +30,8 @@ importers:
         specifier: ^8.3.6
         version: 8.3.6(react@19.0.0)
       '@megacommerce/proto':
-        specifier: 0.4.48
-        version: 0.4.48
+        specifier: 0.4.49
+        version: 0.4.49
       '@radix-ui/react-popover':
         specifier: ^1.1.15
         version: 1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -122,6 +122,9 @@ importers:
       ua-parser-js:
         specifier: ^2.0.6
         version: 2.0.6
+      ulid:
+        specifier: ^3.0.2
+        version: 3.0.2
       uuid:
         specifier: ^11.1.0
         version: 11.1.0
@@ -1765,8 +1768,8 @@ packages:
     peerDependencies:
       react: ^18.x || ^19.x
 
-  '@megacommerce/proto@0.4.48':
-    resolution: {integrity: sha512-LopswpXvnG/JvyVOCS4gKJKwQNHFVoX1M2nh7tzpLYktqSbPsoBnIF+OgK/oNeRsSeeRkDLQbFuxTuxM6Jup1A==}
+  '@megacommerce/proto@0.4.49':
+    resolution: {integrity: sha512-lkGqEIte+8+Sh9T+ayVQOx0nBWiJKAz9vHLFKUsm8kJtaED514fYYEe6XOOfqjqr/r03lGoq4nQ6L6vL+d2qjw==}
 
   '@modern-js/node-bundle-require@2.68.2':
     resolution: {integrity: sha512-MWk/pYx7KOsp+A/rN0as2ji/Ba8x0m129aqZ3Lj6T6CCTWdz0E/IsamPdTmF9Jnb6whQoBKtWSaLTCQlmCoY0Q==}
@@ -9062,6 +9065,10 @@ packages:
     resolution: {integrity: sha512-rvKSBiC5zqCCiDZ9kAOszZcDvdAHwwIKJG33Ykj43OKcWsnmcBRL09YTU4nOeHZ8Y2a7l1MgTd08SBe9A8Qj6A==}
     engines: {node: '>=18'}
 
+  ulid@3.0.2:
+    resolution: {integrity: sha512-yu26mwteFYzBAot7KVMqFGCVpsF6g8wXfJzQUHvu1no3+rRRSFcSV2nKeYvNPLD2J4b08jYBDhHUjeH0ygIl9w==}
+    hasBin: true
+
   unbox-primitive@1.1.0:
     resolution: {integrity: sha512-nWJ91DjeOkej/TA8pXQ3myruKpKEYgqvpw9lz4OPHj/NWFNluYrjbz9j01CJ8yKQd2g4jFoOkINCTW2I5LEEyw==}
     engines: {node: '>= 0.4'}
@@ -11149,7 +11156,7 @@ snapshots:
     dependencies:
       react: 19.0.0
 
-  '@megacommerce/proto@0.4.48':
+  '@megacommerce/proto@0.4.49':
     dependencies:
       '@bufbuild/protobuf': 2.10.1
       '@grpc/grpc-js': 1.14.0
@@ -19985,6 +19992,8 @@ snapshots:
     optional: true
 
   uint8array-extras@1.5.0: {}
+
+  ulid@3.0.2: {}
 
   unbox-primitive@1.1.0:
     dependencies:
