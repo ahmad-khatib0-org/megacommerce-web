@@ -3,7 +3,8 @@ const Mustache = require('mustache')
 
 import { Translations } from './translations'
 import { TranslationsEN } from './translations/en'
-import { AVAILABLE_LANGUAGES, DEFAULT_LANGUAGE_SYMBOL } from '../../constants'
+import { AVAILABLE_LANGUAGES, Cookies, DEFAULT_LANGUAGE_SYMBOL } from '../../constants'
+import { getCookie } from 'cookies-next/client'
 
 const en = TranslationsEN
 
@@ -24,4 +25,12 @@ export const tr = <P extends Record<string, any>>(
   }
 
   return result
+}
+
+export const getLang = (): string => {
+  const lang = getCookie(Cookies.acceptLanguage)
+  if (lang) {
+    if (AVAILABLE_LANGUAGES[lang]) return lang
+  }
+  return DEFAULT_LANGUAGE_SYMBOL
 }

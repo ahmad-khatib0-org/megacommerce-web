@@ -32,4 +32,5 @@ export const TranslationsEN: Translations = {
   'products.images.length.error':
     'You must provid: at least {{Min}} images, and at most {{Max}} images for your product',
   'products.offer.variant_pricing': "Sitting the pricing options of: {{Title}}, Products's Variant",
+  'action.navigate.go_back_home_page': 'Go back to home page',
 }

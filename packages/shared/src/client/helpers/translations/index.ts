@@ -29,4 +29,5 @@ export interface Translations {
   'products.media.variant_images.missing_for_variant': string
   'products.images.length.error': string
   'products.offer.variant_pricing': string
+  'action.navigate.go_back_home_page': string
 }
