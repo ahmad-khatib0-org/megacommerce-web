@@ -28,7 +28,7 @@ function HomeMoreToLike({ tr }: Props) {
   const { inView, ref } = useInView({ threshold: 0 })
 
   const fetchProducts = async (page: number) => {
-    await new Promise((res) => setTimeout(() => res(''), 30000))
+    await new Promise((res) => setTimeout(() => res(''), 50))
     let lastId = ''
     if (products.length) lastId = products[products.length - 1].id
     try {
