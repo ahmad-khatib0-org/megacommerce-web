@@ -30,6 +30,7 @@ const getTranslations = (lang: string) => {
     more: tr(lang, 'products.more_to_like'),
     tdDel: tr(lang, 'products.today_deals'),
     tryAgain: tr(lang, 'actions.try_again'),
+    noMore: tr(lang, 'result.no_more_results'),
   }
 }
 

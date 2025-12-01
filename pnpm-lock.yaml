@@ -30,8 +30,8 @@ importers:
         specifier: ^8.3.6
         version: 8.3.6(react@19.0.0)
       '@megacommerce/proto':
-        specifier: 0.4.44
-        version: 0.4.44
+        specifier: 0.4.48
+        version: 0.4.48
       '@radix-ui/react-popover':
         specifier: ^1.1.15
         version: 1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -107,6 +107,9 @@ importers:
       react-dom:
         specifier: 19.0.0
         version: 19.0.0(react@19.0.0)
+      react-intersection-observer:
+        specifier: ^10.0.0
+        version: 10.0.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       react-toastify:
         specifier: ^11.0.5
         version: 11.0.5(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -1762,8 +1765,8 @@ packages:
     peerDependencies:
       react: ^18.x || ^19.x
 
-  '@megacommerce/proto@0.4.44':
-    resolution: {integrity: sha512-5OZV4eR1l1BdKfJmItdzkXkQr2A10YN93bfASTXYEZMGrH8GsoIY9293EZn0aFXF42d0mevp3dWdwGnvyYrnIg==}
+  '@megacommerce/proto@0.4.48':
+    resolution: {integrity: sha512-LopswpXvnG/JvyVOCS4gKJKwQNHFVoX1M2nh7tzpLYktqSbPsoBnIF+OgK/oNeRsSeeRkDLQbFuxTuxM6Jup1A==}
 
   '@modern-js/node-bundle-require@2.68.2':
     resolution: {integrity: sha512-MWk/pYx7KOsp+A/rN0as2ji/Ba8x0m129aqZ3Lj6T6CCTWdz0E/IsamPdTmF9Jnb6whQoBKtWSaLTCQlmCoY0Q==}
@@ -7913,6 +7916,15 @@ packages:
     peerDependencies:
       react: ^19.0.0
 
+  react-intersection-observer@10.0.0:
+    resolution: {integrity: sha512-JJRgcnFQoVXmbE5+GXr1OS1NDD1gHk0HyfpLcRf0575IbJz+io8yzs4mWVlfaqOQq1FiVjLvuYAdEEcrrCfveg==}
+    peerDependencies:
+      react: ^17.0.0 || ^18.0.0 || ^19.0.0
+      react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
+    peerDependenciesMeta:
+      react-dom:
+        optional: true
+
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
 
@@ -11137,7 +11149,7 @@ snapshots:
     dependencies:
       react: 19.0.0
 
-  '@megacommerce/proto@0.4.44':
+  '@megacommerce/proto@0.4.48':
     dependencies:
       '@bufbuild/protobuf': 2.10.1
       '@grpc/grpc-js': 1.14.0
@@ -18694,6 +18706,12 @@ snapshots:
     dependencies:
       react: 19.0.0
       scheduler: 0.25.0
+
+  react-intersection-observer@10.0.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
+    dependencies:
+      react: 19.0.0
+    optionalDependencies:
+      react-dom: 19.0.0(react@19.0.0)
 
   react-is@16.13.1: {}
 

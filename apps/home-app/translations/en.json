@@ -201,6 +201,7 @@
   "categories.not_found.error": "the requested category is not existed",
   "request.last_id.missing": "the request last id is missing",
   "request.last_id.invalid": "the request last id is invalid",
+  "request.pagination.invalid": "The request listing pagination is missing or invalid!",
   "username": "Username",
   "first_name": "First Name",
   "last_name": "Last Name",
@@ -325,5 +326,6 @@
   "time.one_week_ago": "one week ago",
   "time.weeks_ago": "{{Weeks}} weeks ago",
   "time.one_month_ago": "one month ago",
-  "time.months_ago": "{{Months}} months ago"
+  "time.months_ago": "{{Months}} months ago",
+  "result.no_more_results": "No more results"
 }
