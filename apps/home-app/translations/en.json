@@ -327,5 +327,8 @@
   "time.weeks_ago": "{{Weeks}} weeks ago",
   "time.one_month_ago": "one month ago",
   "time.months_ago": "{{Months}} months ago",
-  "result.no_more_results": "No more results"
+  "result.no_more_results": "No more results",
+  "pages.go_back_to_home": "Go back to home page",
+  "pages.page_not_found": "Oops! Page not found",
+  "pages.page_not_found.message": "We couldn't find the page you're looking for. It might have been moved or doesn't exist anymore."
 }

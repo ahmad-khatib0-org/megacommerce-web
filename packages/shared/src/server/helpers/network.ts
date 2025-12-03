@@ -1,7 +1,7 @@
 import 'server-only'
 import { createConnection } from 'net'
 import { cookies, headers } from 'next/headers'
-import { Metadata } from '@grpc/grpc-js'
+import { Metadata, ServiceError } from '@grpc/grpc-js'
 import { isValid, MAX_ULID } from 'ulid'
 
 import { Context, Session } from '../models'
@@ -163,4 +163,41 @@ export async function getMetadata(): Promise<Metadata> {
   }
 
   return metadata
+}
+
+/**
+ * A generic type representing a standard gRPC method call function.
+ * @template TRequest The type of the request message.
+ * @template TResponse The type of the response message.
+ */
+type GrpcMethod<TRequest, TResponse> = (
+  request: TRequest,
+  metadata: Metadata,
+  callback: (err: ServiceError | null, response: TResponse | null) => void
+) => void
+
+/**
+ * A helper function to wrap a callback-based gRPC method call in a Promise.
+ * This allows for easier use with async/await syntax and provides full type safety.
+ *
+ * @template TRequest The type of the request message.
+ * @template TResponse The type of the response message.
+ * @param {GrpcMethod<TRequest, TResponse>} method - The gRPC client method to call (e.g., client.productDetails).
+ * @param {TRequest} request - The request message object for the gRPC call.
+ * @param {Metadata} metadata - The metadata object for the gRPC call.
+ * @returns {Promise<TResponse>} A Promise that resolves with the gRPC response or rejects with a ServiceError.
+ */
+export function grpcCall<TRequest, TResponse>(
+  method: GrpcMethod<TRequest, TResponse>,
+  request: TRequest,
+  metadata: Metadata
+): Promise<{ data?: TResponse; error?: ServiceError }> {
+  return new Promise((resolve) => {
+    method(request, metadata, (error, response) => {
+      if (error) return resolve({ error })
+      if (!response) return resolve({ error: new Error('Empty response') as ServiceError })
+
+      resolve({ data: response })
+    })
+  })
 }

@@ -1,14 +1,15 @@
 'use client'
 import { useCallback, useEffect, useState } from 'react'
+import Link from 'next/link'
 import Image from 'next/image'
 import { Button, Loader, Rating } from '@mantine/core'
 import { useInView } from 'react-intersection-observer'
 
 import { ProductToLikeListItem } from '@megacommerce/proto/web/products/v1/products_to_like'
+import ProductItemMetadata from '@/components/products/product-item-metadata'
 import { ObjString } from '@megacommerce/shared'
 import { handleGrpcWebErr } from '@megacommerce/shared/client'
 
-import ProductItemMetadata from '@/components/products/product-item-metadata'
 import { useAppStore } from '@/store'
 import { productsClient } from '@/helpers/client'
 
@@ -71,42 +72,42 @@ function HomeMoreToLike({ tr }: Props) {
     <div className='flex flex-col mb-10'>
       <div className='grid grid-cols-[repeat(auto-fit,minmax(230px,240px))] w-[94%] mx-auto gap-x-3 gap-y-6'>
         {products.map((p, idx) => (
-          <div
-            key={idx}
-            className='grid grid-rows-[208px,1fr] border border-transparent hover:border hover:border-black/20 hover:shadow-sm pb-2'>
-            <div className='relative h-52 w-full'>
-              <Image src={`${imagesHost}/${p.image}`} title={p.title} alt={p.title} fill sizes='100%' />
-            </div>
-            <div className='flex flex-col justify-evenly'>
-              <p className='font-light line-clamp-2 px-1'>{p.title}</p>
-              <div className='flex items-center gap-x-1 h-7 px-1'>
-                <p className='font-bold'>{p.price?.formatted}</p>
-                {p.price?.discountPrice && (
-                  <p className='line-through font-light text-sm'>{p.price.discountPrice}</p>
-                )}
-                {(p.price?.savePercentage || p.price?.saveAmount) && (
-                  <p className='font-normal text-red-500 text-sm'>
-                    {p.price?.savePercentage ?? p.price?.saveAmount}
-                  </p>
-                )}
+          <Link key={idx} href={`/item/${p.id}?variant_id=${p.variantId}`}>
+            <div className='grid grid-rows-[208px,1fr] border border-transparent hover:border hover:border-black/20 hover:shadow-sm pb-2'>
+              <div className='relative h-52 w-full'>
+                <Image src={`${imagesHost}/${p.image}`} title={p.title} alt={p.title} fill sizes='100%' />
               </div>
-              {(p.rating || p.sold) && (
-                <div className='flex items-center gap-x-1 px-1'>
-                  {p.rating && (
-                    <div className='flex items-center gap-x-0.5'>
-                      <Rating readOnly defaultValue={p.rating} fractions={2} />
-                      {p.rating}
-                      <p>|</p>
-                    </div>
+              <div className='flex flex-col justify-evenly'>
+                <p className='font-light line-clamp-2 px-1'>{p.title}</p>
+                <div className='flex items-center gap-x-1 h-7 px-1'>
+                  <p className='font-bold'>{p.price?.formatted}</p>
+                  {p.price?.discountPrice && (
+                    <p className='line-through font-light text-sm'>{p.price.discountPrice}</p>
                   )}
-                  {p.sold} {tr.sold}
+                  {(p.price?.savePercentage || p.price?.saveAmount) && (
+                    <p className='font-normal text-red-500 text-sm'>
+                      {p.price?.savePercentage ?? p.price?.saveAmount}
+                    </p>
+                  )}
                 </div>
-              )}
-              {p.meta.map((m, idx) => (
-                <ProductItemMetadata key={idx} meta={m} />
-              ))}
+                {(p.rating || p.sold) && (
+                  <div className='flex items-center gap-x-1 px-1'>
+                    {p.rating && (
+                      <div className='flex items-center gap-x-0.5'>
+                        <Rating readOnly defaultValue={p.rating} fractions={2} />
+                        {p.rating}
+                        <p>|</p>
+                      </div>
+                    )}
+                    {p.sold} {tr.sold}
+                  </div>
+                )}
+                {p.meta.map((m, idx) => (
+                  <ProductItemMetadata key={idx} meta={m} />
+                ))}
+              </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
       {err && (
