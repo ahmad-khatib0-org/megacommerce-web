@@ -6,8 +6,9 @@ import { SearchParams } from '@megacommerce/shared'
 import { ServerError } from '@megacommerce/ui/server'
 
 import ProductDetailsMedia from '@/components/products/product-details-media'
-import { getProduct, getTrans } from '@/app/item/[item_id]/helpers'
 import ProductDetailsBuy from '@/components/products/product-details-buy'
+import { getProduct, getTrans } from '@/app/item/[item_id]/helpers'
+import ProductDetailsPricing from '@/components/products/product-details-pricing'
 
 type Props = {
   searchParams: SearchParams
@@ -31,20 +32,29 @@ async function Page({ params }: Props) {
       <>
         <main>
           <section className='grid grid-cols-[75%_25%] px-4 pt-4'>
-            <div className='flex'>
+            <div className='flex gap-x-2'>
               <ProductDetailsMedia media={result.media!} />
-              <div className='flex justify-center items-center gap-x-2'>
-                {result.brandName && (
-                  <div className='flex justify-center items-center bg-blue-500 px-2 py-1 rounded-md text-white'>
-                    <p>{result.brandName}</p>
-                    <IconPlus color='yellow' className='font-bold' />
-                  </div>
-                )}
-                <h1 className='font-bold text-2xl'>{result.title}</h1>
+
+              <div className='flex flex-col'>
+                <div className='mb-2'>
+                  {result.brandName && (
+                    <div className='inline-flex justify-center items-center bg-blue-500 px-2 py-0.5 rounded-md text-white mr-2 align-top'>
+                      <p>{result.brandName}</p>
+                      <IconPlus color='yellow' className='font-bold' />
+                    </div>
+                  )}
+                  <h1 className='inline font-bold text-lg align-top'>{result.title}</h1>
+                </div>
+                <ProductDetailsPricing
+                  currency={result.currencyCode}
+                  offer={result.offer!}
+                  welcomeDealDiscount={10}
+                />
               </div>
             </div>
             <ProductDetailsBuy
               tr={tr}
+              currency={result.currencyCode}
               soldBy={'Zara corpuration ICI'}
               price={45.66}
               deliveryDate={new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toLocaleDateString(undefined, {

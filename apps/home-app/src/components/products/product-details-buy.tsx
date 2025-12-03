@@ -16,6 +16,7 @@ type Props = {
   price: number
   originalPrice?: number
   discount?: number
+  currency: string
 }
 
 function ProductDetailsBuy({
@@ -27,6 +28,7 @@ function ProductDetailsBuy({
   price,
   originalPrice,
   discount,
+  currency,
 }: Props) {
   const [quantity, setQuantity] = useState(1)
   const [returnsModalOpened, { open: openReturns, close: closeReturns }] = useDisclosure(false)
@@ -38,9 +40,15 @@ function ProductDetailsBuy({
     <div className='border border-gray-200 rounded-lg p-4 shadow-sm bg-white'>
       <div className='mb-4'>
         <div className='flex items-center gap-2 mb-1'>
-          <span className='text-2xl font-bold text-red-600'>${price.toFixed(2)}</span>
+          <span className='text-2xl font-bold text-red-600'>
+            {currency}
+            {price.toFixed(2)}
+          </span>
           {originalPrice && (
-            <span className='text-lg text-gray-500 line-through'>${originalPrice.toFixed(2)}</span>
+            <span className='text-lg text-gray-500 line-through'>
+              {currency}
+              {originalPrice.toFixed(2)}
+            </span>
           )}
           {discount && (
             <Badge color='red' variant='filled' size='lg'>
@@ -53,12 +61,12 @@ function ProductDetailsBuy({
 
       <div className='mb-4 space-y-2 text-sm'>
         <div className='flex'>
-          <span className='text-gray-600 w-24'>{tr.soldBy}:</span>
-          <span className='font-medium'>{soldBy}</span>
+          <span className='text-gray-600 w-24 shrink-0'>{tr.soldBy}:</span>
+          <span className='font-medium truncate'>{soldBy}</span>
         </div>
         <div className='flex'>
-          <span className='text-gray-600 w-24'>{tr.shipTo}:</span>
-          <span className='font-medium'>{shipTo}</span>
+          <span className='text-gray-600 w-24 shrink-0'>{tr.shipTo}:</span>
+          <span className='font-medium truncate'>{shipTo}</span>
         </div>
         <div className='flex items-center gap-2'>
           <IconTruck size={18} className='text-gray-500' />
@@ -127,7 +135,10 @@ function ProductDetailsBuy({
           </Button>
         </div>
         <p className='text-sm text-gray-500 mt-2'>
-          {quantity} {tr.items} · {tr.total}: <span className='font-bold'>${totalPrice}</span>
+          {quantity} {tr.items} · {tr.total}:{' '}
+          <span className='font-bold'>
+            {currency} {totalPrice}
+          </span>
         </p>
       </div>
 
