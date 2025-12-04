@@ -344,5 +344,9 @@
   "pages.page_not_found": "Oops! Page not found",
   "pages.page_not_found.message": "We couldn't find the page you're looking for. It might have been moved or doesn't exist anymore.",
   "privacy.protected": "Your data is protected",
-  "payment.tax.caculated_at_checkout": "Tax calculated at checkout"
+  "payment.tax.caculated_at_checkout": "Tax calculated at checkout",
+  "reviews.rating_and_reviews": "Rating & Reviews",
+  "reviews.reviews": "Reviews",
+  "reviews.ratings": "Rating",
+  "reviews.stars": "Stars"
 }

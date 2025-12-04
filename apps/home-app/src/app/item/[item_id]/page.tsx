@@ -15,6 +15,7 @@ const ProductDetailsCategoryFashion = dynamic(
 )
 
 import { deserializeDetails, getProduct, getTrans } from '@/app/item/[item_id]/helpers'
+import ProductDetailsReviewStats from '@/components/products/product-details-review-stats'
 
 type Props = {
   searchParams: SearchParams
@@ -48,31 +49,44 @@ async function Page({ params }: Props) {
             initialCurrencyCode={result.currencyCode}
           />
           <section className='grid grid-cols-[75%_25%] px-4 pt-4'>
-            <div className='flex gap-x-2'>
-              <ProductDetailsMedia media={result.media!} />
-              <div className='flex flex-col'>
-                <div className='mb-2'>
-                  {result.brandName && (
-                    <div className='inline-flex justify-center items-center bg-blue-500 px-2 py-0.5 rounded-md text-white mr-2 align-top'>
-                      <p>{result.brandName}</p>
-                      <IconPlus color='yellow' className='font-bold' />
-                    </div>
-                  )}
-                  <h1 className='inline font-bold text-lg align-top'>{result.title}</h1>
-                </div>
-                <ProductDetailsPricing
-                  currency={result.currencyCode}
-                  offer={result.offer!}
-                  welcomeDealDiscount={10}
-                />
-                {
+            <div className='flex flex-col gap-x-2 me-2'>
+              <div className='flex gap-x-2'>
+                <ProductDetailsMedia media={result.media!} />
+                <div className='flex flex-col'>
+                  <div className='mb-2'>
+                    {result.brandName && (
+                      <div className='inline-flex justify-center items-center bg-blue-500 px-2 py-0.5 rounded-md text-white mr-2 align-top'>
+                        <p>{result.brandName}</p>
+                        <IconPlus color='yellow' className='font-bold' />
+                      </div>
+                    )}
+                    <h1 className='inline font-bold text-lg align-top'>{result.title}</h1>
+                  </div>
+                  <ProductDetailsPricing
+                    currency={result.currencyCode}
+                    offer={result.offer!}
+                    welcomeDealDiscount={10}
+                  />
                   <ProductDetailsCategoryFashion
                     productId={result.id}
                     details={details}
                     media={result.media!}
                   />
-                }
+                </div>
               </div>
+
+              <ProductDetailsReviewStats
+                tr={tr}
+                averageRating={4.5}
+                totalReviews={100}
+                ratingCounts={[
+                  { star: 5, count: 10 },
+                  { star: 4, count: 20 },
+                  { star: 3, count: 30 },
+                  { star: 2, count: 40 },
+                  { star: 1, count: 50 },
+                ]}
+              />
             </div>
             <ProductDetailsBuy
               tr={tr}

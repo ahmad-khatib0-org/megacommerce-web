@@ -31,6 +31,10 @@ export const getTrans = (lang: string) => {
     addToWishlist: tr(lang, 'products.add_to_wishlist'),
     quantity: tr(lang, 'products.quantity'),
     total: tr(lang, 'cart.total'),
+    ratingAndReviews: tr(lang, 'reviews.rating_and_reviews'),
+    reviews: tr(lang, 'reviews.reviews'),
+    ratings: tr(lang, 'reviews.ratings'),
+    stars: tr(lang, 'reviews.stars'),
   }
 }
 
