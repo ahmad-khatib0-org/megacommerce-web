@@ -49,7 +49,6 @@ function HomeCarousel({ tr }: Props) {
 
   const init = async () => {
     setLoading(true)
-    await new Promise((res) => setTimeout(() => res(''), 3000))
     try {
       const res = await (await productsClient()).HeroProducts({})
       if (res.error) setErr(res.error.message)

@@ -23,7 +23,12 @@ const getTranslations = (lang: string) => {
     welcome: tr(lang, 'welcome'),
     signin: tr(lang, 'signin'),
     register: tr(lang, 'register'),
+    total: tr(lang, 'cart.total'),
     cart: tr(lang, 'cart'),
+    clearCart: tr(lang, 'cart.clear'),
+    cartEmpty: tr(lang, 'cart.empty'),
+    startShopping: tr(lang, 'cart.start_shopping'),
+    checkout: tr(lang, 'cart.checkout'),
   }
 }
 
