@@ -35,6 +35,11 @@ export const getTrans = (lang: string) => {
     reviews: tr(lang, 'reviews.reviews'),
     ratings: tr(lang, 'reviews.ratings'),
     stars: tr(lang, 'reviews.stars'),
+    rating: tr(lang, 'reviews.rating'),
+    sort: tr(lang, 'reviews.sort'),
+    latest: tr(lang, 'reviews.latest'),
+    highest: tr(lang, 'reviews.highest'),
+    withPictures: tr(lang, 'reviews.with_pictures'),
   }
 }
 

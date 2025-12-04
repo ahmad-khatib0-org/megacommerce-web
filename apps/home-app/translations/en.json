@@ -347,6 +347,12 @@
   "payment.tax.caculated_at_checkout": "Tax calculated at checkout",
   "reviews.rating_and_reviews": "Rating & Reviews",
   "reviews.reviews": "Reviews",
-  "reviews.ratings": "Rating",
-  "reviews.stars": "Stars"
+  "reviews.ratings": "Ratings",
+  "reviews.stars": "Stars",
+  "reviews.rating": "Rating",
+  "reviews.with_pictures": "With Pictures",
+  "reviews.sort": "Sort",
+  "reviews.latest": "Latest",
+  "reviews.oldest": "Oldest",
+  "reviews.highest": "Highest"
 }

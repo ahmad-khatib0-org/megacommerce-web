@@ -10,12 +10,14 @@ import ProductDetailsMedia from '@/components/products/product-details-media'
 import ProductDetailsBuy from '@/components/products/product-details-buy'
 import ProductDetailsPricing from '@/components/products/product-details-pricing'
 import ProductDetailsInit from '@/components/products/product-details-init'
+import ProductDetailsReviewStats from '@/components/products/product-details-review-stats'
+import ProductDetailsReviewsFilter from '@/components/products/product-details-reviews-filter'
+import ProductDetailsReviews from '@/components/products/product-details-reviews'
 const ProductDetailsCategoryFashion = dynamic(
   () => import('@/components/products/product-details-category-fashion')
 )
 
 import { deserializeDetails, getProduct, getTrans } from '@/app/item/[item_id]/helpers'
-import ProductDetailsReviewStats from '@/components/products/product-details-review-stats'
 
 type Props = {
   searchParams: SearchParams
@@ -36,9 +38,6 @@ async function Page({ params }: Props) {
     return <ServerError />
   } else {
     const details = await deserializeDetails(result.details!, lang, result.category, result.subcategory)
-
-    console.log(result.media)
-
     return (
       <>
         <main>
@@ -62,11 +61,7 @@ async function Page({ params }: Props) {
                     )}
                     <h1 className='inline font-bold text-lg align-top'>{result.title}</h1>
                   </div>
-                  <ProductDetailsPricing
-                    currency={result.currencyCode}
-                    offer={result.offer!}
-                    welcomeDealDiscount={10}
-                  />
+                  <ProductDetailsPricing welcomeDealDiscount={10} />
                   <ProductDetailsCategoryFashion
                     productId={result.id}
                     details={details}
@@ -74,7 +69,6 @@ async function Page({ params }: Props) {
                   />
                 </div>
               </div>
-
               <ProductDetailsReviewStats
                 tr={tr}
                 averageRating={4.5}
@@ -87,6 +81,8 @@ async function Page({ params }: Props) {
                   { star: 1, count: 50 },
                 ]}
               />
+              <ProductDetailsReviewsFilter filters={[]} currentFilter='all' tr={tr} />
+              <ProductDetailsReviews />
             </div>
             <ProductDetailsBuy
               tr={tr}

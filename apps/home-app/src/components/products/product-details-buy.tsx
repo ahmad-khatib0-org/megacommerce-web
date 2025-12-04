@@ -64,7 +64,7 @@ function ProductDetailsBuy({ soldBy, shipTo, shippingPrice, deliveryDate, tr, cu
   const totalPriceDisplay = finalTotal.toFixed(2)
 
   return (
-    <div className='border border-gray-200 rounded-lg p-4 shadow-sm bg-white'>
+    <div className='border border-gray-200 rounded-lg p-4 shadow-sm bg-white h-max'>
       <div className='mb-4'>
         <div className='flex items-center gap-2 mb-1'>
           <span className='text-2xl font-bold text-red-600'>

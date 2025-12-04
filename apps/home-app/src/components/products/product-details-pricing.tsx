@@ -2,21 +2,23 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 
-import { ProductOffer, ProductOfferVariant } from '@megacommerce/proto/products/v1/product'
+import { ProductOfferVariant } from '@megacommerce/proto/products/v1/product'
+import { useProductStore } from '@/store/products'
 
-type PriceBoxProps = {
-  currency: string
-  offer: ProductOffer
+type Props = {
   welcomeDealDiscount?: number
 }
 
-export default function ProductDetailsPricing({ currency, offer, welcomeDealDiscount }: PriceBoxProps) {
+export default function ProductDetailsPricing({ welcomeDealDiscount }: Props) {
   const path = useSearchParams()
+  const offer = useProductStore((state) => state.offer)
+  const currency = useProductStore((state) => state.currency)
   const [currentVariant, setCurrentVariant] = useState<ProductOfferVariant | null>(null)
   const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 })
   const [saleEnds, setSaleEnds] = useState<Date | null>(null)
 
-  useEffect(() => {
+  const init = () => {
+    if (!offer) return
     const variantID = path.get('variant_id')
     let variant: ProductOfferVariant | null = null
 
@@ -27,13 +29,16 @@ export default function ProductDetailsPricing({ currency, offer, welcomeDealDisc
     }
 
     setCurrentVariant(variant)
-
     if (variant?.salePriceEnd) {
       const saleEnds = new Date(parseInt(variant.salePriceEnd))
       setSaleEnds(saleEnds)
     } else {
       setSaleEnds(null)
     }
+  }
+
+  useEffect(() => {
+    init()
   }, [path, offer])
 
   useEffect(() => {

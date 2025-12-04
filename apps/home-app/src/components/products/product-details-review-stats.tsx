@@ -15,7 +15,7 @@ function ProductDetailsReviewStats({ averageRating, totalReviews, ratingCounts, 
   const maxReviews = Math.max(...ratingCounts.map((rc) => rc.count), 1)
 
   return (
-    <div className='title--wrap--4jOWDTu p-4 bg-white border border-gray-200 rounded-lg shadow-sm mt-10'>
+    <div className='p-4 bg-white border border-gray-200 rounded-lg shadow-sm mt-10'>
       <h2 className='text-xl font-bold mb-4'>{tr.ratingAndReviews}</h2>
 
       <div className='flex gap-8'>

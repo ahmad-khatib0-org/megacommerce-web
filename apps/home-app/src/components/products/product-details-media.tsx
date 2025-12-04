@@ -11,20 +11,18 @@ type Props = {
 
 function ProductDetailsMedia({ media }: Props) {
   const mediaBaseURL = process.env['NEXT_PUBLIC_MEDIA_BASE_URL'] as string
+  const search = useSearchParams()
   const [current, setCurrent] = useState<ProductMediaImage | null>(null)
   const [thumbnails, setThumbnails] = useState<{ [key: string]: ProductMediaImage }>({})
-  const search = useSearchParams()
 
   const getFirstImage = () => {
-    const firstVariantKey = Object.keys(media.media)[0]
-    const firstVariant = media.media[firstVariantKey]
+    const firstVariant = media.media[Object.keys(media.media)[0]]
     const firstImageKey = Object.keys(firstVariant?.images ?? {})[0]
     return firstVariant?.images?.[firstImageKey] ?? null
   }
 
   const getFirstVariantImages = () => {
-    const firstVariantKey = Object.keys(media.media)[0]
-    const firstVariant = media.media[firstVariantKey]
+    const firstVariant = media.media[Object.keys(media.media)[0]]
     return firstVariant?.images ?? {}
   }
 
