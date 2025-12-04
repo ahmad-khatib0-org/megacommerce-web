@@ -13,6 +13,7 @@ import ProductDetailsInit from '@/components/products/product-details-init'
 import ProductDetailsReviewStats from '@/components/products/product-details-review-stats'
 import ProductDetailsReviewsFilter from '@/components/products/product-details-reviews-filter'
 import ProductDetailsReviews from '@/components/products/product-details-reviews'
+import ProductDetailsSpecification from '@/components/products/product-details-specification'
 const ProductDetailsCategoryFashion = dynamic(
   () => import('@/components/products/product-details-category-fashion')
 )
@@ -83,6 +84,7 @@ async function Page({ params }: Props) {
               />
               <ProductDetailsReviewsFilter filters={[]} currentFilter='all' tr={tr} />
               <ProductDetailsReviews />
+              <ProductDetailsSpecification tr={tr} specifications={[]} />
             </div>
             <ProductDetailsBuy
               tr={tr}

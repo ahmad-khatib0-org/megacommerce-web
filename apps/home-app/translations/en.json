@@ -73,6 +73,7 @@
   "templates.verify.part3": "which will direct you to a verification page, click the verify account button and your {{SiteName}} account will be ready to use",
   "templates.verify.part4": "Please note that this is a one-time use token and it will expire in {{Hours}} hours.",
   "templates.footer.part1": "Any questions at all, mail us any time: {{SupportEmail}}, Best wishes, The {{SiteName}} Team",
+  "products.specifications": "Product's Specifications",
   "products.list.page_title": "My Products list",
   "products.create": "Create Product",
   "products.not_found.error": "The requested product is not found",
