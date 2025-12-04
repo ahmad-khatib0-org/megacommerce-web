@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
+
 import { ProductOffer, ProductOfferVariant } from '@megacommerce/proto/products/v1/product'
 
 type PriceBoxProps = {
@@ -13,6 +14,7 @@ export default function ProductDetailsPricing({ currency, offer, welcomeDealDisc
   const path = useSearchParams()
   const [currentVariant, setCurrentVariant] = useState<ProductOfferVariant | null>(null)
   const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 })
+  const [saleEnds, setSaleEnds] = useState<Date | null>(null)
 
   useEffect(() => {
     const variantID = path.get('variant_id')
@@ -21,8 +23,7 @@ export default function ProductDetailsPricing({ currency, offer, welcomeDealDisc
     if (variantID && offer.offer[variantID]) {
       variant = offer.offer[variantID]
     } else if (Object.keys(offer.offer).length > 0) {
-      const firstKey = Object.keys(offer.offer)[0]
-      variant = offer.offer[firstKey]
+      variant = offer.offer[Object.keys(offer.offer)[0]]
     }
 
     setCurrentVariant(variant)
@@ -34,8 +35,6 @@ export default function ProductDetailsPricing({ currency, offer, welcomeDealDisc
       setSaleEnds(null)
     }
   }, [path, offer])
-
-  const [saleEnds, setSaleEnds] = useState<Date | null>(null)
 
   useEffect(() => {
     if (!saleEnds) return
@@ -63,22 +62,24 @@ export default function ProductDetailsPricing({ currency, offer, welcomeDealDisc
 
   if (!currentVariant) return null
 
-  const listPrice = currentVariant.listPrice || currentVariant.price
-  const salePrice = currentVariant.salePrice || currentVariant.price
-  const currentPrice = currentVariant.hasSalePrice ? salePrice : listPrice
+  const sellingPrice = currentVariant.hasSalePrice ? currentVariant.salePrice! : currentVariant.price
 
-  const discount =
-    currentVariant.hasSalePrice && currentVariant.listPrice
-      ? Math.round((1 - parseFloat(salePrice) / parseFloat(listPrice)) * 100)
-      : undefined
+  const msrpPrice = currentVariant.listPrice
 
-  const discountAmount =
-    currentVariant.hasSalePrice && currentVariant.listPrice
-      ? (parseFloat(listPrice) - parseFloat(salePrice)).toFixed(2)
-      : undefined
+  const showListPrice = msrpPrice && parseFloat(msrpPrice) > parseFloat(sellingPrice)
+  const priceToCrossOut = showListPrice ? msrpPrice : undefined
+
+  const discountAmount = priceToCrossOut
+    ? (parseFloat(priceToCrossOut) - parseFloat(sellingPrice)).toFixed(2)
+    : undefined
+
+  const discountPercent = priceToCrossOut
+    ? Math.round((1 - parseFloat(sellingPrice) / parseFloat(priceToCrossOut)) * 100)
+    : undefined
 
   const isWelcomeDeal = welcomeDealDiscount !== undefined
-  const isSale = currentVariant.hasSalePrice && timeLeft.hours > 0
+  const isSale =
+    currentVariant.hasSalePrice && (timeLeft.hours > 0 || timeLeft.minutes > 0 || timeLeft.seconds > 0)
 
   return (
     <div className='border border-[#0044ff] rounded-lg overflow-hidden bg-white'>
@@ -92,24 +93,25 @@ export default function ProductDetailsPricing({ currency, offer, welcomeDealDisc
             </div>
             <span className='text-white font-medium text-sm'>Welcome Deal</span>
           </div>
-          {saleEnds && (
-            <div className='flex items-center gap-1 text-white text-sm'>
-              <span>Ends:</span>
-              <div className='flex items-center gap-1 bg-black/20 px-2 py-1 rounded'>
-                <span className='bg-white/20 px-1 rounded min-w-[20px] text-center'>
-                  {timeLeft.hours.toString().padStart(2, '0')}
-                </span>
-                <span>:</span>
-                <span className='bg-white/20 px-1 rounded min-w-[20px] text-center'>
-                  {timeLeft.minutes.toString().padStart(2, '0')}
-                </span>
-                <span>:</span>
-                <span className='bg-white/20 px-1 rounded min-w-[20px] text-center'>
-                  {timeLeft.seconds.toString().padStart(2, '0')}
-                </span>
+          {saleEnds &&
+            isSale && ( // Only show timer if there's an actual ongoing sale
+              <div className='flex items-center gap-1 text-white text-sm'>
+                <span>Ends:</span>
+                <div className='flex items-center gap-1 bg-black/20 px-2 py-1 rounded'>
+                  <span className='bg-white/20 px-1 rounded min-w-[20px] text-center'>
+                    {timeLeft.hours.toString().padStart(2, '0')}
+                  </span>
+                  <span>:</span>
+                  <span className='bg-white/20 px-1 rounded min-w-[20px] text-center'>
+                    {timeLeft.minutes.toString().padStart(2, '0')}
+                  </span>
+                  <span>:</span>
+                  <span className='bg-white/20 px-1 rounded min-w-[20px] text-center'>
+                    {timeLeft.seconds.toString().padStart(2, '0')}
+                  </span>
+                </div>
               </div>
-            </div>
-          )}
+            )}
         </div>
       )}
       {isWelcomeDeal && welcomeDealDiscount && (
@@ -133,8 +135,10 @@ export default function ProductDetailsPricing({ currency, offer, welcomeDealDisc
                 </span>
               )}
             </div>
-            {discount && (
-              <span className='text-sm font-bold bg-white/20 px-2 py-0.5 rounded'>{discount}% OFF</span>
+            {discountPercent && (
+              <span className='text-sm font-bold bg-white/20 px-2 py-0.5 rounded'>
+                {discountPercent}% OFF
+              </span>
             )}
           </div>
         </div>
@@ -143,7 +147,7 @@ export default function ProductDetailsPricing({ currency, offer, welcomeDealDisc
       <div className='p-2'>
         <div className='flex items-end gap-2 mb-2'>
           <span className='text-2xl font-bold text-black'>
-            {currentPrice}
+            {sellingPrice}
             {currency}
           </span>
 
@@ -155,15 +159,15 @@ export default function ProductDetailsPricing({ currency, offer, welcomeDealDisc
           )}
         </div>
 
-        {currentVariant.listPrice && currentVariant.hasSalePrice && (
+        {priceToCrossOut && (
           <div className='flex items-center gap-2 mb-3'>
             <span className='text-gray-400 line-through text-lg'>
-              {listPrice}
+              {priceToCrossOut}
               {currency}
             </span>
-            {discount && (
+            {discountPercent && (
               <span className='text-sm font-bold bg-red-100 text-red-600 px-2 py-0.5 rounded'>
-                -{discount}%
+                -{discountPercent}%
               </span>
             )}
           </div>
@@ -192,7 +196,6 @@ export default function ProductDetailsPricing({ currency, offer, welcomeDealDisc
             <p className='text-xs text-gray-500 mt-2'>Lower price for larger quantities</p>
           </div>
         )}
-
         <div className='flex gap-x-2 items-center space-y-1 text-sm'>
           <div className='flex items-center gap-1 text-green-600'>
             <span>✓</span>
@@ -203,13 +206,6 @@ export default function ProductDetailsPricing({ currency, offer, welcomeDealDisc
             <span>30-day returns</span>
           </div>
         </div>
-
-        {/* <div className='mt-3 pt-3 border-t border-gray-100'>
-          <div className='inline-flex items-center gap-1 text-sm text-orange-600 bg-orange-50 px-2 py-1 rounded'>
-            <span className='font-medium'>Coupon</span>
-            <span>Apply for extra discount</span>
-          </div>
-        </div> */}
       </div>
     </div>
   )

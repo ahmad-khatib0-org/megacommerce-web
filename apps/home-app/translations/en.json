@@ -294,10 +294,10 @@
   "cart": "Cart",
   "cart.total": "Total",
   "shipping.free_shipping": "Free shipping",
-  "shipping.return_and_refund_policy": "Free shipping",
+  "shipping.cost": "Shipping Cost",
+  "shipping.return_and_refund_policy": "Returns & Refunds",
   "shipping.buy_now": "Buy Now",
   "shipping.security_and_privacy": "Security & Privacy",
-  "products.sold_by": "Sold by",
   "shipping.free_shipping_desc": "Free shipping on all Choice items.",
   "shipping.fast_delivery": "Fast delivery",
   "shipping.fast_delivery_get_refound": "Fast delivery & get refunds for any issues",
@@ -317,6 +317,7 @@
   "actions.try_again": "Try again",
   "upload.uploading_file": "Uploading file...",
   "upload.uploading_complete": "Uploading Completed",
+  "products.sold_by": "Sold by",
   "products.share": "Share Product",
   "products.add_to_wishlist": "Add To Wishlist",
   "products.security_and_privacy_desc": "We protect your privacy and keep your personal details safe and secure. ",
@@ -341,5 +342,7 @@
   "result.no_more_results": "No more results",
   "pages.go_back_to_home": "Go back to home page",
   "pages.page_not_found": "Oops! Page not found",
-  "pages.page_not_found.message": "We couldn't find the page you're looking for. It might have been moved or doesn't exist anymore."
+  "pages.page_not_found.message": "We couldn't find the page you're looking for. It might have been moved or doesn't exist anymore.",
+  "privacy.protected": "Your data is protected",
+  "payment.tax.caculated_at_checkout": "Tax calculated at checkout"
 }

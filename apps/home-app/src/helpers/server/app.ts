@@ -1,5 +1,7 @@
 import 'server-only'
 import { Pool } from 'pg'
+
+import { CategoryTranslations } from '@megacommerce/proto/products/v1/product_categories'
 import { IDName } from '@megacommerce/shared'
 
 interface Category {
@@ -7,10 +9,12 @@ interface Category {
   name: string
   image: string
   subcategories: IDName[]
+  translations: CategoryTranslations[]
 }
 
 export class AppData {
   private static _instance: AppData
+  private db!: Pool
 
   public static instance(): AppData {
     if (!this._instance) this._instance = new AppData()
@@ -18,15 +22,20 @@ export class AppData {
   }
 
   public async init(db: Pool): Promise<void> {
+    this.db = db
+    await this.initCategories()
+  }
+
+  private _categories: Category[] = []
+  private async initCategories(): Promise<void> {
     try {
-      const rows = await db.query('SELECT id, name, image, subcategories FROM categories')
+      const rows = await this.db.query('SELECT id, name, image, subcategories, translations FROM categories')
       this._categories = rows.rows as typeof this._categories
     } catch (err) {
       throw Error(`failed to init categories: ${err}`)
     }
   }
 
-  private _categories: Category[] = []
   get categories() {
     return this._categories
   }

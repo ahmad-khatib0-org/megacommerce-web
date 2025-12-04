@@ -1,3 +1,4 @@
+import dynamic from 'next/dynamic'
 import { redirect } from 'next/navigation'
 import { IconPlus } from '@tabler/icons-react'
 
@@ -7,8 +8,13 @@ import { ServerError } from '@megacommerce/ui/server'
 
 import ProductDetailsMedia from '@/components/products/product-details-media'
 import ProductDetailsBuy from '@/components/products/product-details-buy'
-import { getProduct, getTrans } from '@/app/item/[item_id]/helpers'
 import ProductDetailsPricing from '@/components/products/product-details-pricing'
+import ProductDetailsInit from '@/components/products/product-details-init'
+const ProductDetailsCategoryFashion = dynamic(
+  () => import('@/components/products/product-details-category-fashion')
+)
+
+import { deserializeDetails, getProduct, getTrans } from '@/app/item/[item_id]/helpers'
 
 type Props = {
   searchParams: SearchParams
@@ -28,13 +34,22 @@ async function Page({ params }: Props) {
     }
     return <ServerError />
   } else {
+    const details = await deserializeDetails(result.details!, lang, result.category, result.subcategory)
+
+    console.log(result.media)
+
     return (
       <>
         <main>
+          <ProductDetailsInit
+            productId={result.id}
+            details={details.details}
+            initialOffer={result.offer!}
+            initialCurrencyCode={result.currencyCode}
+          />
           <section className='grid grid-cols-[75%_25%] px-4 pt-4'>
             <div className='flex gap-x-2'>
               <ProductDetailsMedia media={result.media!} />
-
               <div className='flex flex-col'>
                 <div className='mb-2'>
                   {result.brandName && (
@@ -50,13 +65,19 @@ async function Page({ params }: Props) {
                   offer={result.offer!}
                   welcomeDealDiscount={10}
                 />
+                {
+                  <ProductDetailsCategoryFashion
+                    productId={result.id}
+                    details={details}
+                    media={result.media!}
+                  />
+                }
               </div>
             </div>
             <ProductDetailsBuy
               tr={tr}
               currency={result.currencyCode}
               soldBy={'Zara corpuration ICI'}
-              price={45.66}
               deliveryDate={new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toLocaleDateString(undefined, {
                 weekday: 'short',
                 month: 'short',

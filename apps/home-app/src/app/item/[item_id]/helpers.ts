@@ -4,17 +4,22 @@ import {
   ProductDetailsRequest,
   ProductDetailsResponseData,
 } from '@megacommerce/proto/web/products/v1/product_details'
+import { ProductDetails } from '@megacommerce/proto/products/v1/product'
 import { getMetadata, grpcCall, isValidUlid, Trans } from '@megacommerce/shared/server'
 
-import { productsClient } from '@/helpers/server'
+import { AppData, productsClient } from '@/helpers/server'
+import { fromAnyGrpc } from '@megacommerce/shared'
 
 export const getTrans = (lang: string) => {
   const tr = Trans.tr
   return {
     shipAndReturn: tr(lang, 'shipping.return_and_refund_policy'),
     security: tr(lang, 'shipping.security_and_privacy'),
+    proteced: tr(lang, 'privacy.protected'),
+    taxAt: tr(lang, 'payment.tax.caculated_at_checkout'),
     soldBy: tr(lang, 'products.sold_by'),
     shipTo: tr(lang, 'location.ship_to'),
+    shippingCost: tr(lang, 'shipping.cost'),
     buyNow: tr(lang, 'shipping.buy_now'),
     addToCart: tr(lang, 'products.add_to_cart'),
     returnPolicyDescription: tr(lang, 'shipping.refund_and_return_policy_desc'),
@@ -60,4 +65,38 @@ export async function getProduct(
   }
 
   return data.data!
+}
+
+export const deserializeDetails = async (
+  details: ProductDetails,
+  lang: string,
+  category: string,
+  subcategory: string
+) => {
+  const trans = AppData.instance()
+    .categories.find((cat) => cat.id === category)!
+    .translations.find((trans) => trans.language === lang)!.subcategories[subcategory]!
+
+  let variants: {
+    shared: Record<string, any>
+    details: Record<string, { variantName: string; variantData: Record<string, any> }>
+  } = { shared: {}, details: {} }
+
+  for (const [fieldName, fieldData] of Object.entries(details.shared)) {
+    if (trans.attributes[fieldName]) {
+      variants.shared[fieldName] = fromAnyGrpc(fieldData)
+    }
+  }
+
+  for (const [variantId, variantData] of Object.entries(details.details)) {
+    const result: Record<string, any> = {}
+    for (const [fieldName, fieldData] of Object.entries(variantData.variantData)) {
+      if (trans.attributes[fieldName]) {
+        result[fieldName] = fromAnyGrpc(fieldData)
+      }
+    }
+    variants.details[variantId] = { variantName: variantData.variantName, variantData: result }
+  }
+
+  return variants
 }

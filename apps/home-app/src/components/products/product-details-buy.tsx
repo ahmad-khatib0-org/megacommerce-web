@@ -1,11 +1,14 @@
 'use client'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { Modal } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { Button, Input, Tooltip, Badge } from '@mantine/core'
 import { IconHeart, IconShare, IconShieldCheck, IconTruck, IconRotate2 } from '@tabler/icons-react'
 
 import { ObjString } from '@megacommerce/shared'
+import { useProductStore } from '@/store/products'
+import { ProductOfferVariant } from '@megacommerce/proto/products/v1/product'
 
 type Props = {
   soldBy: string
@@ -13,46 +16,70 @@ type Props = {
   shippingPrice: number
   deliveryDate: string
   tr: ObjString
-  price: number
-  originalPrice?: number
-  discount?: number
   currency: string
 }
 
-function ProductDetailsBuy({
-  soldBy,
-  shipTo,
-  shippingPrice,
-  deliveryDate,
-  tr,
-  price,
-  originalPrice,
-  discount,
-  currency,
-}: Props) {
+function ProductDetailsBuy({ soldBy, shipTo, shippingPrice, deliveryDate, tr, currency }: Props) {
   const [quantity, setQuantity] = useState(1)
   const [returnsModalOpened, { open: openReturns, close: closeReturns }] = useDisclosure(false)
   const [securityModalOpened, { open: openSecurity, close: closeSecurity }] = useDisclosure(false)
 
-  const totalPrice = (price * quantity).toFixed(2)
+  const searchParams = useSearchParams()
+  const { offer, currency: storeCurrency } = useProductStore((state) => state)
+  const effectiveCurrency = storeCurrency || currency // Use store currency as source of truth
+
+  const { sellingPrice, priceToCrossOut, discountPercent, priceValue } = useMemo(() => {
+    if (!offer)
+      return { sellingPrice: '0.00', priceToCrossOut: undefined, discountPercent: undefined, priceValue: 0 }
+
+    const variantID = searchParams.get('variant_id') || Object.keys(offer.offer || {})[0]
+    const currentVariant: ProductOfferVariant | undefined = offer.offer[variantID]
+
+    if (!currentVariant)
+      return { sellingPrice: '0.00', priceToCrossOut: undefined, discountPercent: undefined, priceValue: 0 }
+
+    // 1. Calculate Prices
+    const sellingPriceStr = currentVariant.hasSalePrice ? currentVariant.salePrice! : currentVariant.price
+    const priceValue = parseFloat(sellingPriceStr)
+
+    const msrpPrice = currentVariant.listPrice
+
+    const showListPrice = msrpPrice && parseFloat(msrpPrice) > priceValue
+    const priceToCrossOut = showListPrice ? msrpPrice : undefined
+
+    const discountPercent = priceToCrossOut
+      ? Math.round((1 - priceValue / parseFloat(priceToCrossOut)) * 100)
+      : undefined
+
+    return {
+      sellingPrice: priceValue.toFixed(2),
+      priceToCrossOut,
+      discountPercent,
+      priceValue,
+    }
+  }, [searchParams, offer])
+
+  const itemSubtotal = priceValue * quantity
+  const finalTotal = itemSubtotal + shippingPrice
+  const totalPriceDisplay = finalTotal.toFixed(2)
 
   return (
     <div className='border border-gray-200 rounded-lg p-4 shadow-sm bg-white'>
       <div className='mb-4'>
         <div className='flex items-center gap-2 mb-1'>
           <span className='text-2xl font-bold text-red-600'>
-            {currency}
-            {price.toFixed(2)}
+            {effectiveCurrency}
+            {sellingPrice}
           </span>
-          {originalPrice && (
+          {priceToCrossOut && (
             <span className='text-lg text-gray-500 line-through'>
-              {currency}
-              {originalPrice.toFixed(2)}
+              {effectiveCurrency}
+              {parseFloat(priceToCrossOut).toFixed(2)}
             </span>
           )}
-          {discount && (
+          {discountPercent && (
             <Badge color='red' variant='filled' size='lg'>
-              -{discount}%
+              -{discountPercent}%
             </Badge>
           )}
         </div>
@@ -77,7 +104,9 @@ function ProductDetailsBuy({
               {tr.freeShipping}
             </Badge>
           ) : (
-            <span>${shippingPrice.toFixed(2)}</span>
+            <span>
+              {effectiveCurrency} {shippingPrice.toFixed(2)}
+            </span>
           )}
         </div>
       </div>
@@ -97,7 +126,7 @@ function ProductDetailsBuy({
             </div>
             <div className='flex-1'>
               <p className='font-medium text-gray-800'>{tr.shipAndReturn}</p>
-              <p className='text-sm text-gray-600'>{tr.freeReturns || 'Free returns within 15 days'}</p>
+              <p className='text-sm text-gray-600'>{tr.freeReturn}</p>
             </div>
           </div>
 
@@ -109,7 +138,7 @@ function ProductDetailsBuy({
             </div>
             <div className='flex-1'>
               <p className='font-medium text-gray-800'>{tr.security}</p>
-              <p className='text-sm text-gray-600'>{tr.securePayment || 'Secure payment & privacy'}</p>
+              <p className='text-sm text-gray-600'>{tr.protected}</p>
             </div>
           </div>
         </div>
@@ -134,12 +163,27 @@ function ProductDetailsBuy({
             +
           </Button>
         </div>
-        <p className='text-sm text-gray-500 mt-2'>
-          {quantity} {tr.items} · {tr.total}:{' '}
-          <span className='font-bold'>
-            {currency} {totalPrice}
-          </span>
-        </p>
+        <div className='text-sm text-gray-500 mt-2 space-y-0.5'>
+          <p>
+            {tr.items} @ {effectiveCurrency} {sellingPrice}:
+            <span className='font-bold ml-1 text-gray-800'>
+              {effectiveCurrency} {itemSubtotal.toFixed(2)}
+            </span>
+          </p>
+          <p>
+            {tr.shippingCost}:
+            <span className='font-bold ml-1 text-gray-800'>
+              {shippingPrice === 0 ? tr.freeShipping : `${effectiveCurrency} ${shippingPrice.toFixed(2)}`}
+            </span>
+          </p>
+          <p className='mt-1 border-t border-dashed pt-1 flex items-center justify-between text-black'>
+            <span className='font-bold'>{tr.total}:</span>
+            <span className='font-bold text-lg'>
+              {effectiveCurrency} {totalPriceDisplay}
+            </span>
+          </p>
+          <p className='text-xs text-gray-500 text-right'>{tr.taxAt}</p>
+        </div>
       </div>
 
       <div className='space-y-3 mb-4'>
@@ -167,27 +211,25 @@ function ProductDetailsBuy({
           </Button>
         </Tooltip>
       </div>
-
       <Modal opened={returnsModalOpened} onClose={closeReturns} title={tr.returnPolicy}>
         <div className='space-y-3'>
           <div className='flex items-center gap-3'>
             <IconRotate2 size={24} className='text-green-600' />
             <div>
               <h4 className='font-bold'>{tr.shipAndReturn}</h4>
-              <p className='text-sm text-gray-600'>{tr.freeReturns || 'Free returns within 15 days'}</p>
+              <p className='text-sm text-gray-600'>{tr.freeReturn}</p>
             </div>
           </div>
           <p className='text-gray-700'>{tr.returnPolicyDescription}</p>
         </div>
       </Modal>
-
       <Modal opened={securityModalOpened} onClose={closeSecurity} title={tr.security}>
         <div className='space-y-3'>
           <div className='flex items-center gap-3'>
             <IconShieldCheck size={24} className='text-blue-600' />
             <div>
               <h4 className='font-bold'>{tr.securityAndPrivacy}</h4>
-              <p className='text-sm text-gray-600'>Your data is protected</p>
+              <p className='text-sm text-gray-600'>{tr.protected}</p>
             </div>
           </div>
           <p className='text-gray-700'>{tr.securityAndPrivacyDescription}</p>
