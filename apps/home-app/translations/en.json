@@ -355,5 +355,9 @@
   "reviews.sort": "Sort",
   "reviews.latest": "Latest",
   "reviews.oldest": "Oldest",
-  "reviews.highest": "Highest"
+  "reviews.highest": "Highest",
+  "general.visit_store": "Visit Store",
+  "general.contact_seller": "Contact Seller",
+  "general.followers": "Followers",
+  "general.positive_feedback": "Positive Feedback"
 }

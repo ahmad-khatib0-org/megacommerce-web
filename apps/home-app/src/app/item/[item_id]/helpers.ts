@@ -40,6 +40,10 @@ export const getTrans = (lang: string) => {
     latest: tr(lang, 'reviews.latest'),
     highest: tr(lang, 'reviews.highest'),
     withPictures: tr(lang, 'reviews.with_pictures'),
+    visitStore: tr(lang, 'general.visit_store'),
+    contactSeller: tr(lang, 'general.contact_seller'),
+    followers: tr(lang, 'general.followers'),
+    positiveFeedback: tr(lang, 'general.positive_feedback'),
   }
 }
 

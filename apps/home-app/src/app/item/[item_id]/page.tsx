@@ -19,6 +19,7 @@ const ProductDetailsCategoryFashion = dynamic(
 )
 
 import { deserializeDetails, getProduct, getTrans } from '@/app/item/[item_id]/helpers'
+import ProductDetailsBrandInfo from '@/components/products/product-details-brand-info'
 
 type Props = {
   searchParams: SearchParams
@@ -48,7 +49,7 @@ async function Page({ params }: Props) {
             initialOffer={result.offer!}
             initialCurrencyCode={result.currencyCode}
           />
-          <section className='grid grid-cols-[75%_25%] px-4 pt-4'>
+          <section className='grid grid-cols-[75%_25%] px-4 pt-4 mb-10'>
             <div className='flex flex-col gap-x-2 me-2'>
               <div className='flex gap-x-2'>
                 <ProductDetailsMedia media={result.media!} />
@@ -85,6 +86,13 @@ async function Page({ params }: Props) {
               <ProductDetailsReviewsFilter filters={[]} currentFilter='all' tr={tr} />
               <ProductDetailsReviews />
               <ProductDetailsSpecification tr={tr} specifications={[]} />
+              <ProductDetailsBrandInfo
+                brandName={''}
+                storeLink={''}
+                followers={0}
+                positiveFeedbackRate={0}
+                tr={tr}
+              />
             </div>
             <ProductDetailsBuy
               tr={tr}

@@ -24,7 +24,7 @@ function ProductDetailsSpecification({ specifications, tr }: SpecsTableProps) {
   const effectiveSpecs = specifications.length > 0 ? specifications : mockSpecs
 
   return (
-    <div className='p-4 bg-white border border-gray-200 rounded-lg shadow-sm'>
+    <div className='p-4 bg-white border border-gray-200 rounded-lg shadow-sm py-6 my-10'>
       <h2 className='text-xl font-bold mb-4'>{tr.specifications}</h2>
       <div className='divide-y divide-gray-100 border border-gray-100 rounded-lg overflow-hidden'>
         {effectiveSpecs.map((spec, index) => (
