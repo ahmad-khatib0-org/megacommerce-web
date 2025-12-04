@@ -14,12 +14,13 @@ import ProductDetailsReviewStats from '@/components/products/product-details-rev
 import ProductDetailsReviewsFilter from '@/components/products/product-details-reviews-filter'
 import ProductDetailsReviews from '@/components/products/product-details-reviews'
 import ProductDetailsSpecification from '@/components/products/product-details-specification'
+import ProductDetailsBrandInfo from '@/components/products/product-details-brand-info'
+import ProductDetailsFAQ from '@/components/products/product-details-faq'
 const ProductDetailsCategoryFashion = dynamic(
   () => import('@/components/products/product-details-category-fashion')
 )
 
 import { deserializeDetails, getProduct, getTrans } from '@/app/item/[item_id]/helpers'
-import ProductDetailsBrandInfo from '@/components/products/product-details-brand-info'
 
 type Props = {
   searchParams: SearchParams
@@ -93,6 +94,7 @@ async function Page({ params }: Props) {
                 positiveFeedbackRate={0}
                 tr={tr}
               />
+              <ProductDetailsFAQ faqs={[]} tr={tr} />
             </div>
             <ProductDetailsBuy
               tr={tr}

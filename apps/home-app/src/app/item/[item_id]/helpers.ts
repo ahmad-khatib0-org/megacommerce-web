@@ -44,6 +44,8 @@ export const getTrans = (lang: string) => {
     contactSeller: tr(lang, 'general.contact_seller'),
     followers: tr(lang, 'general.followers'),
     positiveFeedback: tr(lang, 'general.positive_feedback'),
+    faq: tr(lang, 'products.frequently_asked_questions'),
+    askAQuestion: tr(lang, 'products.ask_a_question'),
   }
 }
 
