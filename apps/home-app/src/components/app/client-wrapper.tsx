@@ -6,7 +6,7 @@ import { trackClient } from '@megacommerce/shared/client'
 import { useAppStore } from '@/store'
 
 type Props = {
-  clientInfo: { language: string; country: string; currency: string }
+  clientInfo: { language: string; country: string; currency: string; languageName: string }
 }
 
 function ClientWrapper({ clientInfo }: Props) {

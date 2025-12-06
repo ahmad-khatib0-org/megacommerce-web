@@ -9,6 +9,12 @@ import { AVAILABLE_LANGUAGES, Trans } from '@megacommerce/shared/server'
 
 type Props = {
   userLang: string
+  initialClientInfo?: {
+    languageSymbol: string
+    location: string
+    currency: string
+    languageName: string
+  }
 }
 
 const getTranslations = (lang: string) => {
@@ -32,7 +38,7 @@ const getTranslations = (lang: string) => {
   }
 }
 
-const Header = ({ userLang }: Props) => {
+const Header = ({ userLang, initialClientInfo }: Props) => {
   const tr = getTranslations(userLang)
   return (
     <section className='grid grid-cols-[auto,500px,1fr] justify-center items-center mt-2 gap-x-8'>
@@ -44,11 +50,12 @@ const Header = ({ userLang }: Props) => {
       <div className='grid grid-cols-[minmax(0,1fr),minmax(0,1fr),max-content] items-center'>
         <LanguageCurrencyLocation
           tr={tr}
+          initialClientInfo={initialClientInfo}
           langs={Object.entries(AVAILABLE_LANGUAGES).map(([symbol, name]) => ({
             label: name,
             value: symbol,
           }))}
-        />
+        />{' '}
         <Account tr={tr} />
         <Cart tr={tr} />
       </div>

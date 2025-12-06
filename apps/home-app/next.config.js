@@ -13,6 +13,7 @@ const nextConfig = {
   images: {
     domains: ['localhost'],
   },
+  transpilePackages: ['@megacommerce/shared'],
 }
 
 const plugins = [

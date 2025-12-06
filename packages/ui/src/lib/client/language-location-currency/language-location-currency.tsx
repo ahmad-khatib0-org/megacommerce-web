@@ -1,5 +1,5 @@
 'use client'
-import { ReactNode, useEffect, useMemo, useState } from 'react'
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import Image from 'next/image'
 import { StaticImport } from 'next/dist/shared/lib/get-img-props'
 
@@ -57,9 +57,21 @@ export function LanguageCurrencyLocation({
   const [language, setLanguage] = useState(selectedLanguage)
   const [languageName, setLanguageName] = useState('')
 
+  const initialCountryCode = useRef(selectedCountryCode)
+  const initialCurrency = useRef(selectedCurrency)
+  const initialLanguage = useRef(selectedLanguage)
+
   const filteredCountries = countriesList.filter((c) =>
     c.name.toLowerCase().includes(countrySearch.toLowerCase().trim())
   )
+
+  const isSaveDisabled = useMemo(() => {
+    return (
+      countryCode === initialCountryCode.current &&
+      currency === initialCurrency.current &&
+      language === initialLanguage.current
+    )
+  }, [countryCode, currency, language])
 
   const getFlagImage = (iso2: string, size = 20): ReactNode | null => {
     const src = (FLAGS as Record<string, string | StaticImport>)[iso2.toLowerCase()]
@@ -75,11 +87,14 @@ export function LanguageCurrencyLocation({
     )
   }
 
-  const _onSave = () => onSave({ currency, language, location: currency })
+  const _onSave = () => onSave({ currency, language, location: countryCode })
 
+  // This effect sets the display names when the component mounts or when state changes
   useEffect(() => {
-    setCountry(countriesList.find((c) => c.code.toLowerCase() === countryCode.toLowerCase())?.name ?? '')
-  }, [])
+    const selectedCountry = countriesList.find((c) => c.code.toLowerCase() === countryCode.toLowerCase())
+    setCountry(selectedCountry?.name ?? '')
+    setLanguageName(languages.find((lang) => lang.value === language)?.label ?? '')
+  }, [countryCode, language, languages, countriesList])
 
   return (
     <Popover>
@@ -98,18 +113,13 @@ export function LanguageCurrencyLocation({
           </div>
         </div>
       </PopoverTrigger>
-      <PopoverContent className='flex flex-col justify-between border border-black/10 rounded-3xl shadow-xl min-h-96 max-w-80'>
+      <PopoverContent className='flex flex-col justify-between border border-black/10 rounded-3xl shadow-xl min-h-96 max-w-80 z-[99] bg-white'>
         <div className='flex flex-col'>
           <p className='font-bold text-lg mb-2'>{shipTo}</p>
           <Select
             value={countryCode}
             onValueChange={(value) => {
               setCountryCode(value)
-              const selected = countries.find((c) => c.code.toLowerCase() === value)
-              if (selected) {
-                setCountry(selected.name)
-                setCountryCode(selected.code)
-              }
             }}>
             <SelectTrigger className='w-full border border-black/20'>
               {!countryCode && <SelectValue placeholder={websiteLang} />}
@@ -120,11 +130,10 @@ export function LanguageCurrencyLocation({
                 </div>
               )}
             </SelectTrigger>
-            <SelectContent className='max-h-60 max-w-64 border border-black/20 bg-sugar'>
+            <SelectContent className='max-h-60 max-w-64 border border-black/20 bg-sugar z-[999]'>
               <input
                 placeholder='search country...'
                 onChange={(e) => setCountrySearch(e.target.value)}
-                // STOP events from bubbling to the Select/Radix internals:
                 onKeyDown={(e) => e.stopPropagation()}
                 onKeyUp={(e) => e.stopPropagation()}
                 onPointerDown={(e) => e.stopPropagation()}
@@ -151,12 +160,11 @@ export function LanguageCurrencyLocation({
             value={language}
             onValueChange={(value) => {
               setLanguage(value)
-              setLanguageName(languages.find((lang) => lang.value === value)?.label ?? '')
             }}>
             <SelectTrigger className='w-full border border-black/20'>
-              <p>{language}</p>
+              <p>{languageName}</p>
             </SelectTrigger>
-            <SelectContent className='max-h-60 max-w-64 border border-black/20 bg-sugar'>
+            <SelectContent className='max-h-60 max-w-64 border border-black/20 bg-sugar z-[999]'>
               <div className='overflow-auto max-h-60'>
                 {Object.values(languages).map((lang) => {
                   return (
@@ -173,7 +181,7 @@ export function LanguageCurrencyLocation({
             <SelectTrigger className='w-full border border-black/20'>
               <p>{currency}</p>
             </SelectTrigger>
-            <SelectContent className='max-h-60 max-w-64 border border-black/20 bg-sugar'>
+            <SelectContent className='max-h-60 max-w-64 border border-black/20 bg-sugar z-[999]'>
               <div className='overflow-auto max-h-60'>
                 {Object.entries(currenciesList).map(([code, data]) => {
                   return (
@@ -188,7 +196,10 @@ export function LanguageCurrencyLocation({
             </SelectContent>
           </Select>
         </div>
-        <Button onClick={() => _onSave()} className='bg-black/90 text-white font-bold mb-2'>
+        <Button
+          onClick={() => _onSave()}
+          className='bg-black/90 text-white font-bold mb-2'
+          disabled={isSaveDisabled}>
           {save}
         </Button>
       </PopoverContent>

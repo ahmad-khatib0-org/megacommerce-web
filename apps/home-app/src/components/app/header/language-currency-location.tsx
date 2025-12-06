@@ -7,36 +7,38 @@ import { useEffect, useState } from 'react'
 type Props = {
   tr: ObjString
   langs: ValueLabel[]
+  initialClientInfo?: {
+    languageSymbol: string
+    location: string
+    currency: string
+    languageName: string
+  }
 }
 
 // TODO: complete the onSave function
-function LanguageCurrencyLocation({ tr, langs }: Props) {
+function LanguageCurrencyLocation({ tr, langs, initialClientInfo }: Props) {
   const clientInfo = useAppStore((state) => state.clientInfo)
   const [data, setData] = useState<{ country: string; currency: string; language: string }>({
-    language: '',
-    country: '',
-    currency: '',
+    country: initialClientInfo?.location ?? '',
+    currency: initialClientInfo?.currency ?? '',
+    language: initialClientInfo?.languageSymbol ?? '',
   })
 
-  const onSave = (data: OnSave) => {
-    console.log(data)
-  }
-
-  const init = () => {
-    if (clientInfo) {
+  useEffect(() => {
+    if (clientInfo && clientInfo.geoData) {
       setData({
-        country: clientInfo.geoData?.country_code ?? '',
-        currency: clientInfo.geoData?.currency ?? '',
+        country: clientInfo.geoData.country_code,
+        currency: clientInfo.geoData.currency,
         language: clientInfo.language,
       })
     }
-  }
-
-  useEffect(() => {
-    init()
   }, [clientInfo])
 
-  if (!clientInfo) return null
+  const onSave = (data: OnSave) => {
+    console.log('Saving preferences:', data)
+  }
+
+  if (!data.language && !initialClientInfo) return null
 
   return (
     <LanguageCurrencyLocationComp

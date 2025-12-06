@@ -49,6 +49,7 @@ export type Header = (typeof Headers)[keyof typeof Headers]
 
 export const Cookies = {
   AcceptLanguage: 'accept-language',
+  LanguageName: 'language-name',
   Token: 'token',
   UserID: 'user-id',
   DeviceID: 'device-id',
