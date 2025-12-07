@@ -4,8 +4,8 @@ import { create } from 'zustand'
 import { ClientInformation, createDefaultClientInformation } from '@megacommerce/shared/client'
 
 interface AppState {
-  clientInfo: ClientInformation
-  setClientInfo: (info: ClientInformation) => void
+  clientInfo: ClientInformation & { email?: string; firstName?: string }
+  setClientInfo: (info: ClientInformation & { email?: string; firstName?: string }) => void
   setClientEssentialInfo: (info: { language: string; currency: string; country: string }) => void
   isAllCategoriesShown: boolean
   setIsAllCategoriesShown: (isAllCategoriesShown: boolean) => void

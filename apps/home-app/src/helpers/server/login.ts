@@ -95,3 +95,74 @@ class OAuthServiceStatusChecker {
 }
 
 export const oauthServiceStatusChecker = new OAuthServiceStatusChecker()
+
+interface AuthResult {
+  success: boolean
+  email?: string
+  firstName?: string
+  isInternalError: boolean
+}
+
+/**
+ * Checks user authentication with a retry mechanism.
+ * @param maxRetries - The maximum number of times to retry on
+ * internal server errors. Defaults to 2.
+ * @returns An object containing the success status, user info, and an error flag.
+ */
+export async function checkUserAuth(maxRetries: number = 2): Promise<AuthResult> {
+  let attempt = 0
+  // A simple helper function to create a delay
+  const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+  while (attempt <= maxRetries) {
+    try {
+      const response = await fetch('/api/auth/check', { method: 'POST', cache: 'no-store' })
+      if (response.ok) {
+        const data = (await response.json()) as { success: boolean; email: string; firstName: string }
+        return {
+          success: data.success,
+          email: data.email,
+          firstName: data.firstName,
+          isInternalError: false,
+        }
+      }
+
+      if (response.status === 401) {
+        return { success: false, isInternalError: false }
+      }
+
+      if (response.status >= 400 && response.status < 500) {
+        return { success: false, isInternalError: false }
+      }
+
+      if (response.status >= 500) {
+        attempt++
+        if (attempt <= maxRetries) {
+          console.warn(`Auth check failed (server error), retrying... Attempt ${attempt} of ${maxRetries}`)
+          await delay(1000 * attempt) // Wait 1s, 2s, 3s...
+          continue
+        } else {
+          return { success: false, isInternalError: true }
+        }
+      }
+    } catch (error) {
+      // --- NETWORK ERROR ---
+      // The fetch itself failed (e.g., DNS, CORS, offline). This is transient.
+      attempt++
+      if (attempt <= maxRetries) {
+        console.warn(
+          `Auth check failed (network error), retrying... Attempt ${attempt} of ${maxRetries}`,
+          error
+        )
+        await delay(1000 * attempt)
+        continue
+      } else {
+        // Retries exhausted
+        return { success: false, isInternalError: true }
+      }
+    }
+  }
+
+  // Failsafe, should not be reached
+  return { success: false, isInternalError: true }
+}

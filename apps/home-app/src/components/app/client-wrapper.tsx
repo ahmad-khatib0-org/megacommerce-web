@@ -6,7 +6,14 @@ import { trackClient } from '@megacommerce/shared/client'
 import { useAppStore } from '@/store'
 
 type Props = {
-  clientInfo: { language: string; country: string; currency: string; languageName: string }
+  clientInfo: {
+    language: string
+    country: string
+    currency: string
+    languageName: string
+    email?: string
+    firstName?: string
+  }
 }
 
 function ClientWrapper({ clientInfo }: Props) {
@@ -21,7 +28,7 @@ function ClientWrapper({ clientInfo }: Props) {
 
     try {
       const enhancedClientInfo = await trackClient({}, { enableFingerprinting: true })
-      setClientInfo({ ...enhancedClientInfo })
+      setClientInfo({ ...enhancedClientInfo, email: clientInfo.email, firstName: clientInfo.firstName })
     } catch (err) {
       console.error(err)
     } finally {

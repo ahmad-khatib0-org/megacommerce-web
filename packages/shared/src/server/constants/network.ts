@@ -48,11 +48,13 @@ export const Headers = {
 export type Header = (typeof Headers)[keyof typeof Headers]
 
 export const Cookies = {
-  AcceptLanguage: 'accept-language',
-  LanguageName: 'language-name',
+  AcceptLanguage: 'accept_language',
+  LanguageName: 'language_name',
+  AccessToken: 'access_token',
+  RefreshToken: 'refresh_token',
   Token: 'token',
-  UserID: 'user-id',
-  DeviceID: 'device-id',
+  UserID: 'user_id',
+  DeviceID: 'device_id',
   Currency: 'currency',
   Country: 'country',
 } as const
