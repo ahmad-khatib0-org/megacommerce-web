@@ -73,6 +73,7 @@
   "templates.verify.part3": "which will direct you to a verification page, click the verify account button and your {{SiteName}} account will be ready to use",
   "templates.verify.part4": "Please note that this is a one-time use token and it will expire in {{Hours}} hours.",
   "templates.footer.part1": "Any questions at all, mail us any time: {{SupportEmail}}, Best wishes, The {{SiteName}} Team",
+  "products.no_products_found": "No products found. Try adjusting your filters.",
   "products.specifications": "Product's Specifications",
   "products.frequently_asked_questions": "Frequently Asked Questions",
   "products.ask_a_question": "Ask a question",
@@ -201,7 +202,9 @@
   "inventory.update.invalid_operation": "The supplied operation is invalid",
   "inventory.update.insufficient_available": "The requested quantity to subtract is bigger than the available quantity",
   "inventory.update.success": "Inventory updated successfully",
+  "categories.all_categories": "All Categories",
   "categories.missing_name.error": "you must provide the category name",
+  "categories.subcategories": "Subcategories",
   "categories.not_found.error": "the requested category is not existed",
   "request.last_id.missing": "the request last id is missing",
   "request.last_id.invalid": "the request last id is invalid",
@@ -314,7 +317,6 @@
   "shipping.refund_and_return_policy_desc": "Eligible for returns and refunds, within the designated order protection period",
   "shipping.free_return_on_millions_of_items": "Free returns on millions of items",
   "shipping.free_return_desc": "Not satisfied with your order? Send it back within 90 days after the order was placed or 15 days after the order was received (depending on where it shipped from). The first return on each order is free (up to 5 times per month).",
-  "categories.all_categories": "All Categories",
   "megacommerce.commitment": "Megacommerce Commitment",
   "cancel": "Cancel",
   "back": "Back",
@@ -366,5 +368,11 @@
   "general.visit_store": "Visit Store",
   "general.contact_seller": "Contact Seller",
   "general.followers": "Followers",
-  "general.positive_feedback": "Positive Feedback"
+  "general.positive_feedback": "Positive Feedback",
+  "filter.created_at_desc": "Newest",
+  "filter.created_at_asc": "Oldest",
+  "filter.price_low_to_high": "Price: Low to High",
+  "filter.price_high_to_low": "Price: High to Low",
+  "filter.select_all": "Select All",
+  "filter.sort_by": "Sort By"
 }
