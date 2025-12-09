@@ -1,7 +1,11 @@
 import 'client-only'
 import { create, StateCreator } from 'zustand'
 import { devtools } from 'zustand/middleware'
-import { ClientInformation, UploadFileStatus } from '@megacommerce/shared/client'
+import {
+  ClientInformation,
+  createDefaultClientInformation,
+  UploadFileStatus,
+} from '@megacommerce/shared/client'
 
 export interface Uploader {
   show_uploader: boolean
@@ -9,15 +13,17 @@ export interface Uploader {
 }
 
 interface AppState {
-  clientInfo: ClientInformation
-  setClientInfo: (info: ClientInformation) => void
+  clientInfo: ClientInformation & { email?: string; firstName?: string }
+  setClientInfo: (info: ClientInformation & { email?: string; firstName?: string }) => void
+  setClientEssentialInfo: (info: { language: string; currency: string; country: string }) => void
   uploader: Uploader
   setUploader: (uploader: Uploader) => void
 }
 
 const storeFn: StateCreator<AppState> = (set) => ({
-  clientInfo: { currency: '', language: '', country: '' },
+  clientInfo: createDefaultClientInformation(),
   setClientInfo: (clientInfo: ClientInformation) => set({ clientInfo }),
+  setClientEssentialInfo: (info) => set((state) => ({ clientInfo: state.clientInfo, ...info })),
   uploader: { show_uploader: false, uploads: [] },
   setUploader: (uploader: Uploader) => set({ uploader }),
 })
