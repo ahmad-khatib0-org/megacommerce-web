@@ -2,10 +2,10 @@ import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 import { jwtDecode, JwtPayload } from 'jwt-decode'
 
-import { Cookies, Trans } from '@megacommerce/shared/server'
+import { Cookies, Trans, SERVER_INTERNAL_ERROR } from '@megacommerce/shared/server'
 import { system } from '@/helpers/server'
 
-// Set your refresh threshold here (e.g., 0.2 for 20%)
+// refresh threshold here (e.g., 0.2 for 20%)
 const REFRESH_THRESHOLD = 0.2
 
 interface JwtPayloadResponse extends JwtPayload {
@@ -23,15 +23,16 @@ export async function POST(req: NextRequest) {
   const accessToken = cookieStore.get(Cookies.AccessToken)?.value
   const refreshToken = cookieStore.get(Cookies.RefreshToken)?.value
 
-  if (!refreshToken) {
-    return NextResponse.json({ error: tr(lang, 'error.unauthenticated') }, { status: 401 })
-  }
-
   let config
   try {
-    config = (await system()).config!
+    config = (await system()).config
   } catch (err) {
-    return NextResponse.json({ error: tr(lang, 'error.internal') }, { status: 500 })
+    console.error('Failed to get system config:', err)
+    return NextResponse.json({ error: SERVER_INTERNAL_ERROR }, { status: 500 })
+  }
+
+  if (!refreshToken) {
+    return NextResponse.json({ error: tr(lang, 'error.unauthenticated') }, { status: 401 })
   }
 
   let shouldRefresh = false

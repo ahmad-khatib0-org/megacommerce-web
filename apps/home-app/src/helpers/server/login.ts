@@ -116,7 +116,8 @@ export async function checkUserAuth(maxRetries: number = 2): Promise<AuthResult>
 
   while (attempt <= maxRetries) {
     try {
-      const response = await fetch('/api/auth/check', { method: 'POST', cache: 'no-store' })
+      const endpoint = `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/check`
+      const response = await fetch(endpoint, { method: 'POST', cache: 'no-store' })
       if (response.ok) {
         const data = (await response.json()) as { success: boolean; email: string; firstName: string }
         return {
@@ -139,7 +140,7 @@ export async function checkUserAuth(maxRetries: number = 2): Promise<AuthResult>
         attempt++
         if (attempt <= maxRetries) {
           console.warn(`Auth check failed (server error), retrying... Attempt ${attempt} of ${maxRetries}`)
-          await delay(1000 * attempt) // Wait 1s, 2s, 3s...
+          await delay(1000 * attempt)
           continue
         } else {
           return { success: false, isInternalError: true }

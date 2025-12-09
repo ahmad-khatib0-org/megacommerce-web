@@ -1,5 +1,8 @@
 import 'server-only'
 
+export const SERVER_INTERNAL_ERROR =
+  'Sorry, Unexpected internal server error. Our team has been notified. Please try again'
+
 export const Headers = {
   Authorization: 'authorization',
   XRequestID: 'x-request-id',
