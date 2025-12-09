@@ -20,8 +20,6 @@ export const system = async (): Promise<Readonly<System>> => {
 
 /**
  * @method init the required config, trans, ... In order to start the server
- *
- * TODO: relay on cached config, trans, ... For better CI builds
  */
 async function init(): Promise<System> {
   if (_initialized) return _system
