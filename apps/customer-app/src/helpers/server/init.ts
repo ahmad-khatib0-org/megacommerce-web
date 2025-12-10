@@ -21,9 +21,10 @@ async function init(): Promise<System> {
 
   _initPromise = (async () => {
     try {
-      const { port, hostname } = new URL(process.env['COMMON_GRPC_ENDPOINT'] as string)
-      await waitForServiceToBeReady(hostname, parseInt(port))
-      await Trans.init(commonClient(), false)
+      const client = commonClient()
+      // const { port, hostname } = new URL(process.env['COMMON_GRPC_ENDPOINT'] as string)
+      // await waitForServiceToBeReady(hostname, parseInt(port))
+      await Trans.init(client, false)
       const config = await initConfig()
       const db = await initDB(config)
 

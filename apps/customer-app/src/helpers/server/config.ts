@@ -1,4 +1,3 @@
-import path from 'path'
 import { readFile, writeFile } from 'fs/promises'
 import { existsSync } from 'fs'
 import { dump, load } from 'js-yaml'
@@ -6,12 +5,13 @@ import { dump, load } from 'js-yaml'
 import { Config } from '@megacommerce/proto/common/v1/config'
 import { commonClient } from '@/helpers/server'
 
+const CONFIG_DIR = './config'
+
 export async function initConfig(retries = 3): Promise<Config> {
-  const fileName = process.env.NODE_ENV === 'development' ? 'config.dev.yaml' : 'config.prod.yaml'
-  const cfgPath = path.join(process.cwd(), 'config', fileName)
-  if (existsSync(cfgPath)) {
+  const storePath = `${CONFIG_DIR}/config.${process.env.NODE_ENV}.yaml`
+  if (existsSync(storePath)) {
     try {
-      const config = load(await readFile(cfgPath, 'utf8')) as Config
+      const config = load(await readFile(storePath, 'utf8')) as Config
       return config
     } catch (err) {
       throw Error(`failed to read the config file: ${err}`)
@@ -27,7 +27,7 @@ export async function initConfig(retries = 3): Promise<Config> {
             if (res?.error) return reject(new Error(`${errMsg}: ${res.error}`))
             if (!res?.data) return reject(new Error(`${errMsg}: no config data received`))
             resolve(res.data)
-            await writeFile(cfgPath, dump(res.data), 'utf8')
+            await writeFile(storePath, dump(res.data), 'utf8')
           })
         })
       } catch (err) {

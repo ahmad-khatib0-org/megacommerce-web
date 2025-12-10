@@ -12,16 +12,19 @@ export function commonClient() {
   const endpoint = process.env.COMMON_GRPC_ENDPOINT as string
   if (!endpoint) throw new Error('Missing COMMON_GRPC_ENDPOINT')
 
+  let host = endpoint
+  if (endpoint.includes('://')) {
+    const url = new URL(endpoint)
+    host = url.host
+  }
+
   const options = {
     'grpc.keepalive_time_ms': 30000,
     'grpc.keepalive_timeout_ms': 5000,
   }
 
-  globalForCommon.commonClient = new Common.CommonServiceClient(
-    endpoint,
-    credentials.createInsecure(),
-    options
-  )
+  console.log('the host is ', host)
+  globalForCommon.commonClient = new Common.CommonServiceClient(host, credentials.createInsecure(), options)
 
   return globalForCommon.commonClient
 }
