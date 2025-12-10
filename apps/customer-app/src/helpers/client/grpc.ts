@@ -1,6 +1,7 @@
 import 'client-only'
 import { grpc } from '@improbable-eng/grpc-web'
 import { GrpcWebImpl, UsersServiceClientImpl } from '@megacommerce/proto/web/users/v1/users'
+import { GrpcWebImpl as OrdersGrpcWebImpl, OrdersServiceClientImpl } from '@megacommerce/proto/web/orders/v1/orders'
 import { ClientInformation, trackClient } from '@megacommerce/shared/client'
 
 let clientInformation: ClientInformation | null = null
@@ -54,4 +55,21 @@ export async function usersClient(): Promise<UsersServiceClientImpl> {
 
   _usersClient = new UsersServiceClientImpl(usersGrpc)
   return _usersClient
+}
+
+let _ordersClient: OrdersServiceClientImpl | null = null
+
+export async function ordersClient(): Promise<OrdersServiceClientImpl> {
+  if (_ordersClient) return _ordersClient
+
+  const endpoint = process.env['NEXT_PUBLIC_ORDERS_GRPC_ENDPOINT']
+  if (!endpoint) throw new Error('Missing NEXT_PUBLIC_ORDERS_GRPC_ENDPOINT')
+
+  const ordersGrpc = new OrdersGrpcWebImpl(endpoint, {
+    transport: await createTransportWithMetadata(),
+    debug: process.env.NODE_ENV !== 'production',
+  })
+
+  _ordersClient = new OrdersServiceClientImpl(ordersGrpc)
+  return _ordersClient
 }
