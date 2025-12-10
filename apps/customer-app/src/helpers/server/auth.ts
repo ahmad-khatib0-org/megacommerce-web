@@ -1,4 +1,7 @@
 import 'server-only'
+import { cookies, headers } from 'next/headers'
+import { redirect, RedirectType } from 'next/navigation'
+
 import {
   ObjString,
   UserFirstNameMaxLength,
@@ -8,7 +11,7 @@ import {
   UserPasswordMaxLength,
   UserPasswordMinLength,
 } from '@megacommerce/shared'
-import { Trans } from '@megacommerce/shared/server'
+import { Cookies, Trans } from '@megacommerce/shared/server'
 import { UserNameMaxLength, UserNameMinLength } from '@megacommerce/shared'
 
 export async function getPasswordRequirements() {
@@ -57,6 +60,8 @@ export async function getSignupPageTrans(): Promise<ObjString> {
     prev: tr(lang, 'previous'),
     next: tr(lang, 'next'),
     cancel: tr(lang, 'cancel'),
+    profileImg: tr(lang, 'user.profile_information.image'),
+    optionaImg: tr(lang, 'user.profile_information.optional_image'),
   }
 
   return trans
@@ -64,38 +69,36 @@ export async function getSignupPageTrans(): Promise<ObjString> {
 
 interface AuthResult {
   success: boolean
-  isInternalError: boolean
   email?: string
   firstName?: string
+  isInternalError: boolean
 }
 
 /**
  * Checks user authentication with a retry mechanism.
- * @param maxRetries - The maximum number of times to retry on
- * internal server errors. Defaults to 2.
+ * @param headers - Optional headers to forward (e.g., Cookie header)
+ * @param maxRetries - The maximum number of times to retry on internal server errors. Defaults to 2.
  * @returns An object containing the success status, user info, and an error flag.
  */
-export async function checkUserAuth(maxRetries: number = 2): Promise<AuthResult> {
+export async function getUserAuthInfo(
+  headers?: Record<string, string>,
+  maxRetries: number = 2
+): Promise<AuthResult> {
   let attempt = 0
-  // A simple helper function to create a delay
   const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
   while (attempt <= maxRetries) {
     try {
-      const endpoint = `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/check`
-      const response = await fetch(endpoint, { method: 'POST', cache: 'no-store' })
+      const endpoint = process.env.NEXT_PUBLIC_BASE_URL + '/api/auth/check'
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        cache: 'no-store',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+      })
       if (response.ok) {
-        const data = (await response.json()) as { success: boolean; email: string; firstName: string }
-        return {
-          success: data.success,
-          email: data.email,
-          firstName: data.firstName,
-          isInternalError: false,
-        }
-      }
-
-      if (response.status === 401) {
-        return { success: false, isInternalError: false }
+        type response = { success: boolean; email: string; firstName: string }
+        const { success, email, firstName } = (await response.json()) as response
+        return { success, email, firstName, isInternalError: false }
       }
 
       if (response.status >= 400 && response.status < 500) {
@@ -117,14 +120,11 @@ export async function checkUserAuth(maxRetries: number = 2): Promise<AuthResult>
       // The fetch itself failed (e.g., DNS, CORS, offline). This is transient.
       attempt++
       if (attempt <= maxRetries) {
-        console.warn(
-          `Auth check failed (network error), retrying... Attempt ${attempt} of ${maxRetries}`,
-          error
-        )
+        const msg = `Auth check failed (network error), retrying... Attempt ${attempt} of ${maxRetries}`
+        console.warn(msg, error)
         await delay(1000 * attempt)
         continue
       } else {
-        // Retries exhausted
         return { success: false, isInternalError: true }
       }
     }
@@ -132,4 +132,34 @@ export async function checkUserAuth(maxRetries: number = 2): Promise<AuthResult>
 
   // Failsafe, should not be reached
   return { success: false, isInternalError: true }
+}
+
+/**
+ * Reads all incoming client headers from the Next.js request and converts
+ * them into a simple Record<string, string> object for forwarding to an
+ * internal fetch call.
+ * * Note: Headers will be lowercased due to standard Web Headers API behavior.
+ * * @returns A Record<string, string> object containing all client headers.
+ */
+export async function getForwardableHeaders(): Promise<Record<string, string>> {
+  const requestHeaders = headers()
+  const forwardedHeaders: Record<string, string> = {}
+
+  for (const [key, value] of (await requestHeaders).entries()) {
+    forwardedHeaders[key] = value
+  }
+
+  return forwardedHeaders
+}
+
+const LOGIN_PAGE_URL = process.env.LOGIN_PAGE_URL || ''
+
+export async function redirectToAuthStatus(redirectTo: string): Promise<void> {
+  const cookieStore = await cookies()
+  const refreshToken = cookieStore.get(Cookies.RefreshToken)?.value
+  if (refreshToken) {
+    redirect(redirectTo, RedirectType.replace)
+  } else {
+    redirect(LOGIN_PAGE_URL)
+  }
 }

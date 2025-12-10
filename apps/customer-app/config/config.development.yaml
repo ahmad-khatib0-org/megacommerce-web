@@ -299,7 +299,7 @@ imageProxy:
   remoteImageProxyOptions: resize=800x600
 oauth:
   oauthProviderUrl: http://localhost:4444
-  oauthClientId: 9da82607-84a8-423b-962f-c7602f40cf42
+  oauthClientId: 06ccc2a7-de81-4bc3-8941-40933fac9df6
   oauthClientSecret: super-secret
   oauthDbDsn: postgres://hydra:hydra-password@hydra-db:5432/hydra?sslmode=disable
   oauthRedirectUrl: http://localhost:3000/api/callback

@@ -54,7 +54,7 @@ function SignupPersonalInfoForm({ form, tr, imgErr, uppy }: Props) {
       </div>
       <div className='flex flex-col col-span-full w-full'>
         <p className='font-medium text-center my-4 tx-primary text-lg'>
-          {tr.logo} ({tr.optional})
+          {tr.profileImg} ({tr.optionaImg})
         </p>
         {imgErr && <p className='block font-medium text-center my-3 text-red-500 text-lg'>{imgErr}</p>}
         <Dashboard

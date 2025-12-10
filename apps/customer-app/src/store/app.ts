@@ -7,7 +7,13 @@ interface AppState {
   clientInfo: ClientInformation & { email?: string; firstName?: string }
   setClientInfo: (info: ClientInformation & { email?: string; firstName?: string }) => void
   clientInitialInfo: { language: string; currency: string; country: string }
-  setClientEssentialInfo: (info: { language: string; currency: string; country: string }) => void
+  setClientEssentialInfo: (info: {
+    languageName: string
+    languageSymbol: string
+    currency: string
+    country: string
+  }) => void
+  updateClientInfo: (updates: Partial<ClientInformation> & { email?: string; firstName?: string }) => void
 }
 
 const storeFn: StateCreator<AppState> = (set) => ({
@@ -15,6 +21,10 @@ const storeFn: StateCreator<AppState> = (set) => ({
   setClientInfo: (clientInfo: ClientInformation) => set({ clientInfo }),
   clientInitialInfo: { language: '', currency: '', country: '' },
   setClientEssentialInfo: (info) => set((state) => ({ clientInfo: state.clientInfo, ...info })),
+  updateClientInfo: (updates) =>
+    set((state) => ({
+      clientInfo: { ...state.clientInfo, ...updates },
+    })),
 })
 
 export const useAppStore =

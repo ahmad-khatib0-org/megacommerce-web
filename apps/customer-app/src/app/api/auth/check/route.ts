@@ -8,11 +8,9 @@ import { system } from '@/helpers/server'
 // refresh threshold here (e.g., 0.2 for 20%)
 const REFRESH_THRESHOLD = 0.2
 
-interface JwtPayloadResponse extends JwtPayload {
-  id_token: {
-    email: string
-    first_name: string
-  }
+interface IdTokenPayload extends JwtPayload {
+  email: string
+  first_name: string
 }
 
 export async function POST(req: NextRequest) {
@@ -22,11 +20,13 @@ export async function POST(req: NextRequest) {
   const cookieStore = await cookies()
   const accessToken = cookieStore.get(Cookies.AccessToken)?.value
   const refreshToken = cookieStore.get(Cookies.RefreshToken)?.value
+  const idToken = cookieStore.get('id_token')?.value
 
   let config
   try {
     config = (await system()).config
   } catch (err) {
+    console.error('Failed to get system config:', err)
     return NextResponse.json({ error: SERVER_INTERNAL_ERROR }, { status: 500 })
   }
 
@@ -38,38 +38,40 @@ export async function POST(req: NextRequest) {
   let email: string | undefined
   let firstName: string | undefined
 
+  if (idToken) {
+    try {
+      const decodedIdToken = jwtDecode<IdTokenPayload>(idToken)
+      email = decodedIdToken.email
+      firstName = decodedIdToken.first_name
+    } catch (e) {
+      console.error('Failed to decode ID token, forcing refresh or re-login', e)
+      shouldRefresh = true
+    }
+  } else {
+    shouldRefresh = true
+  }
+
   if (accessToken) {
     try {
-      const decodedToken = jwtDecode<JwtPayloadResponse>(accessToken)
+      const decodedToken = jwtDecode(accessToken)
       const now = Math.floor(Date.now() / 1000)
 
       if (decodedToken.exp && decodedToken.iat) {
         const totalLifetime = decodedToken.exp - decodedToken.iat
         const timeRemaining = decodedToken.exp - now
-
         // Check if the remaining time is less than 20% of the total lifetime
         if (timeRemaining / totalLifetime < REFRESH_THRESHOLD) {
           shouldRefresh = true
         }
       }
-
-      // Extract email from the token,
-      if (decodedToken.id_token.email) {
-        email = decodedToken.id_token.email
-        firstName = decodedToken.id_token.first_name
-      }
     } catch (error) {
-      const response = NextResponse.json({ error: tr(lang, 'error.unauthenticated') }, { status: 401 })
-      response.cookies.set(Cookies.AccessToken, '', { maxAge: 0, path: '/' })
-      response.cookies.set(Cookies.RefreshToken, '', { maxAge: 0, path: '/' })
-      return response
+      console.error('Failed to decode access token, forcing refresh or re-login:', error)
+      shouldRefresh = true
     }
   } else {
-    // No access token, so we must refresh
     shouldRefresh = true
   }
 
-  // --- CONDITIONAL TOKEN REFRESH ---
   if (shouldRefresh) {
     const oauth = config?.oauth
     try {
@@ -82,49 +84,60 @@ export async function POST(req: NextRequest) {
         },
         body: new URLSearchParams({
           grant_type: 'refresh_token',
-          refresh_token: refreshToken,
+          refresh_token: refreshToken!, // Safe to assert: checked at the top
           redirect_uri: oauth?.oauthRedirectUrl!,
         }),
       })
 
       if (!tokenResponse.ok) {
-        // Refresh token is invalid, clear cookies and force login
         const response = NextResponse.json({ error: tr(lang, 'error.unauthenticated') }, { status: 401 })
         response.cookies.set(Cookies.AccessToken, '', { maxAge: 0, path: '/' })
         response.cookies.set(Cookies.RefreshToken, '', { maxAge: 0, path: '/' })
+        response.cookies.set('id_token', '', { maxAge: 0, path: '/' }) // Clear ID token too
         return response
       }
 
-      // Hydra responded successfully! Parse the new tokens.
       const tokens = await tokenResponse.json()
-      const { access_token, refresh_token: new_refresh_token, expires_in } = tokens
+      const { access_token, refresh_token: new_refresh_token, expires_in, id_token: new_id_token } = tokens // 2. Destructure new_id_token
 
-      try {
-        const newDecodedToken = jwtDecode<JwtPayloadResponse>(access_token)
-        if (newDecodedToken.id_token.email) {
-          email = newDecodedToken.id_token.email
-          firstName = newDecodedToken.id_token.first_name
+      if (new_id_token) {
+        try {
+          const newDecodedIdToken = jwtDecode<IdTokenPayload>(new_id_token)
+          email = newDecodedIdToken.email
+          firstName = newDecodedIdToken.first_name
+        } catch (e) {
+          console.error('Could not decode new ID token to get email/name', e)
         }
-      } catch (e) {
-        console.error('Could not decode new access token to get email', e)
       }
 
       const response = NextResponse.json({ success: true, email, firstName }, { status: 200 })
+      const secure = process.env.NODE_ENV === 'production' && req.nextUrl.protocol === 'https:'
 
       // Set the NEW access token cookie
       response.cookies.set(Cookies.AccessToken, access_token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure,
         path: '/',
         maxAge: expires_in,
+        sameSite: 'lax',
+      })
+
+      // 4. Set the NEW ID token cookie
+      response.cookies.set('id_token', new_id_token, {
+        httpOnly: true,
+        secure,
+        path: '/',
+        maxAge: expires_in,
+        sameSite: 'lax',
       })
 
       // Set the NEW refresh token cookie
       response.cookies.set(Cookies.RefreshToken, new_refresh_token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure,
         path: '/',
         maxAge: config?.security?.refreshTokenExpiryInHours! * 60 * 60,
+        sameSite: 'lax',
       })
 
       return response
@@ -135,6 +148,6 @@ export async function POST(req: NextRequest) {
   }
 
   // --- NO REFRESH NEEDED ---
-  // the token is still valid and we have the email.
+  // User info (email, firstName) was already retrieved from the existing idToken.
   return NextResponse.json({ success: true, email, firstName }, { status: 200 })
 }
