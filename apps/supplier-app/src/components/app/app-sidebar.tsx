@@ -1,6 +1,20 @@
-type Props = {}
+'use client'
+import { useEffect } from 'react'
 
-function AppSidebar({ }: Props) {
+import { useAppStore } from '@/store'
+
+type Props = {
+  email?: string
+  firstName?: string
+}
+
+function AppSidebar({ email, firstName }: Props) {
+  const updateClientInfo = useAppStore((state) => state.updateClientInfo)
+
+  useEffect(() => {
+    if (email || firstName) updateClientInfo({ email, firstName })
+  }, [])
+
   return (
     <div
       style={{
