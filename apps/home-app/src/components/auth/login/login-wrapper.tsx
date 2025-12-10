@@ -31,8 +31,8 @@ const LoginWrapper = ({ tr }: Props) => {
           {...form.getInputProps('email')}
         />
         <PasswordInput
-          label={tr.email}
-          placeholder={tr.email}
+          label={tr.password}
+          placeholder={tr.password}
           withAsterisk
           size='sm'
           className='w-96'

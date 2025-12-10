@@ -12,6 +12,7 @@ type Props = {
 
 function Account({ tr }: Props) {
   const clientInfo = useAppStore((state) => state.clientInfo)
+
   return (
     <div className='flex items-center gap-x-2'>
       <IconUser size={36} />

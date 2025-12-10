@@ -6,7 +6,7 @@ import { ClientInformation, createDefaultClientInformation } from '@megacommerce
 interface AppState {
   clientInfo: ClientInformation & { email?: string; firstName?: string }
   setClientInfo: (info: ClientInformation & { email?: string; firstName?: string }) => void
-  setClientEssentialInfo: (info: { language: string; currency: string; country: string }) => void
+  setClientEssentialInfo: (info: { languageSymbol: string; currency: string; country: string }) => void
   isAllCategoriesShown: boolean
   setIsAllCategoriesShown: (isAllCategoriesShown: boolean) => void
 }

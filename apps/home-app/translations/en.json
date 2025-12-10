@@ -56,6 +56,9 @@
   "user.create.last_name.error": "last name should be between {{Min}} and {{Max}} characters",
   "user.login.use_auth_service.error": "Please sign in using {{AuthService}}.",
   "user.login.password.error": "Login failed because of invalid password.",
+  "user.profile_information": "Profile Information",
+  "user.profile_information.image": "Profile Image",
+  "user.profile_information.optional_image": "This image is optional",
   "login": "Login",
   "login.error": "An error occurred during authentication.",
   "login.welcom_back": "Welcome Back!",
@@ -374,5 +377,7 @@
   "filter.price_low_to_high": "Price: Low to High",
   "filter.price_high_to_low": "Price: High to Low",
   "filter.select_all": "Select All",
-  "filter.sort_by": "Sort By"
+  "filter.sort_by": "Sort By",
+  "personal_info": "Personal Information",
+  "image.max_size": "Image maximum size is {{Max}} {{Unit}}"
 }

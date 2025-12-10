@@ -5,37 +5,26 @@ import { ColorSchemeScript, mantineHtmlProps, MantineProvider } from '@mantine/c
 import Header from '@/components/app/header/header'
 import ClientWrapper from '@/components/app/client-wrapper'
 import { getClientInformation } from '@megacommerce/shared/server'
-import { checkUserAuth } from '@/helpers/server'
 
 type Props = {
   children: React.ReactNode
 }
 
 async function ServerWrapper({ children }: Props) {
-  const ci = await getClientInformation()
-  const { email, firstName, success, isInternalError } = await checkUserAuth()
+  const { languageSymbol, languageName, currency, location } = await getClientInformation()
 
   return (
-    <html lang={ci.languageSymbol} {...mantineHtmlProps}>
+    <html lang={languageSymbol} {...mantineHtmlProps}>
       <head>
         <ColorSchemeScript />
       </head>
       <body suppressHydrationWarning={true}>
         <MantineProvider>
-          <Header userLang={ci.languageSymbol} initialClientInfo={ci} />
+          <Header lang={languageSymbol} />
           {children}
         </MantineProvider>
         <ToastContainer />
-        <ClientWrapper
-          clientInfo={{
-            email: email,
-            firstName: firstName,
-            language: ci.languageSymbol,
-            country: ci.location,
-            currency: ci.currency,
-            languageName: ci.languageName,
-          }}
-        />
+        <ClientWrapper clientInfo={{ languageSymbol, country: location, currency, languageName }} />
       </body>
     </html>
   )

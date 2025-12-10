@@ -1,7 +1,7 @@
 'use client'
 import { useCallback, useEffect, useState } from 'react'
 import useEmblaCarousel from 'embla-carousel-react'
-// import autoplay from 'embla-carousel-autoplay'
+import autoplay from 'embla-carousel-autoplay'
 import { Loader } from '@mantine/core'
 
 import { HeroProductsResponseData } from '@megacommerce/proto/web/products/v1/hero_products'
@@ -14,16 +14,15 @@ type Props = {
   tr: ObjString
 }
 
-// autoplay.globalOptions = {
-//   delay: 5000,
-//   stopOnMouseEnter: true,
-//   stopOnInteraction: false,
-// }
+autoplay.globalOptions = {
+  delay: 5000,
+  stopOnMouseEnter: true,
+  stopOnInteraction: false,
+}
 
 function HomeCarousel({ tr }: Props) {
   const [selectedIndex, setSelectedIndex] = useState(0)
-  // const [emblaRef, emblaApi] = useEmblaCarousel({}, [autoplay()])
-  const [emblaRef, emblaApi] = useEmblaCarousel({}, [])
+  const [emblaRef, emblaApi] = useEmblaCarousel({}, [autoplay()])
   const [loading, setLoading] = useState(true)
   const [err, setErr] = useState('')
   const [response, setResponse] = useState<HeroProductsResponseData | null>()
@@ -34,8 +33,6 @@ function HomeCarousel({ tr }: Props) {
     },
     [emblaApi]
   )
-
-  const carousels = ['this is the 1', 'this is the 2', 'this is the 3']
 
   useEffect(() => {
     if (!emblaApi) return
@@ -84,9 +81,8 @@ function HomeCarousel({ tr }: Props) {
               onClick={() => onClick(idx)}
               className='embla__prev flex items-center cursor-pointer h-4'>
               <span
-                className={`block h-1.5 w-10 border border-black/10 ${
-                  selectedIndex === idx ? 'bg-white' : 'bg-white/40'
-                }`}></span>
+                className={`block h-1.5 w-10 border border-black/10 ${selectedIndex === idx ? 'bg-white' : 'bg-white/40'
+                  }`}></span>
             </li>
           ))}
         </ul>

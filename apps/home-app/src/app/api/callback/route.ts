@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 
-import { Trans } from '@megacommerce/shared/server'
+import { Cookies, Trans } from '@megacommerce/shared/server'
 import { encodeQueryParams, system } from '@/helpers/server'
 import { Config } from '@megacommerce/proto/common/v1/config'
 
@@ -12,11 +12,12 @@ export async function GET(req: NextRequest) {
   const code = url.searchParams.get('code')
   const state = url.searchParams.get('state')
 
-  // TODO: include the occurred error
-  const returnErr = (descID: string) => {
+  const returnErr = (descID: string, error?: any) => {
+    console.log(error)
     const msg = tr(lang, 'login.error')
     const desc = tr(lang, descID)
-    const url = `/api/error?${encodeQueryParams({ error: msg, error_description: desc, translated: true })}`
+    const params = encodeQueryParams({ error: msg, error_description: desc, translated: true })
+    const url = new URL(`/auth/login/error?${params}`, req.nextUrl.origin)
     return NextResponse.redirect(url, 302)
   }
 
@@ -24,7 +25,7 @@ export async function GET(req: NextRequest) {
   try {
     config = (await system()).config!
   } catch (err) {
-    return returnErr('error.internal')
+    return returnErr('error.internal', err)
   }
 
   const oauth = config?.oauth
@@ -50,27 +51,39 @@ export async function GET(req: NextRequest) {
     },
   })
 
-  if (!res.ok) return returnErr('oauth.unknown_error')
+  if (!res.ok) return returnErr('oauth.unknown_error', await res.text())
 
   const tokens = await res.json()
-  const { access_token, refresh_token, expires_in } = tokens
+  const { access_token, refresh_token, expires_in, id_token } = tokens
 
   // Set JWTs in HTTP-only cookies
   const response = NextResponse.redirect(new URL('/', req.url))
 
+  const secure = process.env.NODE_ENV === 'production' && req.nextUrl.protocol === 'https:'
+
   response.cookies.set('oauth_state', '', { maxAge: 0, path: '/' })
-  response.cookies.set('access_token', access_token, {
+  response.cookies.set(Cookies.AccessToken, access_token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure,
     path: '/',
     maxAge: expires_in,
+    sameSite: 'lax',
   })
 
-  response.cookies.set('refresh_token', refresh_token, {
+  response.cookies.set(Cookies.RefreshToken, refresh_token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure,
     path: '/',
     maxAge: config?.security?.refreshTokenExpiryInHours! * 60 * 60,
+    sameSite: 'lax',
+  })
+
+  response.cookies.set('id_token', id_token, {
+    httpOnly: true,
+    secure,
+    path: '/',
+    maxAge: expires_in,
+    sameSite: 'lax',
   })
 
   return response

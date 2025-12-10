@@ -4,16 +4,10 @@ import { useEffect, useState } from 'react'
 import { PageLoader } from '@megacommerce/ui/shared'
 import { trackClient } from '@megacommerce/shared/client'
 import { useAppStore } from '@/store'
+import { getUserAuthInfo } from '@/helpers/client'
 
 type Props = {
-  clientInfo: {
-    language: string
-    country: string
-    currency: string
-    languageName: string
-    email?: string
-    firstName?: string
-  }
+  clientInfo: { languageSymbol: string; country: string; currency: string; languageName: string }
 }
 
 function ClientWrapper({ clientInfo }: Props) {
@@ -28,7 +22,8 @@ function ClientWrapper({ clientInfo }: Props) {
 
     try {
       const enhancedClientInfo = await trackClient({}, { enableFingerprinting: true })
-      setClientInfo({ ...enhancedClientInfo, email: clientInfo.email, firstName: clientInfo.firstName })
+      const { email, firstName, success, isInternalError } = await getUserAuthInfo()
+      setClientInfo({ ...enhancedClientInfo, email, firstName })
     } catch (err) {
       console.error(err)
     } finally {

@@ -29,6 +29,7 @@ function HomeSliders({ res }: Props) {
         title={title}
         sizes='100%'
         fill={true}
+        priority
         className='object-fill'
       />
     )
