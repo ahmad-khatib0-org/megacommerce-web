@@ -17,6 +17,7 @@ import { ObjString } from '@megacommerce/shared'
 import { handleGrpcWebErr } from '@megacommerce/shared/client'
 import { ordersClient } from '@/helpers/client'
 import { useAppStore } from '@/store'
+import OrderListItemComponent from './order-list-item'
 
 type Props = {
   tr: ObjString
@@ -314,43 +315,13 @@ function OrdersList({ tr }: Props) {
                 </div>
               </div>
 
-              {/* ... (Items list) ... */}
               <div className='mb-6'>
                 <Title order={4} className='mb-4'>
                   {tr.items}
                 </Title>
                 <div className='space-y-3'>
                   {order.items.map((item) => (
-                    <div key={item.id} className='flex gap-3 py-3 border-b border-gray-100 last:border-0'>
-                      <div className='flex-shrink-0'>
-                        <div className='w-16 h-16 bg-gray-100 rounded-lg overflow-hidden'>
-                          <div className='w-full h-full flex items-center justify-center text-gray-400 text-xs'>
-                            {/* Product image would go here */}
-                            {tr.items}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className='flex-1'>
-                        <Text fw={500} className='mb-1'>
-                          {item.title}
-                        </Text>
-                        <div className='flex justify-between items-end'>
-                          <div className='text-sm text-gray-600'>
-                            <div className='flex items-center gap-2'>
-                              <span>
-                                {tr.quantity}: {item.quantity}
-                              </span>
-                              <span className='text-gray-400'>•</span>
-                              <span>
-                                ${(Number(item.unitPriceCents) / 100).toFixed(2)} {tr.each}
-                              </span>
-                            </div>
-                          </div>
-                          <Text fw={600}>${(Number(item.totalCents) / 100).toFixed(2)}</Text>
-                        </div>
-                      </div>
-                    </div>
+                    <OrderListItemComponent key={item.id} item={item} tr={tr} />
                   ))}
                 </div>
               </div>
