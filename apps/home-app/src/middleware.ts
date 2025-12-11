@@ -21,17 +21,12 @@ export function middleware(request: NextRequest) {
   if (!request.cookies.get(Cookies.Currency)?.value) {
     response.cookies.set(Cookies.Currency, DEFAULT_CURRENCY)
   }
-
   if (!request.cookies.get(Cookies.AcceptLanguage)?.value) {
     response.cookies.set(Cookies.AcceptLanguage, DEFAULT_LANGUAGE_SYMBOL)
   }
-
-  console.log('✅ Middleware is running and setting cookies if needed!')
-
   if (!request.cookies.get(Cookies.LanguageName)?.value) {
     response.cookies.set(Cookies.LanguageName, DEFAULT_LANGUAGE_NAME)
   }
-
   if (!request.cookies.get(Cookies.Country)?.value) {
     response.cookies.set(Cookies.Country, DEFAULT_LOCATION)
   }

@@ -9,6 +9,7 @@ import {
   IconCheck,
   IconClock,
   IconArrowRight,
+  IconX,
 } from '@tabler/icons-react'
 
 import { OrderListItem } from '@megacommerce/proto/orders/v1/orders_list'
@@ -21,6 +22,7 @@ type Props = {
   tr: ObjString
 }
 
+// 1. HARDCODED LISTS STILL USE FULL PROTOBUF KEYS
 const statusSteps = [
   { key: 'ORDER_STATUS_CREATED', label: 'orderPlaced', icon: IconCalendar },
   { key: 'ORDER_STATUS_CONFIRMED', label: 'processingStep', icon: IconPackage },
@@ -28,12 +30,49 @@ const statusSteps = [
   { key: 'ORDER_STATUS_DELIVERED', label: 'deliveredStep', icon: IconCheck },
 ]
 
+// 2. NEW MAP: Converts the short status value (e.g., 'CONFIRMED') back to the Protobuf Key
+// This map is essential because the API returns the short string (r.status), but the component's logic (statusSteps) relies on the full Protobuf key.
+const shortStatusToKeyMap: Record<string, string> = {
+  UNRECOGNIZED: 'ORDER_STATUS_UNRECOGNIZED',
+  CREATED: 'ORDER_STATUS_CREATED',
+  CONFIRMED: 'ORDER_STATUS_CONFIRMED',
+  SHIPPED: 'ORDER_STATUS_SHIPPED',
+  DELIVERED: 'ORDER_STATUS_DELIVERED',
+  CANCELLED: 'ORDER_STATUS_CANCELLED',
+  REFUNDED: 'ORDER_STATUS_REFUNDED',
+  PAYMENT_FAILED: 'ORDER_STATUS_PAYMENT_FAILED',
+  PAYMENT_SUCCEEDED: 'ORDER_STATUS_PAYMENT_SUCCEEDED',
+  REFUND_REQUESTED: 'ORDER_STATUS_REFUND_REQUESTED',
+}
+
+// Mapping of all Protobuf string keys to their corresponding translation keys
+const statusLabelMap: Record<string, keyof ObjString> = {
+  ORDER_STATUS_CREATED: 'pending',
+  ORDER_STATUS_CONFIRMED: 'processing',
+  ORDER_STATUS_SHIPPED: 'shipped',
+  ORDER_STATUS_DELIVERED: 'delivered',
+  ORDER_STATUS_CANCELLED: 'cancelled',
+  ORDER_STATUS_REFUNDED: 'cancelled',
+  ORDER_STATUS_PAYMENT_FAILED: 'cancelled',
+  ORDER_STATUS_PAYMENT_SUCCEEDED: 'processing',
+  ORDER_STATUS_REFUND_REQUESTED: 'pending',
+}
+
+// Helper to get the full Protobuf key from the short value
+const getFullStatusKey = (shortStatus: string) => {
+  // If the shortStatus is already a full key (from a different source or pre-processed), return it directly.
+  if (shortStatus.startsWith('ORDER_STATUS_')) return shortStatus
+  // Look up the full key from the short value.
+  return shortStatusToKeyMap[shortStatus] || shortStatus
+}
+
 function OrdersList({ tr }: Props) {
   const clientInfo = useAppStore((state) => state.clientInfo)
   const [orders, setOrders] = useState<OrderListItem[]>([])
   const [loading, setLoading] = useState(false)
   const [err, setErr] = useState('')
   const [page, setPage] = useState(1)
+  const [initialLoadAttempted, setInitialLoadAttempted] = useState(false)
   const [hasMore, setHasMore] = useState(true)
 
   const { inView, ref } = useInView({ threshold: 0 })
@@ -46,9 +85,7 @@ function OrdersList({ tr }: Props) {
 
     try {
       const res = await (await ordersClient()).OrdersList({ pagination: { page, lastId } })
-      if (res.error) {
-        return { error: res.error.message }
-      }
+      if (res.error) return { error: res.error.message }
       if (res.data) {
         return {
           orders: res.data.orders,
@@ -56,6 +93,7 @@ function OrdersList({ tr }: Props) {
         }
       }
     } catch (err) {
+      console.log('err', err)
       return { error: handleGrpcWebErr(err, clientInfo.language) }
     }
   }
@@ -76,51 +114,53 @@ function OrdersList({ tr }: Props) {
     }
 
     setLoading(false)
+    setInitialLoadAttempted(true)
   }, [loading, hasMore, page, orders.length])
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
+  // Helpers rely on the FULL Protobuf key for logic
+  const getStatusColor = (fullStatusKey: string) => {
+    switch (fullStatusKey) {
       case 'ORDER_STATUS_DELIVERED':
         return 'green'
       case 'ORDER_STATUS_SHIPPED':
         return 'blue'
       case 'ORDER_STATUS_CONFIRMED':
+      case 'ORDER_STATUS_PAYMENT_SUCCEEDED':
         return 'orange'
       case 'ORDER_STATUS_CREATED':
+      case 'ORDER_STATUS_REFUND_REQUESTED':
         return 'yellow'
       case 'ORDER_STATUS_PAYMENT_FAILED':
       case 'ORDER_STATUS_CANCELLED':
+      case 'ORDER_STATUS_REFUNDED':
         return 'red'
       default:
         return 'gray'
     }
   }
 
-  const getStatusLabel = (status: string) => {
-    const statusMap: Record<string, string> = {
-      ORDER_STATUS_CREATED: tr.pending,
-      ORDER_STATUS_CONFIRMED: tr.processing,
-      ORDER_STATUS_SHIPPED: tr.shipped,
-      ORDER_STATUS_DELIVERED: tr.delivered,
-      ORDER_STATUS_CANCELLED: tr.cancelled,
-      ORDER_STATUS_PAYMENT_FAILED: tr.cancelled,
-    }
-    return statusMap[status] || status
+  const getStatusLabel = (fullStatusKey: string) => {
+    const translationKey = statusLabelMap[fullStatusKey]
+    // Returns the human-readable text from the translation object
+    return tr[translationKey as keyof typeof tr]
   }
 
-  const getStatusIndex = (status: string) => {
-    return statusSteps.findIndex((step) => step.key === status)
+  const getStatusIndex = (fullStatusKey: string) => {
+    return statusSteps.findIndex((step) => step.key === fullStatusKey)
   }
 
   useEffect(() => {
-    loadOrders()
-  }, [])
+    if (!initialLoadAttempted) loadOrders()
+  }, [loadOrders, initialLoadAttempted])
 
   useEffect(() => {
-    if (inView) loadOrders()
-  }, [inView, loadOrders])
+    if (inView && !err && hasMore) loadOrders()
+  }, [inView, loadOrders, err, hasMore])
 
-  if (orders.length === 0 && !loading) {
+  const isNonSequentialFinalState = (fullStatusKey: string) =>
+    ['ORDER_STATUS_CANCELLED', 'ORDER_STATUS_REFUNDED', 'ORDER_STATUS_PAYMENT_FAILED'].includes(fullStatusKey)
+
+  if (orders.length === 0 && !loading && !err) {
     return (
       <div className='mx-auto px-4 py-8 sm:max-w-[500px] sm:w-[500px] text-center'>
         <div className='mb-8'>
@@ -143,7 +183,7 @@ function OrdersList({ tr }: Props) {
   }
 
   return (
-    <div className='mx-auto px-4 py-8'>
+    <div className='mx-auto px-4 py-8 w-full'>
       <div className='mb-8'>
         <Title order={1} className='mb-2'>
           {tr.myOrders}
@@ -153,18 +193,20 @@ function OrdersList({ tr }: Props) {
 
       <div className='space-y-6'>
         {orders.map((order) => {
-          const currentStepIndex = getStatusIndex(order.status)
+          const fullStatusKey = getFullStatusKey(order.status)
+          const currentStepIndex = getStatusIndex(fullStatusKey)
           const createdDate = new Date(Number(order.createdAt))
+          const isFinalState = isNonSequentialFinalState(fullStatusKey)
 
           return (
             <div key={order.id} className='bg-white border border-gray-200 rounded-lg shadow-sm p-6'>
-              {/* Order Header */}
               <div className='flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4'>
                 <div>
                   <div className='flex items-center gap-3 mb-2'>
                     <Title order={3}>Order #{order.id.slice(0, 8).toUpperCase()}</Title>
-                    <Badge color={getStatusColor(order.status)} variant='light' size='lg'>
-                      {getStatusLabel(order.status)}
+                    <Badge color={getStatusColor(fullStatusKey)} variant='light' size='lg'>
+                      {/* Displays the human-readable label, e.g., 'Processing' */}
+                      {getStatusLabel(fullStatusKey)}
                     </Badge>
                   </div>
                   <div className='flex items-center gap-4 text-sm text-gray-600'>
@@ -185,45 +227,48 @@ function OrdersList({ tr }: Props) {
                     )}
                   </div>
                 </div>
-
                 <div className='text-right'>
                   <Text size='xl' fw={700} className='text-orange-500'>
                     {order.currencyCode} {(Number(order.totalCents) / 100).toFixed(2)}
                   </Text>
                   <Text size='sm' c='dimmed'>
-                    {order.items.length} {order.items.length > 1 ? tr.items : 'item'}
+                    {order.items.length} {order.items.length > 1 ? tr.items : tr.item}
                   </Text>
                 </div>
               </div>
 
-              {/* Progress Indicator */}
               <div className='mb-8'>
                 <div className='relative'>
-                  {/* Progress Line */}
-                  <div className='absolute top-4 left-0 right-0 h-0.5 bg-gray-200'></div>
-                  <div
-                    className='absolute top-4 left-0 h-0.5 bg-orange-500 transition-all duration-500'
-                    style={{
-                      width: `${(currentStepIndex / (statusSteps.length - 1)) * 100}%`,
-                    }}></div>
+                  {/* Only show progress bar for sequential steps */}
+                  {!isFinalState && (
+                    <>
+                      <div className='absolute top-4 left-0 right-0 h-0.5 bg-gray-200'></div>
+                      <div
+                        className='absolute top-4 left-0 h-0.5 bg-orange-500 transition-all duration-500'
+                        style={{
+                          width: `${(Math.max(0, currentStepIndex) / (statusSteps.length - 1)) * 100}%`,
+                        }}></div>
+                    </>
+                  )}
 
-                  {/* Status Steps */}
                   <div className='relative flex justify-between'>
                     {statusSteps.map((step, index) => {
                       const Icon = step.icon
                       const isCompleted = index <= currentStepIndex
-                      const isCurrent = order.status === step.key
+                      const isCurrent = fullStatusKey === step.key // Use fullStatusKey
+
+                      // Skip rendering steps if it's a non-sequential state
+                      if (isFinalState) return null
 
                       return (
                         <div key={step.key} className='flex flex-col items-center'>
-                          {/* Status Dot */}
                           <div
                             className={`
                             w-8 h-8 rounded-full flex items-center justify-center
                             ${isCompleted ? 'bg-orange-500' : 'bg-gray-200'}
                             ${isCurrent ? 'ring-4 ring-orange-200' : ''}
                             transition-all duration-300
-                          `}>
+                            `}>
                             {isCompleted ? (
                               <Icon size={16} className='text-white' />
                             ) : (
@@ -231,20 +276,18 @@ function OrdersList({ tr }: Props) {
                             )}
                           </div>
 
-                          {/* Status Label */}
                           <Text
                             size='sm'
                             className={`mt-2 ${isCurrent || isCompleted ? 'text-gray-800 font-medium' : 'text-gray-500'
                               }`}>
-                            {tr[step.label as keyof typeof tr] || step.label}
+                            {tr[step.label as keyof typeof tr]}
                           </Text>
 
-                          {/* Status Date */}
                           {isCurrent && (
                             <Text size='xs' c='dimmed' className='mt-1'>
-                              {order.status === 'ORDER_STATUS_DELIVERED'
+                              {fullStatusKey === 'ORDER_STATUS_DELIVERED' // Use fullStatusKey
                                 ? `Delivered on ${createdDate.toLocaleDateString()}`
-                                : order.status === 'ORDER_STATUS_SHIPPED'
+                                : fullStatusKey === 'ORDER_STATUS_SHIPPED' // Use fullStatusKey
                                   ? `Shipped on ${createdDate.toLocaleDateString()}`
                                   : 'In progress'}
                             </Text>
@@ -252,11 +295,26 @@ function OrdersList({ tr }: Props) {
                         </div>
                       )
                     })}
+
+                    {/* Render separate final state if applicable */}
+                    {isFinalState && (
+                      <div className='w-full text-center'>
+                        <IconX size={24} className='text-red-500 mx-auto mb-2' />
+                        <Text size='sm' className='text-red-600 font-medium'>
+                          {getStatusLabel(fullStatusKey)}
+                        </Text>
+                        <Text size='xs' c='dimmed' className='mt-1'>
+                          {fullStatusKey === 'ORDER_STATUS_CANCELLED'
+                            ? `Cancelled on ${createdDate.toLocaleDateString()}`
+                            : 'Final State'}
+                        </Text>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
 
-              {/* Order Items */}
+              {/* ... (Items list) ... */}
               <div className='mb-6'>
                 <Title order={4} className='mb-4'>
                   {tr.items}
@@ -297,16 +355,14 @@ function OrdersList({ tr }: Props) {
                 </div>
               </div>
 
-              {/* Order Actions */}
               <div className='flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 border-t border-gray-200'>
                 <div className='space-y-2'>{/* Tracking info would go here */}</div>
-
                 <div className='flex gap-3'>
                   <Button variant='outline' color='gray' size='sm' leftSection={<IconPackage size={16} />}>
                     {tr.viewDetails}
                   </Button>
 
-                  {order.status === 'ORDER_STATUS_DELIVERED' ? (
+                  {fullStatusKey === 'ORDER_STATUS_DELIVERED' ? ( // Use fullStatusKey
                     <Button variant='filled' color='orange' size='sm' leftSection={<IconCheck size={16} />}>
                       {tr.leaveReview}
                     </Button>
