@@ -31,11 +31,15 @@ export default async function Layout({ children }: Readonly<{ children: React.Re
   if (!success) redirect(`${process.env.LOGIN_PAGE_URL}`)
 
   return (
-    <div className='grid grid-cols-[auto,1fr] min-h-screen'>
+    <div className='grid grid-cols-[auto,1fr] min-h-screen max-h-screen'>
       <AppSidebar email={email} firstName={firstName} tr={sidebarTr} />
-      <div className='grid grid-rows-[auto,1fr]'>
-        <AppHeader info={ci} />
-        {children}
+      <div className='grid grid-rows-[auto,1fr] max-h-screen overflow-hidden'>
+        <div className='sticky top-0 z-10 h-14'>
+          <AppHeader info={ci} />
+        </div>
+        <div className='overflow-y-auto' style={{ maxHeight: 'calc(100vh - 56px)' }}>
+          {children}
+        </div>
       </div>
     </div>
   )

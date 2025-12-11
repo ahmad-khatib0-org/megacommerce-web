@@ -23,7 +23,6 @@ type Props = {
   tr: ObjString
 }
 
-// 1. HARDCODED LISTS STILL USE FULL PROTOBUF KEYS
 const statusSteps = [
   { key: 'ORDER_STATUS_CREATED', label: 'orderPlaced', icon: IconCalendar },
   { key: 'ORDER_STATUS_CONFIRMED', label: 'processingStep', icon: IconPackage },
@@ -31,8 +30,6 @@ const statusSteps = [
   { key: 'ORDER_STATUS_DELIVERED', label: 'deliveredStep', icon: IconCheck },
 ]
 
-// 2. NEW MAP: Converts the short status value (e.g., 'CONFIRMED') back to the Protobuf Key
-// This map is essential because the API returns the short string (r.status), but the component's logic (statusSteps) relies on the full Protobuf key.
 const shortStatusToKeyMap: Record<string, string> = {
   UNRECOGNIZED: 'ORDER_STATUS_UNRECOGNIZED',
   CREATED: 'ORDER_STATUS_CREATED',
@@ -46,7 +43,6 @@ const shortStatusToKeyMap: Record<string, string> = {
   REFUND_REQUESTED: 'ORDER_STATUS_REFUND_REQUESTED',
 }
 
-// Mapping of all Protobuf string keys to their corresponding translation keys
 const statusLabelMap: Record<string, keyof ObjString> = {
   ORDER_STATUS_CREATED: 'pending',
   ORDER_STATUS_CONFIRMED: 'processing',
@@ -59,11 +55,8 @@ const statusLabelMap: Record<string, keyof ObjString> = {
   ORDER_STATUS_REFUND_REQUESTED: 'pending',
 }
 
-// Helper to get the full Protobuf key from the short value
 const getFullStatusKey = (shortStatus: string) => {
-  // If the shortStatus is already a full key (from a different source or pre-processed), return it directly.
   if (shortStatus.startsWith('ORDER_STATUS_')) return shortStatus
-  // Look up the full key from the short value.
   return shortStatusToKeyMap[shortStatus] || shortStatus
 }
 
@@ -184,7 +177,7 @@ function OrdersList({ tr }: Props) {
   }
 
   return (
-    <div className='mx-auto px-4 py-8 w-full max-h-screen overflow-y-auto'>
+    <div className='mx-auto px-4 py-8 w-full'>
       <div className='mb-8'>
         <Title order={1} className='mb-2'>
           {tr.myOrders}
