@@ -402,5 +402,11 @@
   "filter.select_all": "Select All",
   "filter.sort_by": "Sort By",
   "personal_info": "Personal Information",
-  "image.max_size": "Image maximum size is {{Max}} {{Unit}}"
-}
+  "image.max_size": "Image maximum size is {{Max}} {{Unit}}",
+  "sidebar.dashboard": "Dashboard",
+  "sidebar.orders": "Orders",
+  "sidebar.payments": "Payments",
+  "sidebar.logout": "Logout",
+  "sidebar.logout_confirmation_title": "Confirm Logout",
+  "sidebar.logout_confirmation_message": "Are you sure you want to logout? You will need to login again to access your account."
+  }

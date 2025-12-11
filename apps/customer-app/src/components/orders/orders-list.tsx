@@ -184,7 +184,7 @@ function OrdersList({ tr }: Props) {
   }
 
   return (
-    <div className='mx-auto px-4 py-8 w-full'>
+    <div className='mx-auto px-4 py-8 w-full max-h-screen overflow-y-auto'>
       <div className='mb-8'>
         <Title order={1} className='mb-2'>
           {tr.myOrders}
