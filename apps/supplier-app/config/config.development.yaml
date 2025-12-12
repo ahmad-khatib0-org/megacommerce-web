@@ -1,0 +1,331 @@
+main:
+  env: dev
+  siteName: MegaCommerce
+  siteUrl: www.megacommerce.com
+  enableLinkPreviews: true
+  restrictLinkPreviews: ''
+  enableClientPerformanceDebugging: false
+  enableGifPicker: true
+  enableCustomEmoji: true
+  enableEmojiPicker: true
+  timeBetweenUserTypingUpdatesMilliseconds: '500'
+  enableFileSearch: true
+  enableUserTypingMessages: true
+  enableUserStatuses: true
+  enableEmailInvitations: true
+  enableSvgs: false
+  allowPersistentNotifications: false
+  persistentNotificationIntervalMinutes: 10
+  persistentNotificationMaxCount: 3
+  persistentNotificationMaxRecipients: 50
+  featureFlagSyncIntervalSeconds: 60
+  allowSyncedDrafts: true
+services:
+  commonServiceGrpcUrl: 0.0.0.0:50051
+  userServiceGrpcUrl: 0.0.0.0:50052
+  productsServiceGrpcUrl: 0.0.0.0:50053
+  jaegerCollectorUrl: otel-collector:4317
+  commonServicePrometheusUrl: 0.0.0.0:8080
+  userServicePrometheusUrl: 0.0.0.0:8081
+  productsServicePrometheusUrl: 0.0.0.0:8082
+  usersServiceMaxReceiveMessageSizeBytes: '52428800'
+  authServiceGrpcUrl: 0.0.0.0:50054
+  authServicePrometheusUrl: 0.0.0.0:8083
+  searchServiceGrpcUrl: ''
+  searchServicePrometheusUrl: ''
+  ordersServiceGrpcUrl: 0.0.0.0:50055
+  ordersServicePrometheusUrl: 0.0.0.0:8084
+  ordersServiceMaxReceiveMessageSizeBytes: '10485760'
+  inventoryServiceGrpcUrl: 0.0.0.0:50056
+  inventoryServicePrometheusUrl: 0.0.0.0:8085
+  inventoryServiceMaxReceiveMessageSizeBytes: '10485760'
+security:
+  accessTokenExpiryWebInHours: 240
+  accessTokenExpiryMobileInHours: 2
+  accessTokenExpirySsoInHours: 2
+  accessTokenCacheInMinutes: 10
+  refreshTokenExpiryInHours: 720
+  maximumLoginAttempts: 5
+  terminateSessionsOnPasswordChange: true
+  emailConfirmationUrl: http://localhost:3000/auth/email-verification
+  passwordResetUrl: http://localhost:3000/auth/reset-password
+  tokenConfirmationExpiryInHours: 24
+  tokenPasswordResetExpiryInHours: 24
+  enableInsecureOutgoingConnections: false
+  enableMultifactorAuthentication: true
+  enforceMultifactorAuthentication: false
+  enableOauthServiceProvider: true
+  enableOutgoingOauthConnections: true
+  allowCorsFrom: '*'
+  corsExposedHeaders: X-Custom-Header
+  corsAllowCredentials: true
+  corsDebug: false
+  allowCookiesForSubdomains: false
+cache:
+  cacheType: redis
+  redisAddress: redis://0.0.0.0:6379
+  redisPassword: ''
+  redisDb: 0
+  redisCachePrefix: 'cache:'
+  disableClientCache: false
+metrics:
+  enable: true
+  blockProfileRate: 1
+  listenAddress: ':9090'
+  enableClientMetrics: true
+  enableNotificationMetrics: true
+  clientSideUserIds: []
+sso:
+  enable: true
+  secret: sso-secret
+  id: sso-id
+  scope: openid email
+  authEndpoint: https://auth.example.com
+  tokenEndpoint: https://token.example.com
+  userApiEndpoint: https://user.example.com
+  discoveryEndpoint: https://discovery.example.com
+  buttonText: Login with SSO
+  buttonColor: '#000000'
+sql:
+  driverName: postgres
+  dataSource: postgresql://megacommerce@localhost:26257/megacommerce?sslmode=disable
+  maxIdleConns: 2
+  connMaxLifetimeMilliseconds: 600000
+  connMaxIdleTimeMilliseconds: 120000
+  maxOpenConns: 10
+  trace: true
+  atRestEncryptKey: ''
+  queryTimeout: 3000
+  disableDatabaseSearch: false
+password:
+  minimumLength: 8
+  maximumLength: 72
+  lowercase: true
+  number: true
+  uppercase: true
+  symbol: true
+  enableForgotLink: true
+file:
+  enableFileAttachments: true
+  enableMobileUpload: true
+  enableMobileDownload: true
+  maxImageResolution: '1920'
+  maxImageDecoderConcurrency: '4'
+  driverName: s3
+  amazonS3AccessKeyId: minioadmin
+  amazonS3SecretAccessKey: minioadmin
+  amazonS3Bucket: uploads
+  amazonS3PathPrefix: files/
+  amazonS3Region: us-east-1
+  amazonS3Endpoint: http://localhost:9000
+  amazonS3Ssl: false
+  amazonS3SignV2: false
+  amazonS3Sse: false
+  amazonS3Trace: false
+  amazonS3RequestTimeoutMilliseconds: '5000'
+  amazonS3UploadPartSizeBytes: '5242880'
+  amazonS3StorageClass: STANDARD
+email:
+  sendEmailNotifications: true
+  requireEmailVerification: true
+  feedbackEmail: feedback@example.com
+  replyToAddress: noreply@example.com
+  enableSmtpAuth: true
+  smtpUsername: ''
+  smtpPassword: ''
+  smtpServer: localhost
+  smtpPort: '1025'
+  smtpServerTimeout: 30
+  connectionSecurity: ''
+  sendPushNotifications: true
+  pushNotificationServer: https://push.example.com
+  pushNotificationContents: full
+  pushNotificationBuffer: 100
+  enableEmailBatching: true
+  emailBatchingBufferSize: 10
+  emailBatchingInterval: 5
+  skipServerCertificateVerification: false
+  emailNotificationContentsType: full
+  loginButtonColor: '#000000'
+  loginButtonBorderColor: '#ffffff'
+  loginButtonTextColor: '#ffffff'
+  rateLimitingMemorySize: 65536
+  rateLimitingPerHour: 20
+  rateLimitingMaxBurst: 20
+rateLimit:
+  enable: true
+  perSec: 10
+  maxBurst: 100
+  memoryStoreSize: 10000
+  varyByRemoteAddr: true
+  varyByUser: true
+  varyByHeader: X-Forwarded-For
+privacy:
+  showEmailAddress: false
+  showFullName: true
+support:
+  termsOfServiceLink: https://example.com/tos
+  privacyPolicyLink: https://example.com/privacy
+  aboutLink: https://example.com/about
+  helpLink: https://example.com/help
+  reportAProblemLink: https://example.com/report
+  forgotPasswordLink: https://example.com/forgot
+  supportEmail: support@example.com
+localization:
+  defaultServerLocale: en
+  defaultClientLocale: en
+  availableLocales:
+    - en
+ldap:
+  enable: true
+  enableSync: true
+  ldapServer: ldap.example.com
+  ldapPort: 389
+  connectionSecurity: TLS
+  baseDn: dc=example,dc=com
+  bindUsername: cn=admin,dc=example,dc=com
+  bindPassword: password
+  maximumLoginAttempts: 5
+  userFilter: (objectClass=person)
+  groupFilter: (objectClass=group)
+  enableAdminFilter: false
+  adminFilter: (memberOf=cn=admins,dc=example,dc=com)
+  groupDisplayNameAttribute: cn
+  groupIdAttribute: gid
+  firstNameAttribute: givenName
+  lastNameAttribute: sn
+  emailAttribute: mail
+  usernameAttribute: uid
+  nicknameAttribute: displayName
+  idAttribute: uidNumber
+  positionAttribute: title
+  loginIdAttribute: uid
+  pictureAttribute: jpegPhoto
+  syncIntervalMinutes: 60
+  queryTimeout: 30
+  maxPageSize: 500
+  loginFieldName: Email
+  loginButtonColor: '#0000FF'
+  loginButtonBorderColor: '#000000'
+  loginButtonTextColor: '#FFFFFF'
+saml:
+  enable: true
+  enableSyncWithLdap: false
+  enableSyncWithLdapIncludeAuth: false
+  ignoreGuestsLdapSync: true
+  verify: true
+  encrypt: true
+  signRequest: true
+  idpUrl: https://idp.example.com
+  idpDescriptorUrl: https://idp.example.com/descriptor
+  idpMetadataUrl: https://idp.example.com/metadata
+  serviceProviderIdentifier: sp-id
+  assertionConsumerServiceUrl: https://sp.example.com/assertion
+  signatureAlgorithm: RSA-SHA256
+  canonicalAlgorithm: http://www.w3.org/2001/10/xml-exc-c14n#
+  scopingIdpProviderId: scoping-idp-id
+  scopingIdpName: Example IdP
+  idpCertificateFile: /path/to/idp.crt
+  publicCertificateFile: /path/to/public.crt
+  privateKeyFile: /path/to/private.key
+  idAttribute: uid
+  enableAdminAttribute: true
+  adminAttribute: isAdmin
+  firstNameAttribute: givenName
+  lastNameAttribute: sn
+  emailAttribute: mail
+  usernameAttribute: uid
+  nicknameAttribute: displayName
+  localeAttribute: locale
+  positionAttribute: title
+  loginButtonText: Login with SAML
+  loginButtonColor: '#0000FF'
+  loginButtonBorderColor: '#000000'
+  loginButtonTextColor: '#FFFFFF'
+nativeApp:
+  appCustomUrlSchemes:
+    - myapp://
+  appDownloadLink: https://example.com/download
+  androidAppDownloadLink: https://play.google.com/store/apps/details?id=com.example
+  iosAppDownloadLink: https://apps.apple.com/app/id123456789
+  mobileExternalBrowser: true
+  mobileEnableBiometrics: true
+  mobilePreventScreenCapture: false
+  mobileJailbreakProtection: true
+meilisearch:
+  serverUrls:
+    - http://localhost:7700
+    - http://localhost:7701
+    - http://localhost:7702
+  masterKey: masterKey
+  enableIndexing: true
+  enableSearching: true
+  enableAutocomplete: true
+  maxConcurrency: 100
+  requestTimeoutSeconds: 30
+  indexPrefix: ''
+  searchCutoffMs: 1000
+  enableTypoTolerance: true
+  kafkaBroker: localhost:19092
+  kafkaGroupId: meili-worker-group
+  kafakTopic: products_outbox
+  kafakTopicDlq: products_dlq
+  taskMaxWaitMs: 30000
+  taskMaxRetries: 5
+  taskBackoffBaseMs: 200
+  shutdownWaitSecs: 30
+bleve:
+  indexDir: /var/bleve
+  enableIndexing: true
+  enableSearching: true
+  enableAutocomplete: true
+  bulkIndexingTimeWindowSeconds: 5
+  batchSize: 100
+dataRetention:
+  enableMessageDeletion: true
+  enableFileDeletion: true
+  enableBoardsDeletion: false
+  messageRetentionHours: 720
+  fileRetentionHours: 720
+  boardsRetentionDays: 30
+  deletionJobStartTime: '02:00'
+  batchSize: 100
+  timeBetweenBatchesMilliseconds: 500
+  retentionIdsBatchSize: 100
+imageProxy:
+  enable: true
+  imageProxyType: remote
+  remoteImageProxyUrl: https://imageproxy.example.com
+  remoteImageProxyOptions: resize=800x600
+oauth:
+  oauthProviderUrl: http://localhost:4444
+  oauthClientId: 6ba5affd-2ab4-4f83-acfe-d1f6c6237f24
+  oauthClientSecret: super-secret
+  oauthDbDsn: postgres://hydra:hydra-password@hydra-db:5432/hydra?sslmode=disable
+  oauthRedirectUrl: http://localhost:3000/api/callback
+  oauthLoginUrl: http://localhost:4000/login
+  oauthConsentUrl: http://localhost:4000/consent
+  oauthResponseType: code
+  oauthScope:
+    - openid
+    - offline
+  oauthAdminUrl: http://localhost:4445
+  oauthBackendUrl: http://localhost:4000
+  frontendLoginUrl: http://localhost:3000/auth/login
+  frontendLoginErrorUrl: http://localhost:3000/auth/login/error
+  oauthGrantAccessTokenAudience:
+    - megacommerce
+products:
+  productImageMaxSizeMb: '3'
+  productImageAcceptedFormats:
+    - image/png
+    - image/webp
+    - image/jpeg
+    - image/jpg
+  productImageMaxWidth: '2000'
+  productImageMaxHeight: '2000'
+  productImageMinWidth: '400'
+  productImageMinHeight: '400'
+  productImagesMinCountPerVariant: '1'
+  productImagesMaxCountPerVariant: '10'
+  productMediaMaxDirectUploadingSizeMb: '40'

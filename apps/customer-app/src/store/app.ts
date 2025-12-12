@@ -6,7 +6,7 @@ import { ClientInformation, createDefaultClientInformation } from '@megacommerce
 interface AppState {
   clientInfo: ClientInformation & { email?: string; firstName?: string }
   setClientInfo: (info: ClientInformation & { email?: string; firstName?: string }) => void
-  clientInitialInfo: { language: string; currency: string; country: string }
+  clientEssentialInfo: { languageName: string; languageSymbol: string; currency: string; country: string }
   setClientEssentialInfo: (info: {
     languageName: string
     languageSymbol: string
@@ -19,7 +19,7 @@ interface AppState {
 const storeFn: StateCreator<AppState> = (set) => ({
   clientInfo: createDefaultClientInformation(),
   setClientInfo: (clientInfo: ClientInformation) => set({ clientInfo }),
-  clientInitialInfo: { language: '', currency: '', country: '' },
+  clientEssentialInfo: { languageName: '', languageSymbol: '', currency: '', country: '' },
   setClientEssentialInfo: (info) => set((state) => ({ clientInfo: state.clientInfo, ...info })),
   updateClientInfo: (updates) =>
     set((state) => ({

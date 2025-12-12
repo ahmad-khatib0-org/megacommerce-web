@@ -24,7 +24,7 @@ type Props = {
 
 function SignupWrapper({ tr, passwordRequirements }: Props) {
   const router = useRouter()
-  const clientInfo = useAppStore((state) => state.clientInitialInfo)
+  const clientInfo = useAppStore((state) => state.clientEssentialInfo)
   const [image, setImage] = useState<Attachment>()
   const [imageErr, setImageErr] = useState<string | undefined>()
   const [submitting, setSubmitting] = useState(false)

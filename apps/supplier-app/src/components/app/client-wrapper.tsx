@@ -7,12 +7,10 @@ import { useAppStore } from '@/store'
 
 type Props = {
   clientInfo: {
-    language: string
+    languageSymbol: string
+    languageName: string
     country: string
     currency: string
-    languageName: string
-    email?: string
-    firstName?: string
   }
 }
 
@@ -28,7 +26,7 @@ function ClientWrapper({ clientInfo }: Props) {
 
     try {
       const enhancedClientInfo = await trackClient({}, { enableFingerprinting: true })
-      setClientInfo({ ...enhancedClientInfo, email: clientInfo.email, firstName: clientInfo.firstName })
+      setClientInfo({ ...enhancedClientInfo })
     } catch (err) {
       console.error(err)
     } finally {

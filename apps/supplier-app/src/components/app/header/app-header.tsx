@@ -1,14 +1,14 @@
 import 'server-only'
+import { Trans } from '@megacommerce/shared/server'
+
 import AppUploader from '@/components/app/header/app-uploader'
-import { ClientInformation, Trans } from '@megacommerce/shared/server'
 
 type Props = {
-  info: ClientInformation
+  lang: string
 }
 
-function AppHeader({ info }: Props) {
+function AppHeader({ lang }: Props) {
   const tr = Trans.tr
-  const lang = info.language
   const trans = {
     cancel: tr(lang, 'cancel'),
     uploading: tr(lang, 'upload.uploading_file'),

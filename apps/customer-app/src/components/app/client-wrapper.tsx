@@ -8,9 +8,9 @@ import { useAppStore } from '@/store'
 type Props = {
   clientInfo: {
     languageSymbol: string
+    languageName: string
     country: string
     currency: string
-    languageName: string
   }
 }
 

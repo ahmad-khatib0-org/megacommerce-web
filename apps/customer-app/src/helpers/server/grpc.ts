@@ -23,8 +23,6 @@ export function commonClient() {
     'grpc.keepalive_timeout_ms': 5000,
   }
 
-  console.log('the host is ', host)
   globalForCommon.commonClient = new Common.CommonServiceClient(host, credentials.createInsecure(), options)
-
   return globalForCommon.commonClient
 }
