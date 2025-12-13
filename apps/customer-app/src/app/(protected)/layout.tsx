@@ -1,12 +1,16 @@
 import 'server-only'
 import { redirect } from 'next/navigation'
 
-import { getClientInformation, Trans } from '@megacommerce/shared/server'
+import {
+  getClientInformation,
+  getForwardableHeaders,
+  getUserAuthInfo,
+  Trans,
+} from '@megacommerce/shared/server'
 import { ServerError } from '@megacommerce/ui/server'
 
 import AppHeader from '@/components/app/header/app-header'
 import AppSidebar from '@/components/app/app-sidebar'
-import { getForwardableHeaders, getUserAuthInfo } from '@/helpers/server'
 
 async function getSidebarTranslations(lang: string) {
   const tr = Trans.tr

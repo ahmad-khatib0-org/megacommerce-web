@@ -7,7 +7,7 @@ export const metadata = {
 }
 
 export default async function Index() {
-  await redirectToAuthStatus('/orders')
+  await redirectToAuthStatus('/products')
   return (
     <div className='flex justify-center items-center h-screen'>
       <p>Redirecting...</p>

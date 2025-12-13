@@ -67,7 +67,8 @@ export async function GET(req: NextRequest) {
     secure,
     path: '/',
     maxAge: expires_in,
-    sameSite: 'lax',
+    sameSite: secure ? 'lax' : 'none',
+    domain: secure ? undefined : 'localhost',
   })
 
   response.cookies.set(Cookies.RefreshToken, refresh_token, {
@@ -75,7 +76,8 @@ export async function GET(req: NextRequest) {
     secure,
     path: '/',
     maxAge: config?.security?.refreshTokenExpiryInHours! * 60 * 60,
-    sameSite: 'lax',
+    sameSite: secure ? 'lax' : 'none',
+    domain: secure ? undefined : 'localhost',
   })
 
   response.cookies.set('id_token', id_token, {
@@ -83,7 +85,8 @@ export async function GET(req: NextRequest) {
     secure,
     path: '/',
     maxAge: expires_in,
-    sameSite: 'lax',
+    sameSite: secure ? 'lax' : 'none',
+    domain: secure ? undefined : 'localhost',
   })
 
   return response

@@ -1,5 +1,5 @@
 import 'server-only'
-import { cookies, headers } from 'next/headers'
+import { cookies } from 'next/headers'
 import { redirect, RedirectType } from 'next/navigation'
 
 import {
@@ -69,91 +69,6 @@ export async function getSignupPageTrans(): Promise<ObjString> {
   }
 
   return trans
-}
-
-interface AuthResult {
-  success: boolean
-  email?: string
-  firstName?: string
-  isInternalError: boolean
-}
-
-/**
- * Checks user authentication with a retry mechanism.
- * @param headers - Optional headers to forward (e.g., Cookie header)
- * @param maxRetries - The maximum number of times to retry on internal server errors. Defaults to 2.
- * @returns An object containing the success status, user info, and an error flag.
- */
-export async function getUserAuthInfo(
-  headers?: Record<string, string>,
-  maxRetries: number = 2
-): Promise<AuthResult> {
-  let attempt = 0
-  const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
-
-  while (attempt <= maxRetries) {
-    try {
-      const endpoint = process.env.NEXT_PUBLIC_BASE_URL + '/api/auth/check'
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        cache: 'no-store',
-        headers: { ...headers, 'Content-Type': 'application/json' },
-      })
-      if (response.ok) {
-        type response = { success: boolean; email: string; firstName: string }
-        const { success, email, firstName } = (await response.json()) as response
-        return { success, email, firstName, isInternalError: false }
-      }
-
-      if (response.status >= 400 && response.status < 500) {
-        return { success: false, isInternalError: false }
-      }
-
-      if (response.status >= 500) {
-        attempt++
-        if (attempt <= maxRetries) {
-          console.warn(`Auth check failed (server error), retrying... Attempt ${attempt} of ${maxRetries}`)
-          await delay(1000 * attempt)
-          continue
-        } else {
-          return { success: false, isInternalError: true }
-        }
-      }
-    } catch (error) {
-      // --- NETWORK ERROR ---
-      // The fetch itself failed (e.g., DNS, CORS, offline). This is transient.
-      attempt++
-      if (attempt <= maxRetries) {
-        const msg = `Auth check failed (network error), retrying... Attempt ${attempt} of ${maxRetries}`
-        console.warn(msg, error)
-        await delay(1000 * attempt)
-        continue
-      } else {
-        return { success: false, isInternalError: true }
-      }
-    }
-  }
-
-  // Failsafe, should not be reached
-  return { success: false, isInternalError: true }
-}
-
-/**
- * Reads all incoming client headers from the Next.js request and converts
- * them into a simple Record<string, string> object for forwarding to an
- * internal fetch call.
- * * Note: Headers will be lowercased due to standard Web Headers API behavior.
- * * @returns A Record<string, string> object containing all client headers.
- */
-export async function getForwardableHeaders(): Promise<Record<string, string>> {
-  const requestHeaders = headers()
-  const forwardedHeaders: Record<string, string> = {}
-
-  for (const [key, value] of (await requestHeaders).entries()) {
-    forwardedHeaders[key] = value
-  }
-
-  return forwardedHeaders
 }
 
 const LOGIN_PAGE_URL = process.env.LOGIN_PAGE_URL || ''
