@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 
 @Injectable()
 export class AppService {
-  getData(): { message: string } {
-    return { message: 'Hello API' }
+  async getData(): Promise<{ message: string }> {
+    return { message: 'Shared API is running' }
   }
 }
