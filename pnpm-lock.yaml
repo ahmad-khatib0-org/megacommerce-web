@@ -33,8 +33,8 @@ importers:
         specifier: ^8.3.6
         version: 8.3.6(react@19.0.0)
       '@megacommerce/proto':
-        specifier: 0.4.57
-        version: 0.4.57
+        specifier: 0.4.58
+        version: 0.4.58
       '@nestjs/common':
         specifier: ^11.0.0
         version: 11.1.9(reflect-metadata@0.1.14)(rxjs@7.8.2)
@@ -1073,6 +1073,9 @@ packages:
   '@bufbuild/protobuf@2.10.1':
     resolution: {integrity: sha512-ckS3+vyJb5qGpEYv/s1OebUHDi/xSNtfgw1wqKZo7MR9F2z+qXr0q5XagafAG/9O0QPVIUfST0smluYSTpYFkg==}
 
+  '@bufbuild/protobuf@2.10.2':
+    resolution: {integrity: sha512-uFsRXwIGyu+r6AMdz+XijIIZJYpoWeYzILt5yZ2d3mCjQrWUTVpVD9WL/jZAbvp+Ed04rOhrsk7FiTcEDseB5A==}
+
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
     engines: {node: '>=12'}
@@ -1870,8 +1873,8 @@ packages:
     peerDependencies:
       react: ^18.x || ^19.x
 
-  '@megacommerce/proto@0.4.57':
-    resolution: {integrity: sha512-q9ichN0CYTicbxvvCn1/fF5SaqJARLgtxLHWhrS9gKz64oQcoAKkb1BggTnz8FKtANtzyVRMyGMBTPPHCztKDg==}
+  '@megacommerce/proto@0.4.58':
+    resolution: {integrity: sha512-vRsgRTmFfCORso/yd4xO+e6meI8VVZNgXFwULkAUuYVVwnpEfZBG7GQXiKWDY7Ieqsu5D814W2QE+h0G+YYMww==}
 
   '@modern-js/node-bundle-require@2.68.2':
     resolution: {integrity: sha512-MWk/pYx7KOsp+A/rN0as2ji/Ba8x0m129aqZ3Lj6T6CCTWdz0E/IsamPdTmF9Jnb6whQoBKtWSaLTCQlmCoY0Q==}
@@ -11005,6 +11008,8 @@ snapshots:
 
   '@bufbuild/protobuf@2.10.1': {}
 
+  '@bufbuild/protobuf@2.10.2': {}
+
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
@@ -11766,9 +11771,9 @@ snapshots:
     dependencies:
       react: 19.0.0
 
-  '@megacommerce/proto@0.4.57':
+  '@megacommerce/proto@0.4.58':
     dependencies:
-      '@bufbuild/protobuf': 2.10.1
+      '@bufbuild/protobuf': 2.10.2
       '@grpc/grpc-js': 1.14.0
       '@improbable-eng/grpc-web': 0.15.0(google-protobuf@3.21.4)
       browser-headers: 0.4.1

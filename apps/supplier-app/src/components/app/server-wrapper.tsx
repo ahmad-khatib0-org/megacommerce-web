@@ -4,7 +4,6 @@ import { ColorSchemeScript, mantineHtmlProps, MantineProvider } from '@mantine/c
 
 import { getClientInformation } from '@megacommerce/shared/server'
 import ClientWrapper from '@/components/app/client-wrapper'
-import AppHeader from '@/components/app/header/app-header'
 
 type Props = {
   children: React.ReactNode
@@ -19,10 +18,7 @@ async function ServerWrapper({ children }: Props) {
         <ColorSchemeScript />
       </head>
       <body suppressHydrationWarning={true}>
-        <MantineProvider>
-          <AppHeader lang={languageSymbol} />
-          {children}
-        </MantineProvider>
+        <MantineProvider>{children}</MantineProvider>
         <ToastContainer />
         <ClientWrapper clientInfo={{ languageName, languageSymbol, country, currency }} />
       </body>
