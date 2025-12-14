@@ -1,5 +1,3 @@
-import 'client-only'
-
 export interface Translations {
   'error.canceled': string
   'error.unknown': string

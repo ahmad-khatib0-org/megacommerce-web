@@ -1,4 +1,3 @@
-import 'server-only'
 import { headers, cookies } from 'next/headers'
 
 import {

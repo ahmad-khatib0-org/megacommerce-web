@@ -1,4 +1,3 @@
-import 'client-only'
 const Mustache = require('mustache')
 
 import { Translations } from './translations'

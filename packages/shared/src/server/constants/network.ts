@@ -1,5 +1,3 @@
-import 'server-only'
-
 export const SERVER_INTERNAL_ERROR =
   'Sorry, Unexpected internal server error. Our team has been notified. Please try again'
 
@@ -55,6 +53,7 @@ export const Cookies = {
   LanguageName: 'language_name',
   AccessToken: 'access_token',
   RefreshToken: 'refresh_token',
+  IdToken: 'id_token',
   Token: 'token',
   UserID: 'user_id',
   DeviceID: 'device_id',

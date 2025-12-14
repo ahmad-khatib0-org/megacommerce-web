@@ -1,4 +1,3 @@
-import 'server-only'
 import { headers } from 'next/headers'
 
 interface AuthResult {
@@ -23,7 +22,6 @@ export async function getForwardableHeaders(): Promise<Record<string, string>> {
     forwardedHeaders[key.toLowerCase()] = value
   })
 
-  console.log('forwardedHeaders', forwardedHeaders)
   return forwardedHeaders
 }
 
@@ -49,6 +47,7 @@ export async function getUserAuthInfo(
         method: 'POST',
         cache: 'no-store',
         headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
       })
 
       if (response.ok) {
@@ -74,9 +73,9 @@ export async function getUserAuthInfo(
     } catch (error) {
       // Network error - transient
       attempt++
+      const msg = `Auth check failed (network error), retrying... Attempt ${attempt} of ${maxRetries}`
+      console.error(msg, error)
       if (attempt <= maxRetries) {
-        const msg = `Auth check failed (network error), retrying... Attempt ${attempt} of ${maxRetries}`
-        console.warn(msg, error)
         await delay(1000 * attempt)
         continue
       } else {

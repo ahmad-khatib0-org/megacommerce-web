@@ -1,4 +1,3 @@
-import 'client-only'
 import { grpc } from '@improbable-eng/grpc-web'
 
 export class GrpcWebError extends Error {

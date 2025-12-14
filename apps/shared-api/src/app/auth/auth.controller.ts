@@ -3,6 +3,7 @@ import { FastifyRequest, FastifyReply } from 'fastify'
 import { jwtDecode, JwtPayload } from 'jwt-decode'
 
 import { Config } from '@megacommerce/proto/common/v1/config'
+import { Cookies, Trans } from '@megacommerce/shared/server'
 import { AuthService } from './auth.service'
 
 interface IdTokenPayload extends JwtPayload {
@@ -10,11 +11,24 @@ interface IdTokenPayload extends JwtPayload {
   first_name: string
 }
 
-// Cookie names
-const COOKIES = {
-  AccessToken: 'access_token',
-  RefreshToken: 'refresh_token',
-  IdToken: 'id_token',
+/**
+ * Parse cookies from Cookie header string
+ * Since cookies may come from header forwarding, not Fastify cookie parsing
+ */
+function parseCookieHeader(cookieHeader: string): Record<string, string> {
+  const cookies: Record<string, string> = {}
+  if (!cookieHeader) return cookies
+
+  cookieHeader.split(';').forEach((cookie) => {
+    const [name, ...rest] = cookie.split('=')
+    const cleanName = name.trim()
+    const cleanValue = rest.join('=').trim()
+    if (cleanName && cleanValue) {
+      cookies[cleanName] = cleanValue
+    }
+  })
+
+  return cookies
 }
 
 /**
@@ -43,15 +57,27 @@ export class AuthController {
   async check(@Req() req: FastifyRequest, @Res() res: FastifyReply): Promise<void> {
     try {
       const config = this.config
+      // Parse cookies from two sources:
+      // 1. Fastify cookie plugin (for direct requests)
+      // 2. Cookie header (for forwarded requests from other Next.js apps)
+      let accessToken = req.cookies[Cookies.AccessToken]
+      let refreshToken = req.cookies[Cookies.RefreshToken]
+      let idToken = req.cookies[Cookies.IdToken]
+      let lang = req.cookies[Cookies.AcceptLanguage]
 
-      // Extract cookies from Fastify request
-      const accessToken = req.cookies[COOKIES.AccessToken]
-      const refreshToken = req.cookies[COOKIES.RefreshToken]
-      const idToken = req.cookies[COOKIES.IdToken]
+      if (!accessToken || !refreshToken) {
+        const cookieHeader = req.headers.cookie
+        if (cookieHeader) {
+          const headerCookies = parseCookieHeader(cookieHeader)
+          accessToken = accessToken || headerCookies[Cookies.AccessToken]
+          refreshToken = refreshToken || headerCookies[Cookies.RefreshToken]
+          idToken = idToken || headerCookies[Cookies.IdToken]
+        }
+      }
 
       // Refresh token is required
       if (!refreshToken) {
-        return res.status(401).send({ error: 'Unauthenticated' })
+        return res.status(401).send({ error: Trans.tr('en', 'error.unauthenticated') })
       }
 
       let shouldRefresh = false
@@ -118,9 +144,9 @@ export class AuthController {
           })
 
           if (!tokenResponse.ok) {
-            res.clearCookie(COOKIES.AccessToken)
-            res.clearCookie(COOKIES.RefreshToken)
-            res.clearCookie(COOKIES.IdToken)
+            res.clearCookie(Cookies.AccessToken)
+            res.clearCookie(Cookies.RefreshToken)
+            res.clearCookie(Cookies.IdToken)
             return res.status(401).send({ error: 'Unauthenticated' })
           }
 
@@ -152,17 +178,17 @@ export class AuthController {
             sameSite: 'lax' as const,
           }
 
-          res.setCookie(COOKIES.AccessToken, access_token, {
+          res.setCookie(Cookies.AccessToken, access_token, {
             ...cookieOptions,
             maxAge: expires_in,
           })
 
-          res.setCookie(COOKIES.IdToken, new_id_token, {
+          res.setCookie(Cookies.IdToken, new_id_token, {
             ...cookieOptions,
             maxAge: expires_in,
           })
 
-          res.setCookie(COOKIES.RefreshToken, new_refresh_token, {
+          res.setCookie(Cookies.RefreshToken, new_refresh_token, {
             ...cookieOptions,
             maxAge: (config?.security?.refreshTokenExpiryInHours || 24) * 60 * 60,
           })

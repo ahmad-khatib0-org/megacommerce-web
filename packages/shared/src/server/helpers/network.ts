@@ -1,4 +1,3 @@
-import 'server-only'
 import { createConnection } from 'net'
 import { cookies, headers } from 'next/headers'
 import { Metadata, ServiceError } from '@grpc/grpc-js'

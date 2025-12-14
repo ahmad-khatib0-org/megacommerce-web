@@ -1,3 +1,5 @@
+import { Trans } from '@megacommerce/shared/server'
+
 import { commonClient } from './grpc'
 import { initConfig } from './config'
 import { initDB } from './db'
@@ -26,19 +28,16 @@ async function init(): Promise<System> {
   _initPromise = (async () => {
     try {
       const client = commonClient()
-      // Validate common service is reachable
       await new Promise<void>((resolve, reject) => {
-        client.configGet({}, (err: Error | null) => {
-          if (err && err.message.includes('UNAVAILABLE')) {
-            reject(new Error('Common service is unavailable'))
-          } else {
-            resolve()
-          }
+        client.ping({}, (err: Error | null) => {
+          if (err) reject(new Error('Common service is unavailable'))
+          else resolve()
         })
       })
 
       const config = await initConfig()
       const db = await initDB(config)
+      await Trans.init(client, false)
 
       _system = { config, db }
       _initialized = true

@@ -1,4 +1,3 @@
-import 'client-only'
 import { StringMap } from '@megacommerce/proto/shared/v1/types'
 
 /** getFirstErroredStep gets the earliest step index that has errored-out fields,

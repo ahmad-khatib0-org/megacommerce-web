@@ -1,4 +1,3 @@
-import 'client-only'
 import { Any } from '@megacommerce/proto/shared/v1/types'
 
 import { MAX_INT32, MIN_INT32 } from '../constants'
