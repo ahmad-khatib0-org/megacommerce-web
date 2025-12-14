@@ -461,5 +461,16 @@
   "products.supplier.price": "Price",
   "products.supplier.quantity": "Quantity",
   "products.supplier.loading": "Loading products...",
-  "products.supplier.error_loading": "Failed to load products"
+  "products.supplier.error_loading": "Failed to load products",
+  "profile.supplier.title": "Supplier Profile",
+  "profile.supplier.full_name": "Full Name",
+  "profile.supplier.email": "Email",
+  "profile.supplier.username": "Username",
+  "profile.supplier.membership": "Membership",
+  "profile.supplier.created_at": "Account Created",
+  "profile.supplier.updated_at": "Last Updated",
+  "profile.supplier.email_verified": "Verified",
+  "profile.supplier.email_not_verified": "Not Verified",
+  "profile.supplier.loading": "Loading profile...",
+  "profile.supplier.error_loading": "Failed to load profile"
 }
