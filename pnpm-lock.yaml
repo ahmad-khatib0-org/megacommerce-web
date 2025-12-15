@@ -33,8 +33,8 @@ importers:
         specifier: ^8.3.6
         version: 8.3.6(react@19.0.0)
       '@megacommerce/proto':
-        specifier: 0.4.59
-        version: 0.4.59
+        specifier: 0.4.60
+        version: 0.4.60
       '@nestjs/common':
         specifier: ^11.0.0
         version: 11.1.9(reflect-metadata@0.1.14)(rxjs@7.8.2)
@@ -1873,8 +1873,8 @@ packages:
     peerDependencies:
       react: ^18.x || ^19.x
 
-  '@megacommerce/proto@0.4.59':
-    resolution: {integrity: sha512-RcDLmlgRfFUP9zDJ8iegTivMi+e+KnjEQFpQDvxG6VI+XERlmi2DmgHjfS/8biiL2jz6/HE8oJcCaLZuj1JqWQ==}
+  '@megacommerce/proto@0.4.60':
+    resolution: {integrity: sha512-hlBclU9ertSi/82vzB+4DVfGEVfeVpD1E4N0PctttETvJD5J0ndnRjvJFJb0iB+NVimZfhmEUPUDwq0QEk7cbA==}
 
   '@modern-js/node-bundle-require@2.68.2':
     resolution: {integrity: sha512-MWk/pYx7KOsp+A/rN0as2ji/Ba8x0m129aqZ3Lj6T6CCTWdz0E/IsamPdTmF9Jnb6whQoBKtWSaLTCQlmCoY0Q==}
@@ -11771,7 +11771,7 @@ snapshots:
     dependencies:
       react: 19.0.0
 
-  '@megacommerce/proto@0.4.59':
+  '@megacommerce/proto@0.4.60':
     dependencies:
       '@bufbuild/protobuf': 2.10.2
       '@grpc/grpc-js': 1.14.0

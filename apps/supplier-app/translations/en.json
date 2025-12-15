@@ -472,5 +472,21 @@
   "profile.supplier.email_verified": "Verified",
   "profile.supplier.email_not_verified": "Not Verified",
   "profile.supplier.loading": "Loading profile...",
-  "profile.supplier.error_loading": "Failed to load profile"
+  "profile.supplier.error_loading": "Failed to load profile",
+  "dashboard.supplier.title": "Dashboard",
+  "dashboard.supplier.stats.total_products": "Total Products",
+  "dashboard.supplier.stats.total_inventory": "Total Inventory Items",
+  "dashboard.supplier.stats.total_reviews": "Total Reviews",
+  "dashboard.supplier.stats.pending_orders": "Pending Orders",
+  "dashboard.supplier.stats.total_orders": "Total Orders",
+  "dashboard.supplier.charts.visits_by_period": "Visits by Period",
+  "dashboard.supplier.charts.product_visits": "Product Visit Trends",
+  "dashboard.supplier.periods.today": "Today",
+  "dashboard.supplier.periods.yesterday": "Yesterday",
+  "dashboard.supplier.periods.last_week": "Last Week",
+  "dashboard.supplier.periods.last_month": "Last Month",
+  "dashboard.supplier.periods.last_year": "Last Year",
+  "dashboard.supplier.loading": "Loading dashboard...",
+  "dashboard.supplier.error_loading": "Failed to load dashboard",
+  "dashboard.supplier.coming_soon": "Coming Soon"
 }
