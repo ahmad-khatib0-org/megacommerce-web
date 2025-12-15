@@ -1,9 +1,10 @@
 'use client'
-
 import { useEffect, useState } from 'react'
-import { Card, Loader, Button, Avatar, Divider, Badge, Grid, Text, Group } from '@mantine/core'
-import { ObjString, handleGrpcWebErr } from '@megacommerce/shared/client'
+import { Card, Loader, Button, Avatar, Badge, Grid, Text } from '@mantine/core'
+
 import { SupplierProfile as SupplierProfileType } from '@megacommerce/proto/web/users/v1/supplier_profile'
+import { ObjString } from '@megacommerce/shared'
+import { handleGrpcWebErr } from '@megacommerce/shared/client'
 import { usersClient } from '@/helpers/client/grpc'
 import { useAppStore } from '@/store'
 
@@ -23,7 +24,7 @@ function SupplierProfile({ tr }: Props) {
       setLoading(true)
       setErr('')
 
-      const res = await usersClient.GetSupplierProfile({})
+      const res = await (await usersClient()).GetSupplierProfile({})
 
       if (res.error) {
         setErr(res.error.message || tr.errorLoading)

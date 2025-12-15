@@ -127,7 +127,9 @@ function ProductCreateHooks({ tr }: Props) {
     if (active === 0) {
       try {
         setProductDetailsLoading(true)
-        const response = await productsClient.ProductData({
+        const response = await (
+          await productsClient()
+        ).ProductData({
           subcategory: {
             category: identityForm.values.category,
             subcategory: identityForm.values.subcategory,
@@ -300,7 +302,7 @@ function ProductCreateHooks({ tr }: Props) {
           : safetyFormRef.current?.getForm().getValues() ?? {}
       )
 
-      const result = await productsClient.ProductCreate(request)
+      const result = await (await productsClient()).ProductCreate(request)
 
       if (result.error) {
         Products.handleCreateError(

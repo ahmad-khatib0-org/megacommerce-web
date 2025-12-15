@@ -16,6 +16,7 @@ import SignupAdditionalInfoForm from '@/components/signup/signup-additional-info
 import SignupAuthInfoForm, { PasswordRequirements } from '@/components/signup/signup-auth-info-form'
 import SignupHooks from '@/components/signup/signup-hooks'
 import { SignupHelpers } from '@/helpers/client'
+import { useAppStore } from '@/store'
 
 type Props = {
   tr: ObjString
@@ -23,12 +24,13 @@ type Props = {
 }
 
 function SignupWrapper({ tr, passwordRequirements }: Props) {
+  const router = useRouter()
+  const clientInfo = useAppStore((state) => state.clientEssentialInfo)
   const stepperRef = useRef<StepperHandle>(null)
   const [image, setImage] = useState<Attachment>()
   const [imageErr, setImageErr] = useState<string | undefined>()
   const [submitting, setSubmitting] = useState(false)
   const { uppy, infoForm, authForm } = SignupHooks({ tr, setImage })
-  const router = useRouter()
 
   const steps = [
     <SignupInformationForm key='company' form={infoForm} tr={tr} />,
@@ -44,6 +46,7 @@ function SignupWrapper({ tr, passwordRequirements }: Props) {
         subMsg={tr.createAcc}
         onSubmit={async () =>
           await SignupHelpers.onSubmit(
+            clientInfo.languageSymbol,
             submitting,
             setSubmitting,
             infoForm,

@@ -67,7 +67,7 @@ export async function GET(req: NextRequest) {
     secure,
     path: '/',
     maxAge: expires_in,
-    sameSite: secure ? 'lax' : 'none',
+    // sameSite: secure ? 'lax' : 'none',
     domain: secure ? undefined : 'localhost',
   })
 
@@ -76,7 +76,6 @@ export async function GET(req: NextRequest) {
     secure,
     path: '/',
     maxAge: config?.security?.refreshTokenExpiryInHours! * 60 * 60,
-    sameSite: secure ? 'lax' : 'none',
     domain: secure ? undefined : 'localhost',
   })
 
@@ -85,7 +84,7 @@ export async function GET(req: NextRequest) {
     secure,
     path: '/',
     maxAge: expires_in,
-    sameSite: secure ? 'lax' : 'none',
+    // sameSite: secure ? 'lax' : 'none',
     domain: secure ? undefined : 'localhost',
   })
 

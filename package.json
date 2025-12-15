@@ -91,7 +91,7 @@
     "@mantine/dates": "^8.3.6",
     "@mantine/form": "^8.3.6",
     "@mantine/hooks": "^8.3.6",
-    "@megacommerce/proto": "0.4.60",
+    "@megacommerce/proto": "0.4.61",
     "@nestjs/common": "^11.0.0",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.0",

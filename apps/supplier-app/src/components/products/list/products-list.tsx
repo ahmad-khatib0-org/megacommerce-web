@@ -36,7 +36,7 @@ function ProductsList({ tr }: Props) {
     if (products.length) lastId = products[products.length - 1].id
 
     try {
-      const res = await productsClient.ProductsList({ pagination: { page: pageNum, lastId } })
+      const res = await (await productsClient()).ProductsList({ pagination: { page: pageNum, lastId } })
       if (res.error) return { error: res.error.message }
       if (res.data) {
         return {

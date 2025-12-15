@@ -1,10 +1,18 @@
 'use client'
-
 import { useEffect, useState } from 'react'
-import { Card, Loader, Button, Grid, Text, Badge, Group, ThemeIcon, RingProgress } from '@mantine/core'
-import { IconTrendingUp, IconPackages, IconBox, IconStar, IconShoppingCart, IconEye } from '@tabler/icons-react'
-import { ObjString, handleGrpcWebErr } from '@megacommerce/shared/client'
+import { Card, Loader, Button, Grid, Text, Group, ThemeIcon } from '@mantine/core'
+import {
+  IconTrendingUp,
+  IconPackages,
+  IconBox,
+  IconStar,
+  IconShoppingCart,
+  IconEye,
+} from '@tabler/icons-react'
+
+import { ObjString } from '@megacommerce/shared'
 import { DashboardStats } from '@megacommerce/proto/web/users/v1/dashboard'
+import { handleGrpcWebErr } from '@megacommerce/shared/client'
 import { usersClient } from '@/helpers/client/grpc'
 import { useAppStore } from '@/store'
 
@@ -51,7 +59,7 @@ function SupplierDashboard({ tr }: Props) {
       setLoading(true)
       setErr('')
 
-      const res = await usersClient.GetSupplierDashboard({})
+      const res = await (await usersClient()).GetSupplierDashboard({})
 
       if (res.error) {
         setErr(res.error.message || tr.errorLoading)
@@ -106,7 +114,7 @@ function SupplierDashboard({ tr }: Props) {
           <Grid.Col span={{ base: 12, sm: 6, md: 4 }}>
             <StatCard
               icon={<IconPackages size={24} />}
-              label={tr.stats.totalProducts}
+              label={tr.totalProducts}
               value={stats?.totalProducts || 0}
               color='blue'
             />
@@ -115,7 +123,7 @@ function SupplierDashboard({ tr }: Props) {
           <Grid.Col span={{ base: 12, sm: 6, md: 4 }}>
             <StatCard
               icon={<IconBox size={24} />}
-              label={tr.stats.totalInventory}
+              label={tr.totalInventory}
               value={stats?.totalInventoryItems || 0}
               color='green'
             />
@@ -124,7 +132,7 @@ function SupplierDashboard({ tr }: Props) {
           <Grid.Col span={{ base: 12, sm: 6, md: 4 }}>
             <StatCard
               icon={<IconStar size={24} />}
-              label={tr.stats.totalReviews}
+              label={tr.totalReviews}
               value={stats?.totalReviews || 0}
               color='yellow'
             />
@@ -133,7 +141,7 @@ function SupplierDashboard({ tr }: Props) {
           <Grid.Col span={{ base: 12, sm: 6, md: 4 }}>
             <StatCard
               icon={<IconShoppingCart size={24} />}
-              label={tr.stats.pendingOrders}
+              label={tr.pendingOrders}
               value={stats?.pendingOrders || 0}
               color='orange'
             />
@@ -142,7 +150,7 @@ function SupplierDashboard({ tr }: Props) {
           <Grid.Col span={{ base: 12, sm: 6, md: 4 }}>
             <StatCard
               icon={<IconShoppingCart size={24} />}
-              label={tr.stats.totalOrders}
+              label={tr.totalOrders}
               value={stats?.totalOrders || 0}
               color='violet'
             />
@@ -164,7 +172,7 @@ function SupplierDashboard({ tr }: Props) {
         {/* Visits by Period Chart Placeholder */}
         <Card shadow='sm' padding='lg' radius='md' withBorder>
           <Card.Section withBorder inheritPadding py='md'>
-            <h3 className='text-lg font-semibold'>{tr.charts.visitsByPeriod}</h3>
+            <h3 className='text-lg font-semibold'>{tr.visitsByPeriod}</h3>
           </Card.Section>
           <Card.Section inheritPadding py='md'>
             <div className='h-64 flex flex-col items-center justify-center bg-gray-50 rounded'>
@@ -186,7 +194,7 @@ function SupplierDashboard({ tr }: Props) {
         {/* Product Categories Chart Placeholder */}
         <Card shadow='sm' padding='lg' radius='md' withBorder>
           <Card.Section withBorder inheritPadding py='md'>
-            <h3 className='text-lg font-semibold'>{tr.charts.productVisits}</h3>
+            <h3 className='text-lg font-semibold'>{tr.productVisits}</h3>
           </Card.Section>
           <Card.Section inheritPadding py='md'>
             <div className='h-64 flex flex-col items-center justify-center bg-gray-50 rounded'>

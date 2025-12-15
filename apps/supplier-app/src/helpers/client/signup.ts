@@ -3,6 +3,7 @@ import { Dispatch, SetStateAction } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
 import { object, string, ref } from 'yup'
+
 import { SupplierCreateRequest } from '@megacommerce/proto/web/users/v1/supplier'
 import { Attachment } from '@megacommerce/proto/web/shared/v1/attachment'
 import { AppError } from '@megacommerce/proto/shared/v1/error'
@@ -43,6 +44,7 @@ export class SignupHelpers {
   }
 
   static onSubmit = async (
+    lang: string,
     sub: boolean,
     setSub: Dispatch<SetStateAction<boolean>>,
     info: SignupInformationForm,
@@ -56,7 +58,7 @@ export class SignupHelpers {
     setSub(true)
     try {
       const req = this.requestBuilder(info.values, auth.values, image)
-      const res = await usersClient.CreateSupplier(req)
+      const res = await (await usersClient()).CreateSupplier(req)
       if (res.error) {
         this.invalidateForms(res.error, info, auth, setImgErr)
         const firstErr = getFirstErroredStep(res.error!.errors!, this.formStepsFields())
@@ -66,7 +68,7 @@ export class SignupHelpers {
       toast.success(res.data!.message, { delay: 7000 })
       router.replace(PagesPaths.home)
     } catch (err) {
-      toast.error(handleGrpcWebErr(err))
+      toast.error(handleGrpcWebErr(err, lang))
     } finally {
       setSub(false)
     }
