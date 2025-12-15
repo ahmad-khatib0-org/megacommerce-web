@@ -1,11 +1,11 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { Button, Badge, Text, Title, ActionIcon, Loader, Modal, NumberInput } from '@mantine/core'
+import { useRouter } from 'next/navigation'
+import { Button, Badge, Text, Title, ActionIcon, Loader } from '@mantine/core'
 import {
   IconPackage,
   IconSearch,
-  IconEdit,
   IconTrash,
   IconEye,
   IconTrendingUp,
@@ -18,12 +18,14 @@ import { handleGrpcWebErr } from '@megacommerce/shared/client'
 import { InventoryListItem } from '@megacommerce/proto/web/inventory/v1/inventory_list'
 import { inventoryClient } from '@/helpers/client'
 import { useAppStore } from '@/store'
+import { PagesPaths } from '@/helpers/client'
 
 type Props = {
   tr: ObjString
 }
 
 function InventoryList({ tr }: Props) {
+  const router = useRouter()
   const clientInfo = useAppStore((state) => state.clientInfo)
 
   const [items, setItems] = useState<InventoryListItem[]>([])
@@ -32,11 +34,6 @@ function InventoryList({ tr }: Props) {
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
-
-  const [editModalOpen, setEditModalOpen] = useState(false)
-  const [selectedItem, setSelectedItem] = useState<InventoryListItem | null>(null)
-  const [editQuantity, setEditQuantity] = useState(0)
-  const [editOperation, setEditOperation] = useState<'add' | 'subtract' | 'set'>('set')
 
   const fetchInventory = useCallback(
     async (pageNum: number) => {
@@ -77,48 +74,8 @@ function InventoryList({ tr }: Props) {
     fetchInventory(1)
   }, [fetchInventory])
 
-  const handleEditItem = (item: InventoryListItem) => {
-    setSelectedItem(item)
-    setEditQuantity(item.quantityTotal)
-    setEditOperation('set')
-    setEditModalOpen(true)
-  }
-
-  const handleUpdateQuantity = async () => {
-    if (!selectedItem) return
-
-    // try {
-    //   const operationMap = {
-    //     set: InventoryUpdateOperation.INVENTORY_UPDATE_OPERATION_SET,
-    //     add: InventoryUpdateOperation.INVENTORY_UPDATE_OPERATION_ADD,
-    //     subtract: InventoryUpdateOperation.INVENTORY_UPDATE_OPERATION_SUBTRACT,
-    //   }
-    //
-    //   const res = await inventoryClient.InventoryUpdate({
-    //     items: [
-    //       {
-    //         productId: selectedItem.productId,
-    //         variantId: selectedItem.variantId,
-    //         sku: selectedItem.sku,
-    //         operation: operationMap[editOperation],
-    //         quantity: editQuantity,
-    //       },
-    //     ],
-    //     reason: `Inventory adjustment via dashboard`,
-    //   })
-    //
-    //   if (res.error) {
-    //     setErr(res.error.message || 'Failed to update inventory')
-    //     return
-    //   }
-    //
-    //   // Refresh inventory list after update
-    //   fetchInventory(1)
-    //   setEditModalOpen(false)
-    //   setSelectedItem(null)
-    // } catch (error) {
-    //   setErr(handleGrpcWebErr(error, clientInfo.language))
-    // }
+  const handleViewItem = (itemId: string) => {
+    router.push(`${PagesPaths.inventory}/${itemId}`)
   }
 
   const filteredItems = items.filter(
@@ -310,11 +267,8 @@ function InventoryList({ tr }: Props) {
                         variant='subtle'
                         color='blue'
                         size='sm'
-                        onClick={() => handleEditItem(item)}
-                        title={tr.edit}>
-                        <IconEdit size={16} />
-                      </ActionIcon>
-                      <ActionIcon variant='subtle' color='gray' size='sm' title={tr.view}>
+                        onClick={() => handleViewItem(item.id)}
+                        title={tr.view}>
                         <IconEye size={16} />
                       </ActionIcon>
                       <ActionIcon variant='subtle' color='red' size='sm' title={tr.delete}>
@@ -351,64 +305,6 @@ function InventoryList({ tr }: Props) {
           </div>
         )}
       </div>
-
-      {/* Edit Quantity Modal */}
-      <Modal
-        opened={editModalOpen}
-        onClose={() => setEditModalOpen(false)}
-        title='Update Inventory'
-        size='md'>
-        {selectedItem && (
-          <div className='space-y-4'>
-            <div>
-              <Text fw={500} mb={8}>
-                Product: {selectedItem.productName}
-              </Text>
-              <Text size='sm' c='dimmed' mb={16}>
-                SKU: {selectedItem.sku}
-              </Text>
-            </div>
-
-            <div>
-              <label className='block text-sm font-medium text-gray-700 mb-2'>Operation</label>
-              <select
-                value={editOperation}
-                onChange={(e) => setEditOperation(e.target.value as 'add' | 'subtract' | 'set')}
-                className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none'>
-                <option value='set'>Set to exact quantity</option>
-                <option value='add'>Add quantity</option>
-                <option value='subtract'>Subtract quantity</option>
-              </select>
-            </div>
-
-            <div>
-              <label className='block text-sm font-medium text-gray-700 mb-2'>Quantity</label>
-              <NumberInput
-                value={editQuantity}
-                // onChange={(val) => setEditQuantity(val || 0)}
-                min={0}
-              />
-            </div>
-
-            {editOperation === 'set' && (
-              <Text size='sm' c='dimmed'>
-                Current stock: {selectedItem.quantityTotal}
-              </Text>
-            )}
-
-            <div className='flex gap-3 mt-6'>
-              <Button fullWidth variant='outline' onClick={() => setEditModalOpen(false)}>
-                Cancel
-              </Button>
-              {/* 
-<Button fullWidth color='blue' onClick={handleUpdateQuantity}>
-                Update
-              </Button>
-              */}
-            </div>
-          </div>
-        )}
-      </Modal>
     </div>
   )
 }

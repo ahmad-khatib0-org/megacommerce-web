@@ -513,5 +513,14 @@
   "inventory.supplier.no_inventory": "No inventory items found",
   "inventory.supplier.no_inventory_desc": "Try adjusting your search or filters",
   "inventory.supplier.loading": "Loading inventory...",
-  "inventory.supplier.error_loading": "Failed to load inventory"
+  "inventory.supplier.error_loading": "Failed to load inventory",
+  "inventory.supplier.update.title": "Update Inventory Item",
+  "inventory.supplier.update.subtitle": "Manage inventory levels and adjust stock quantities",
+  "inventory.supplier.update.operation": "Operation",
+  "inventory.supplier.update.operation.set": "Set to exact quantity",
+  "inventory.supplier.update.operation.add": "Add quantity",
+  "inventory.supplier.update.operation.subtract": "Subtract quantity",
+  "inventory.supplier.update.quantity": "Quantity",
+  "inventory.supplier.update.reason": "Reason for adjustment",
+  "update": "Update"
 }

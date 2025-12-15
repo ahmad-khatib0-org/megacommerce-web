@@ -6,4 +6,5 @@ export class PagesPaths {
   static home = '/'
   static signup = '/signup'
   static login = '/login'
+  static inventory = '/inventory'
 }
