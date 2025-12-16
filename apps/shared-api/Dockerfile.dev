@@ -1,0 +1,45 @@
+# Multi-stage build for shared-api (NestJS backend)
+# Note: Build context should be megacommerce-web root
+FROM node:23-alpine AS base
+
+WORKDIR /app
+
+ENV ENV=dev \
+    NODE_ENV=development
+
+# Install build tools
+RUN apk add --no-cache python3 make g++ curl bash
+
+# Install pnpm
+RUN npm install -g pnpm@10.10.0
+
+# Dependencies stage
+FROM base AS deps
+
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json tsconfig.base.json ./
+COPY apps ./apps
+COPY packages ./packages
+RUN pnpm install --frozen-lockfile
+
+# Build shared packages (required for apps to compile)
+FROM deps AS build-deps
+
+WORKDIR /app
+RUN pnpm nx run shared:build || true
+
+# Development stage
+FROM base AS dev
+
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json tsconfig.base.json ./
+COPY apps ./apps
+COPY packages ./packages
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=build-deps /app/packages/shared/dist ./packages/shared/dist
+
+# Copy app-specific config and translations directories
+COPY apps/shared-api/config ./apps/shared-api/config
+COPY apps/shared-api/translations ./apps/shared-api/translations
+
+EXPOSE 3003
+
+CMD ["pnpm", "nx", "run", "shared-api:dev"]

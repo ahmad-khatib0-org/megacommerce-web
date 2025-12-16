@@ -11,7 +11,7 @@ import { Translations } from '../models'
 import { Cookies, DEFAULT_LANGUAGE_SYMBOL } from '../constants'
 import { calculateHash } from './build'
 
-const TRANSLATIONS_DIR = './translations'
+let TRANSLATIONS_DIR = './translations'
 
 async function fetchTranslations(client: Common.CommonServiceClient): Promise<Translations> {
   return new Promise((resolve, reject) => {
@@ -213,7 +213,8 @@ async function fetchOrLoadTransFromCache(client: Common.CommonServiceClient, for
 
 // 4. Public API
 export const Trans = {
-  init: async (client: Common.CommonServiceClient, forceFresh = false) => {
+  init: async (client: Common.CommonServiceClient, forceFresh = false, translationsDir?: string) => {
+    if (translationsDir) TRANSLATIONS_DIR = translationsDir
     const trans = await fetchOrLoadTransFromCache(client, forceFresh)
     TranslationStore.instance().init(trans, 10)
   },

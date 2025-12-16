@@ -25,19 +25,19 @@ services:
   userServiceGrpcUrl: 0.0.0.0:50052
   productsServiceGrpcUrl: 0.0.0.0:50053
   jaegerCollectorUrl: otel-collector:4317
-  commonServicePrometheusUrl: 0.0.0.0:8080
-  userServicePrometheusUrl: 0.0.0.0:8081
-  productsServicePrometheusUrl: 0.0.0.0:8082
+  commonServicePrometheusUrl: 0.0.0.0:8060
+  userServicePrometheusUrl: 0.0.0.0:8062
+  productsServicePrometheusUrl: 0.0.0.0:8061
   usersServiceMaxReceiveMessageSizeBytes: '52428800'
   authServiceGrpcUrl: 0.0.0.0:50054
-  authServicePrometheusUrl: 0.0.0.0:8083
-  searchServiceGrpcUrl: ''
-  searchServicePrometheusUrl: ''
+  authServicePrometheusUrl: 0.0.0.0:8063
+  searchServiceGrpcUrl: 0.0.0.0:50057
+  searchServicePrometheusUrl: 0.0.0.0:8066
   ordersServiceGrpcUrl: 0.0.0.0:50055
-  ordersServicePrometheusUrl: 0.0.0.0:8084
+  ordersServicePrometheusUrl: 0.0.0.0:8064
   ordersServiceMaxReceiveMessageSizeBytes: '10485760'
   inventoryServiceGrpcUrl: 0.0.0.0:50056
-  inventoryServicePrometheusUrl: 0.0.0.0:8085
+  inventoryServicePrometheusUrl: 0.0.0.0:8065
   inventoryServiceMaxReceiveMessageSizeBytes: '10485760'
 security:
   accessTokenExpiryWebInHours: 240

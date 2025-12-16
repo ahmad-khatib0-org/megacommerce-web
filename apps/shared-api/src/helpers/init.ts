@@ -1,5 +1,6 @@
-import { Trans } from '@megacommerce/shared/server'
+import { join } from 'path'
 
+import { Trans } from '@megacommerce/shared/server'
 import { commonClient } from './grpc'
 import { initConfig } from './config'
 import { initDB } from './db'
@@ -26,6 +27,8 @@ async function init(): Promise<System> {
   if (_initPromise) return _initPromise
 
   _initPromise = (async () => {
+    const transDir = join(process.cwd(), 'apps', 'shared-api', 'translations')
+
     try {
       const client = commonClient()
       await new Promise<void>((resolve, reject) => {
@@ -37,7 +40,7 @@ async function init(): Promise<System> {
 
       const config = await initConfig()
       const db = await initDB(config)
-      await Trans.init(client, false)
+      await Trans.init(client, false, transDir)
 
       _system = { config, db }
       _initialized = true

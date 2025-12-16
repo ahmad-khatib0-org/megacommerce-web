@@ -3,12 +3,12 @@ main:
   siteName: MegaCommerce
   siteUrl: www.megacommerce.com
   enableLinkPreviews: true
-  restrictLinkPreviews: ""
+  restrictLinkPreviews: ''
   enableClientPerformanceDebugging: false
   enableGifPicker: true
   enableCustomEmoji: true
   enableEmojiPicker: true
-  timeBetweenUserTypingUpdatesMilliseconds: "500"
+  timeBetweenUserTypingUpdatesMilliseconds: '500'
   enableFileSearch: true
   enableUserTypingMessages: true
   enableUserStatuses: true
@@ -25,20 +25,20 @@ services:
   userServiceGrpcUrl: 0.0.0.0:50052
   productsServiceGrpcUrl: 0.0.0.0:50053
   jaegerCollectorUrl: otel-collector:4317
-  commonServicePrometheusUrl: 0.0.0.0:8080
-  userServicePrometheusUrl: 0.0.0.0:8081
-  productsServicePrometheusUrl: 0.0.0.0:8082
-  usersServiceMaxReceiveMessageSizeBytes: "52428800"
+  commonServicePrometheusUrl: 0.0.0.0:8060
+  userServicePrometheusUrl: 0.0.0.0:8062
+  productsServicePrometheusUrl: 0.0.0.0:8061
+  usersServiceMaxReceiveMessageSizeBytes: '52428800'
   authServiceGrpcUrl: 0.0.0.0:50054
-  authServicePrometheusUrl: 0.0.0.0:8083
-  searchServiceGrpcUrl: ""
-  searchServicePrometheusUrl: ""
+  authServicePrometheusUrl: 0.0.0.0:8063
+  searchServiceGrpcUrl: 0.0.0.0:50057
+  searchServicePrometheusUrl: 0.0.0.0:8066
   ordersServiceGrpcUrl: 0.0.0.0:50055
-  ordersServicePrometheusUrl: 0.0.0.0:8084
-  ordersServiceMaxReceiveMessageSizeBytes: "10485760"
+  ordersServicePrometheusUrl: 0.0.0.0:8064
+  ordersServiceMaxReceiveMessageSizeBytes: '10485760'
   inventoryServiceGrpcUrl: 0.0.0.0:50056
-  inventoryServicePrometheusUrl: 0.0.0.0:8085
-  inventoryServiceMaxReceiveMessageSizeBytes: "10485760"
+  inventoryServicePrometheusUrl: 0.0.0.0:8065
+  inventoryServiceMaxReceiveMessageSizeBytes: '10485760'
 security:
   accessTokenExpiryWebInHours: 240
   accessTokenExpiryMobileInHours: 2
@@ -56,7 +56,7 @@ security:
   enforceMultifactorAuthentication: false
   enableOauthServiceProvider: true
   enableOutgoingOauthConnections: true
-  allowCorsFrom: "*"
+  allowCorsFrom: '*'
   corsExposedHeaders: X-Custom-Header
   corsAllowCredentials: true
   corsDebug: false
@@ -64,14 +64,14 @@ security:
 cache:
   cacheType: redis
   redisAddress: redis://0.0.0.0:6379
-  redisPassword: ""
+  redisPassword: ''
   redisDb: 0
-  redisCachePrefix: "cache:"
+  redisCachePrefix: 'cache:'
   disableClientCache: false
 metrics:
   enable: true
   blockProfileRate: 1
-  listenAddress: :9090
+  listenAddress: ':9090'
   enableClientMetrics: true
   enableNotificationMetrics: true
   clientSideUserIds: []
@@ -85,7 +85,7 @@ sso:
   userApiEndpoint: https://user.example.com
   discoveryEndpoint: https://discovery.example.com
   buttonText: Login with SSO
-  buttonColor: "#000000"
+  buttonColor: '#000000'
 sql:
   driverName: postgres
   dataSource: postgresql://megacommerce@localhost:26257/megacommerce?sslmode=disable
@@ -94,7 +94,7 @@ sql:
   connMaxIdleTimeMilliseconds: 120000
   maxOpenConns: 10
   trace: true
-  atRestEncryptKey: ""
+  atRestEncryptKey: ''
   queryTimeout: 3000
   disableDatabaseSearch: false
 password:
@@ -109,8 +109,8 @@ file:
   enableFileAttachments: true
   enableMobileUpload: true
   enableMobileDownload: true
-  maxImageResolution: "1920"
-  maxImageDecoderConcurrency: "4"
+  maxImageResolution: '1920'
+  maxImageDecoderConcurrency: '4'
   driverName: s3
   amazonS3AccessKeyId: minioadmin
   amazonS3SecretAccessKey: minioadmin
@@ -122,8 +122,8 @@ file:
   amazonS3SignV2: false
   amazonS3Sse: false
   amazonS3Trace: false
-  amazonS3RequestTimeoutMilliseconds: "5000"
-  amazonS3UploadPartSizeBytes: "5242880"
+  amazonS3RequestTimeoutMilliseconds: '5000'
+  amazonS3UploadPartSizeBytes: '5242880'
   amazonS3StorageClass: STANDARD
 email:
   sendEmailNotifications: true
@@ -131,12 +131,12 @@ email:
   feedbackEmail: feedback@example.com
   replyToAddress: noreply@example.com
   enableSmtpAuth: true
-  smtpUsername: ""
-  smtpPassword: ""
+  smtpUsername: ''
+  smtpPassword: ''
   smtpServer: localhost
-  smtpPort: "1025"
+  smtpPort: '1025'
   smtpServerTimeout: 30
-  connectionSecurity: ""
+  connectionSecurity: ''
   sendPushNotifications: true
   pushNotificationServer: https://push.example.com
   pushNotificationContents: full
@@ -146,9 +146,9 @@ email:
   emailBatchingInterval: 5
   skipServerCertificateVerification: false
   emailNotificationContentsType: full
-  loginButtonColor: "#000000"
-  loginButtonBorderColor: "#ffffff"
-  loginButtonTextColor: "#ffffff"
+  loginButtonColor: '#000000'
+  loginButtonBorderColor: '#ffffff'
+  loginButtonTextColor: '#ffffff'
   rateLimitingMemorySize: 65536
   rateLimitingPerHour: 20
   rateLimitingMaxBurst: 20
@@ -205,9 +205,9 @@ ldap:
   queryTimeout: 30
   maxPageSize: 500
   loginFieldName: Email
-  loginButtonColor: "#0000FF"
-  loginButtonBorderColor: "#000000"
-  loginButtonTextColor: "#FFFFFF"
+  loginButtonColor: '#0000FF'
+  loginButtonBorderColor: '#000000'
+  loginButtonTextColor: '#FFFFFF'
 saml:
   enable: true
   enableSyncWithLdap: false
@@ -239,9 +239,9 @@ saml:
   localeAttribute: locale
   positionAttribute: title
   loginButtonText: Login with SAML
-  loginButtonColor: "#0000FF"
-  loginButtonBorderColor: "#000000"
-  loginButtonTextColor: "#FFFFFF"
+  loginButtonColor: '#0000FF'
+  loginButtonBorderColor: '#000000'
+  loginButtonTextColor: '#FFFFFF'
 nativeApp:
   appCustomUrlSchemes:
     - myapp://
@@ -263,7 +263,7 @@ meilisearch:
   enableAutocomplete: true
   maxConcurrency: 100
   requestTimeoutSeconds: 30
-  indexPrefix: ""
+  indexPrefix: ''
   searchCutoffMs: 1000
   enableTypoTolerance: true
   kafkaBroker: localhost:19092
@@ -288,7 +288,7 @@ dataRetention:
   messageRetentionHours: 720
   fileRetentionHours: 720
   boardsRetentionDays: 30
-  deletionJobStartTime: 02:00
+  deletionJobStartTime: '02:00'
   batchSize: 100
   timeBetweenBatchesMilliseconds: 500
   retentionIdsBatchSize: 100
@@ -316,16 +316,16 @@ oauth:
   oauthGrantAccessTokenAudience:
     - megacommerce
 products:
-  productImageMaxSizeMb: "3"
+  productImageMaxSizeMb: '3'
   productImageAcceptedFormats:
     - image/png
     - image/webp
     - image/jpeg
     - image/jpg
-  productImageMaxWidth: "2000"
-  productImageMaxHeight: "2000"
-  productImageMinWidth: "400"
-  productImageMinHeight: "400"
-  productImagesMinCountPerVariant: "1"
-  productImagesMaxCountPerVariant: "10"
-  productMediaMaxDirectUploadingSizeMb: "40"
+  productImageMaxWidth: '2000'
+  productImageMaxHeight: '2000'
+  productImageMinWidth: '400'
+  productImageMinHeight: '400'
+  productImagesMinCountPerVariant: '1'
+  productImagesMaxCountPerVariant: '10'
+  productMediaMaxDirectUploadingSizeMb: '40'
