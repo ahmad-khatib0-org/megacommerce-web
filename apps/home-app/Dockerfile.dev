@@ -40,7 +40,7 @@ COPY --from=build-deps /app/dist/packages/shared ./packages/shared/dist
 # Copy app-specific config and translations directories
 COPY apps/home-app/config ./apps/home-app/config
 COPY apps/home-app/translations ./apps/home-app/translations
-COPY apps/home-app/.development.env ./apps/home-app/.development.env
+COPY apps/home-app/.env.development ./apps/home-app/.env.development
 
 EXPOSE 3000
 
