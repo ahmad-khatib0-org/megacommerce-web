@@ -35,11 +35,12 @@ COPY pnpm-lock.yaml pnpm-workspace.yaml package.json tsconfig.base.json ./
 COPY apps ./apps
 COPY packages ./packages
 COPY --from=deps /app/node_modules ./node_modules
-COPY --from=build-deps /app/packages/shared/dist ./packages/shared/dist
+COPY --from=build-deps /app/dist/packages/shared ./packages/shared/dist
 
 # Copy app-specific config and translations directories
 COPY apps/home-app/config ./apps/home-app/config
 COPY apps/home-app/translations ./apps/home-app/translations
+COPY apps/home-app/.development.env ./apps/home-app/.development.env
 
 EXPOSE 3000
 
