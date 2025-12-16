@@ -1,0 +1,75 @@
+name: Build and Push Web Apps (NX Monorepo)
+
+on:
+  push:
+    tags:
+      - 'dev-*'
+      - 'v*'
+
+env:
+  REGISTRY: docker.io
+
+jobs:
+  build-apps:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        app: [home-app, customer-app, supplier-app, shared-api]
+        include:
+          - app: home-app
+            service_name: megacommerce-home-app
+            port: 3000
+          - app: customer-app
+            service_name: megacommerce-customer-app
+            port: 3001
+          - app: supplier-app
+            service_name: megacommerce-supplier-app
+            port: 3002
+          - app: shared-api
+            service_name: megacommerce-shared-api
+            port: 3003
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.10.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '23'
+          cache: 'pnpm'
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          VERSION=${VERSION#dev-}
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Build and push ${{ matrix.app }}
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./apps/${{ matrix.app }}/Dockerfile.dev
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ secrets.DOCKER_USERNAME }}/${{ matrix.service_name }}:${{ steps.version.outputs.VERSION }}
+            ${{ env.REGISTRY }}/${{ secrets.DOCKER_USERNAME }}/${{ matrix.service_name }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
