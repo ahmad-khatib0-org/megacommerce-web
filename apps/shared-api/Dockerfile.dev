@@ -37,7 +37,7 @@ COPY --from=prod-deps /app/node_modules ./node_modules
 COPY --from=prod-deps /app/apps/shared-api ./apps/shared-api
 COPY --from=prod-deps /app/packages ./packages
 # Copy pre-built shared library dist
-COPY --from=build-shared /app/packages/shared/dist ./packages/shared/dist
+COPY --from=build-shared /app/dist/packages/shared ./packages/shared/dist
 
 # Copy runtime config and translations
 COPY apps/shared-api/config ./apps/shared-api/config
