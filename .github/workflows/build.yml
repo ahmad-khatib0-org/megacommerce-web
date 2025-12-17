@@ -1,4 +1,9 @@
-name: Build and Push Web Apps (NX Monorepo)
+# Legacy workflow - kept for backwards compatibility
+# Use individual workflows instead: build-home-app.yml, build-customer-app.yml, etc.
+# Trigger: git tag -a dev-home-app-v1.0.0 -m "Release"
+#          git push origin dev-home-app-v1.0.0
+
+name: Build and Push Web Apps (Legacy - Use Individual Workflows)
 
 on:
   push:
@@ -12,6 +17,7 @@ env:
 jobs:
   build-apps:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: read
       packages: write
@@ -34,17 +40,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10.10.0
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "23"
-          cache: "pnpm"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -73,4 +68,3 @@ jobs:
             ${{ env.REGISTRY }}/${{ secrets.DOCKER_USERNAME }}/${{ matrix.service_name }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max,compression=gzip
-          build-timeout: 30m
