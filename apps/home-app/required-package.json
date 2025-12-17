@@ -1,0 +1,29 @@
+{
+  "name": "home-app",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@grpc/grpc-js": "^1.14.0",
+    "@improbable-eng/grpc-web": "^0.15.0",
+    "@mantine/core": "^8.3.6",
+    "@mantine/form": "^8.3.6",
+    "@mantine/hooks": "^8.3.6",
+    "@megacommerce/proto": "^0.4.65",
+    "@tabler/icons-react": "^3.35.0",
+    "client-only": "^0.0.1",
+    "cookies-next": "^6.1.1",
+    "embla-carousel-autoplay": "^8.6.0",
+    "embla-carousel-react": "^8.6.0",
+    "js-yaml": "^4.1.0",
+    "mantine-form-yup-resolver": "^2.0.0",
+    "next": "~15.2.5",
+    "opossum": "^9.0.0",
+    "pg": "^8.16.3",
+    "react": "19.0.0",
+    "react-intersection-observer": "^10.0.0",
+    "react-toastify": "^11.0.5",
+    "server-only": "^0.0.1",
+    "yup": "^1.7.1",
+    "zustand": "^5.0.8"
+  }
+}

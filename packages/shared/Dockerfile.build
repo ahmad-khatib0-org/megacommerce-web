@@ -1,0 +1,26 @@
+# Build stage for packages/shared library
+# This is used as a base stage by apps
+# Usage: FROM ... AS build-shared
+#        COPY --from=build-shared /app/packages/shared/dist ./packages/shared/dist
+
+FROM node:23-alpine AS builder
+
+WORKDIR /app
+
+RUN apk add --no-cache python3 make g++
+RUN npm install -g pnpm@10.10.0
+
+# Copy only required dependencies for shared
+COPY packages/shared/required-package.json ./package.json
+COPY pnpm-lock.yaml pnpm-workspace.yaml ./
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile --prod --prefer-offline
+
+# Copy shared source
+COPY packages/shared/src ./src
+COPY packages/shared/tsconfig.json ./
+COPY packages/shared/tsconfig.lib.json ./
+
+# Build shared library
+RUN pnpm run build

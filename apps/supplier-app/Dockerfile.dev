@@ -1,47 +1,63 @@
-# Optimized multi-stage build for supplier-app
-# Build context: megacommerce-web root
-# Key: Only final 'dev' stage is pushed to registry, intermediate layers are build-cache only
+# Minimal Docker image for supplier-app
+# Size: ~50-80MB (down from 1GB)
+# Strategy: Build shared lib, install only required deps, build app
 
 FROM node:23-alpine AS base
+
 WORKDIR /app
+
 ENV NODE_ENV=development
-RUN apk add --no-cache python3 make g++ curl bash
+
+RUN apk add --no-cache python3 make g++
+
 RUN npm install -g pnpm@10.10.0
 
-# Stage 1: Full install for building (build-cache only, ~1.5GB layer, not pushed)
-FROM base AS deps
-COPY pnpm-lock.yaml pnpm-workspace.yaml package.json tsconfig.base.json ./
-COPY apps/supplier-app ./apps/supplier-app
-COPY packages ./packages
-RUN pnpm install --frozen-lockfile --prefer-offline
+# Stage 1: Build packages/shared (dependency for apps)
+FROM base AS build-shared
 
-# Stage 2: Build shared library
-FROM deps AS build-shared
-WORKDIR /app
-RUN pnpm nx run shared:build
+COPY packages/shared/required-package.json ./package.json
+COPY pnpm-lock.yaml pnpm-workspace.yaml ./
 
-# Stage 3: MINIMAL layer - production dependencies only
-# Use --prod flag to ONLY install production deps, avoiding devDependencies entirely
-FROM base AS prod-deps
-COPY pnpm-lock.yaml pnpm-workspace.yaml package.json tsconfig.base.json ./
-COPY apps/supplier-app ./apps/supplier-app
-COPY packages ./packages
-# Key: --prod flag means devDependencies are NOT installed
 RUN pnpm install --frozen-lockfile --prod --prefer-offline
 
-# Stage 4: Final runtime image (~300-400MB, this is what gets pushed)
-FROM base AS dev
-# Copy only production node_modules from prod-deps stage
-COPY --from=prod-deps /app/node_modules ./node_modules
-# Copy source code
-COPY --from=prod-deps /app/apps/supplier-app ./apps/supplier-app
-COPY --from=prod-deps /app/packages ./packages
-# Copy pre-built shared library dist
-COPY --from=build-shared /app/dist/packages/shared ./packages/shared/dist
+COPY packages/shared/src ./src
+COPY packages/shared/tsconfig.json ./
+COPY packages/shared/tsconfig.lib.json ./
 
-# Copy runtime config and translations
-COPY apps/supplier-app/config ./apps/supplier-app/config
-COPY apps/supplier-app/translations ./apps/supplier-app/translations
+RUN pnpm run build
+
+# Stage 2: Build supplier-app
+FROM base AS app
+
+# Copy only required dependencies
+COPY apps/supplier-app/required-package.json ./package.json
+COPY pnpm-lock.yaml pnpm-workspace.yaml ./
+
+RUN pnpm install --frozen-lockfile --prod --prefer-offline
+
+# Copy built shared library
+COPY --from=build-shared /app/dist ./packages/shared/dist
+
+# Copy app source code
+COPY apps/supplier-app/src ./src
+COPY apps/supplier-app/next.config.js ./
+COPY apps/supplier-app/tsconfig.json ./
+COPY apps/supplier-app/postcss.config.js ./
+COPY apps/supplier-app/tailwind.config.js ./
+COPY apps/supplier-app/.swcrc ./
+
+# Copy config and translations directories
+COPY apps/supplier-app/config ./config
+COPY apps/supplier-app/translations ./translations
+COPY apps/supplier-app/public ./public
+
+# Copy environment files
+COPY apps/supplier-app/.env.development ./
+COPY apps/supplier-app/.env.production ./
+
+# Build the app
+RUN pnpm run build
 
 EXPOSE 3002
-CMD ["pnpm", "nx", "run", "supplier-app:dev"]
+
+CMD ["pnpm", "run", "start"]
