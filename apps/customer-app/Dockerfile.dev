@@ -1,43 +1,40 @@
-# Optimized multi-stage build for customer-app
-# Build context: megacommerce-web root
-# Key: Only final 'dev' stage is pushed to registry, intermediate layers are build-cache only
-
 FROM node:23-alpine AS base
 WORKDIR /app
 ENV NODE_ENV=development
 RUN apk add --no-cache python3 make g++ curl bash
 RUN npm install -g pnpm@10.10.0
 
-# Stage 1: Full install for building (build-cache only, ~1.5GB layer, not pushed)
 FROM base AS deps
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json tsconfig.base.json ./
 COPY apps/customer-app ./apps/customer-app
 COPY packages ./packages
 RUN pnpm install --frozen-lockfile --prefer-offline
 
-# Stage 2: Build shared library
 FROM deps AS build-shared
 WORKDIR /app
 RUN pnpm nx run shared:build
 
-# Stage 3: MINIMAL layer - production dependencies only
-# Use --prod flag to ONLY install production deps, avoiding devDependencies entirely
 FROM base AS prod-deps
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json tsconfig.base.json ./
 COPY apps/customer-app ./apps/customer-app
 COPY packages ./packages
-# Key: --prod flag means devDependencies are NOT installed
 RUN pnpm install --frozen-lockfile --prod --prefer-offline
+# Remove unused nest dependencies for Next.js frontend
+RUN pnpm remove --prod \
+    @fastify/cookie \
+    @nestjs/common \
+    @nestjs/config \
+    @nestjs/core \
+    @nestjs/platform-express \
+    @nestjs/platform-fastify \
+    fastify \
+    2>/dev/null || true
 
-# Stage 4: Final runtime image (~300-400MB, this is what gets pushed)
 FROM base AS dev
-# Copy only production node_modules from prod-deps stage
 COPY --from=prod-deps /app/node_modules ./node_modules
-# Copy source code
 COPY --from=prod-deps /app/apps/customer-app ./apps/customer-app
 COPY --from=prod-deps /app/packages ./packages
-# Copy pre-built shared library dist
-COPY --from=build-shared /app/packages/shared/dist ./packages/shared/dist
+COPY --from=build-shared /app/dist/packages/shared ./packages/shared/dist
 
 # Copy runtime config and translations
 COPY apps/customer-app/config ./apps/customer-app/config
