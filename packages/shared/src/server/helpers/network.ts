@@ -3,6 +3,7 @@ import { cookies, headers } from 'next/headers'
 import { Metadata, ServiceError } from '@grpc/grpc-js'
 import { isValid, MAX_ULID } from 'ulid'
 
+import { Environment } from '@megacommerce/proto/common/v1/config'
 import { Context, Session } from '../models'
 import { Headers } from '../constants'
 
@@ -199,4 +200,17 @@ export function grpcCall<TRequest, TResponse>(
       resolve({ data: response })
     })
   })
+}
+
+export function stringToEnvEnum(env: string): number {
+  switch (env) {
+    case 'local':
+      return Environment.LOCAL
+    case 'dev':
+      return Environment.DEV
+    case 'production':
+      return Environment.PRODUCTION
+    default:
+      return Environment.DEV
+  }
 }
