@@ -21,8 +21,7 @@ pnpm-debug.log*
 tmp
 scripts
 .cursor
-.github/instructions
-packages/shared/.next
+.github
 packages/ui/.next
 apps/*/specs
 apps/*/.next

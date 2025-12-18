@@ -67,4 +67,4 @@ jobs:
             ${{ env.REGISTRY }}/${{ secrets.DOCKER_USERNAME }}/${{ matrix.service_name }}:${{ steps.version.outputs.VERSION }}
             ${{ env.REGISTRY }}/${{ secrets.DOCKER_USERNAME }}/${{ matrix.service_name }}:latest
           cache-from: type=gha
-          cache-to: type=gha,mode=max,compression=gzip
+          cache-to: type=gha,mode=min,compression=gzip

@@ -55,4 +55,4 @@ jobs:
             ${{ env.REGISTRY }}/${{ secrets.DOCKER_USERNAME }}/${{ env.SERVICE_NAME }}:${{ steps.version.outputs.VERSION }}
             ${{ env.REGISTRY }}/${{ secrets.DOCKER_USERNAME }}/${{ env.SERVICE_NAME }}:latest
           cache-from: type=gha
-          cache-to: type=gha,mode=max,compression=gzip
+          cache-to: type=gha,mode=min,compression=gzip
